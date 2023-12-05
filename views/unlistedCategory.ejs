@@ -1,0 +1,78 @@
+<!-- include footer -->
+<%- include('include/_adminbase.ejs') %>
+    <!-- /include footer -->
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+
+    <script src="https://kit.fontawesome.com/23d1247997.js" crossorigin="anonymous"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" rel="stylesheet" />
+
+    <section id="content">
+        <main>
+          
+          <a href="/admin-catogary"><button class="btn btn-primary">Go Back</button></a> 
+            
+
+            <div class="table-data">
+                <div class="order">
+                    <div class="head">
+                        <h3>Recently Deleted</h3>
+                        <i class='bx bx-search'></i>
+                        <i class='bx bx-filter'></i>
+                    </div>
+                    <table>
+                        
+                        <thead>
+                            <tr >
+                                <th>si. No</th>
+                                <th>category</th>
+                                <th>Action</th>
+                                <th>Restore</th>
+                            </tr>
+                        </thead>
+                        <% for(let i=0;i<category.length;i++){ %>
+                        <tbody>
+                            <tr onclick="category('<%=category[i]%>')">
+                                <td>
+                                    <p><%=i+1 %></p>
+                                </td>
+                               
+                                    <td>
+                                        
+                                        <p><%= category[i].name %></p>
+                                     
+                                    </td>
+                              
+
+                               
+                                    <td><a href="/delete-category?category=<%=category[i].name%>"
+                                        class="btn btn-light border px-2 pt-2 icon-hover"
+                                        style="margin-right: 3%;"><i class="fas fa-trash fa-lg text-secondary px-1"></i></a></td>
+
+                                        <td><a href="/restore-category?category=<%=category[i].name%>"
+                                            class="btn btn-light border px-2 pt-2 icon-hover"
+                                            style="margin-right: 3%;"><i class="fas fa-trash-restore fa-lg text-secondary px-1"></i></a></td>
+                                    
+
+                                            
+                            </tr>
+                            <% } %>
+                        </tbody>
+                        
+                    </table>
+                </div>
+        </main>
+<script>
+    function category(cat){
+        const singlecat=`/unlist-catogary?category=${cat}`
+        window.location.href= singlecat;
+    }
+</script>
+    </section>
+
+    <script src="js/adminserver.js"></script>
+    </body>
+
+    </html>

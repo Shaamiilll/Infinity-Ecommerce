@@ -1,0 +1,220 @@
+<!-- include header -->
+<%- include('include/_header') %>
+  <!-- /include header -->
+
+  <!-- cart + summary -->
+  <section class="bg-light my-5">
+    <div class="container">
+      <div class="row">
+        <!-- cart -->
+        <div class="col-lg-9">
+          <div class="card border shadow-0">
+            <div class="m-4">
+              <h4 class="card-title mb-4">Your shopping cart</h4>
+              <% if(cart && cart.length > 0){ %>
+                <% for (let i=0;i<cart.length;i++){ %>
+                  <div class="row gy-3 mb-4">
+                    <div class="col-lg-5 outofstock" onclick="userdetails('<%=cart[i].prId%>')">
+                      <div class="me-lg-5">
+                        <div class="d-flex">
+                          <img src="primg/<%= cart[i].prd_images[0] %>" class="border rounded me-3"
+                            style="width: 96px; height: 96px;" />
+                          <div class="">
+                            <a href="#" class="nav-link">
+                              <%= cart[i].pname %>
+                            </a>
+                            <p class="text-muted">
+                              <%= cart[i].category %>
+                            </p>
+                            <% if(cart[i].categoryStats==false||cart[i].active==false){ %>
+                              <p style="color: red;">Product Not available </p>
+
+                              <style>
+                                .outofstock {
+                                  opacity: 90%;
+                                  pointer-events: none;
+                                }
+                              </style>
+                              <% }else{ %>
+
+                                <script>
+                                  document.querySelector('.outofstock').classList.remove('outofstock')
+                                </script>
+                                <% } %>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap">
+                      <!-- <div class="col-md-4 col-6 mb-3">
+                    <label class="mb-2 d-block">Quantity</label>
+                    <div class="input-group mb-3" style="width: 170px;">
+                        <button class="btn btn-white border border-secondary px-3" type="button" id="decrease-btn" data-mdb-ripple-color="dark">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <input type="text" class="form-control text-center border border-secondary" placeholder="1" aria-label="Example text with button addon" aria-describedby="button-addon1" id="quantity-input" />
+                        <button class="btn btn-white border border-secondary px-3" type="button" id="increase-btn" data-mdb-ripple-color="dark">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div> -->
+                      <div class="">
+                        <% const discount= cart[i].discount %>
+                        <% const disPrice= cart[i].price*discount/100 %>
+                        <% const showPrice=cart[i].price-disPrice %>
+                        <text class="h6">₹ <%= cart[i].cartQuantity * showPrice %></text> <br />
+                        <small class="text-muted text-nowrap">₹ <%= showPrice %>/ per item </small>
+                      </div>
+                    </div>
+                    <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap">
+                      <div class="col-md-4 col-6 mb-3">
+                        <label class="mb-2 d-block">Quantity</label>
+                        <div class="input-group mb-3 quantity-container" style="width: 170px;" >
+
+                          <a href="/cart/dec?id=<%= cart[i].prId %>">
+                            <button class="btn btn-white border border-secondary px-3 decrease-btn" type="button">
+                              <i class="fas fa-minus"></i>
+                            </button>
+                          </a>
+                          <input type="text" class="form-control text-center border border-secondary quantity-input" placeholder="<%= cart[i].cartQuantity %>" disabled />
+                          <a href="/cart/inc?id=<%= cart[i].prId %>"><button class="btn btn-white border border-secondary px-3 increase-btn" type="button">
+                            <i class="fas fa-plus"></i>
+                          </button></a>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="col-lg col-sm-6 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
+                      <div class="float-md-end">
+                        <a href="#!" class="btn btn-light border px-2 icon-hover-primary"><i
+                            class="fas fa-heart fa-lg px-1 text-secondary"></i></a>
+                        <a href="/remove-product?id=<%=cart[i].prId%>"
+                          class="btn btn-light border text-danger icon-hover-danger"> Remove</a>
+                      </div>
+                    </div>
+                  </div>
+                  <% } %>
+                    <% }else{ %>
+                      <p>No Items In Cart</p>
+                      <% } %>
+
+
+            </div>
+
+            <div class="border-top pt-4 mx-4 mb-4">
+              <p><i class="fas fa-truck text-muted fa-lg"></i> Free Delivery within 1-2 weeks</p>
+              <p class="text-muted">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
+                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                aliquip
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- cart -->
+        <!-- summary -->
+        <div class="col-lg-3">
+
+          <div class="card shadow-0 border">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <p class="mb-2">Total price:</p>
+                <p class="mb-2" id="total-price-before" >
+                  <%= totalsum %>
+                </p>
+              </div>
+              <div class="d-flex justify-content-between">
+                <p class="mb-2">Total Items</p>
+                <p class="mb-2 text-success">
+                  <%=cart.length %>
+                </p>
+              </div>
+              <hr />
+              <div class="d-flex justify-content-between">
+                <p class="mb-2">Total price:</p>
+                <p class="mb-2 fw-bold" id="total-price">
+                  <%= totalsum %>
+                </p>
+              </div>
+            <form action="/checkout-page" method="post">
+              <input type="hidden" name="totalsum" value="<%= totalsum %>" hidden>
+                 <button class="btn btn-success w-100 shadow-0 mb-2" type="submit">Make Purchase </button> 
+            </form>
+              <div class="mt-3">
+                    <a href=" /" class="btn btn-light w-100 border mt-2"> Back to shop </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- summary -->
+      </div>
+    </div>
+  </section>
+  <!-- cart + summary -->
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
+  <script>
+    function userdetails(id) {
+      const productDetailURL = `/product-details?productId=${id}`;
+
+      // Redirect to the user details page.
+      window.location.href = productDetailURL;
+    }
+
+  </script>
+
+  <!-- <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var currentStock = 10;
+
+    // Get the quantity input and buttons
+    var quantityInputs = document.getElementsByClassName('quantity-input');
+    var decreaseBtns = document.getElementsByClassName('decrease-btn');
+    var increaseBtns = document.getElementsByClassName('increase-btn');
+    var quantityInputs = document.getElementsByClassName('quantity-input');
+
+    // Function to update the quantity and total price
+    function updateQuantityAndTotal(index, change) {
+      // Get the current quantity value
+      var currentQuantity = parseInt(quantityInputs[index].value) || 0;
+
+      // Update the quantity based on the change
+      var newQuantity = currentQuantity + change;
+
+      // Ensure the quantity is within the available stock
+      newQuantity = Math.max(1, Math.min(currentStock, newQuantity));
+
+      // Update the input field with the new quantity
+      quantityInputs[index].value = newQuantity;
+
+      // Get the price per item
+      var pricePerItem = parseFloat(document.querySelector('.h6').innerText.replace('₹ ', ''));
+
+      // Calculate and update the total price
+      var totalPrice = newQuantity * pricePerItem;
+      document.querySelector('#total-price').innerText = '₹ ' + totalPrice.toFixed(2);
+      document.querySelector('#total-price-before').innerText = '₹ ' + totalPrice.toFixed(2);
+    }
+
+    // Add click event listeners to the buttons
+    for (var i = 0; i < decreaseBtns.length; i++) {
+      decreaseBtns[i].addEventListener('click', function (index) {
+        return function () {
+          updateQuantityAndTotal(index, -1);
+        };
+      }(i));
+
+      increaseBtns[i].addEventListener('click', function (index) {
+        return function () {
+          updateQuantityAndTotal(index, 1);
+        };
+      }(i));
+    }
+  });
+</script> -->
+  </body>
+  <!-- include footer -->
+  <%- include('include/_footer') %>
+    <!-- /include footer -->
+
+    </html>

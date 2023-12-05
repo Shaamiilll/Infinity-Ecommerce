@@ -1,0 +1,449 @@
+<%- include('include/_header') %>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/drift-zoom/1.3.1/Drift.min.js" integrity="sha512-Pd9pNKoNtEB70QRXTvNWLO5kqcL9zK88R4SIvThaMcQRC3g8ilKFNQawEr+PSyMtf/JTjV7pbFOFnkVdr0zKvw==" crossorigin="anonymous"></script>
+<script src="/path/to/cdn/jquery.min.js"></script>
+<script src="/path/to/extm.min.js"></script>
+<script src="path/to/magnify.js"></script>
+
+
+
+  <!-- content -->
+  <section class="py-5">
+    <div class="container">
+      <div class="row gx-5">
+        <aside class="col-lg-6">
+          <div id="largeImageContainer" class="rounded-4 mb-3 d-flex justify-content-center imageHo">
+            <a data-fslightbox="mygalley" class="rounded-4" data-type="image" href="primg/<%= product.prd_images[0] %>">
+              <img id="largeImage" style="max-width: auto; max-height: auto; margin: auto;" class="rounded-4 fit"
+                src="primg/<%= product.prd_images[0] %>" data-magnify-src="primg/<%= product.prd_images[0] %>" />
+            </a>
+          </div>
+
+          <div class="d-flex justify-content-center mb-3">
+            <% for(let i=0; i < product.prd_images.length; i++) { %>
+              <a data-fslightbox="mygalley" class="border mx-1 rounded-2" data-type="image"
+                onclick="updateLargeImage('primg/<%= product.prd_images[i] %>')">
+                <img width="60" height="60" class="rounded-2" src="primg/<%= product.prd_images[i] %>" />
+              </a>
+              <% } %>
+          </div>
+          <!-- thumbs-wrap.// -->
+          <!-- gallery-wrap .end// -->
+        </aside>
+        <main class="col-lg-6">
+          <div class="ps-lg-3">
+            <h4 class="title text-dark">
+              <%=product.pname%>
+            </h4>
+            <div class="d-flex flex-row my-3">
+              <div class="text-warning mb-1 me-2">
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+                <span class="ms-1">
+                  4.5
+                </span>
+              </div>
+              <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>
+                <%=product.stock%>
+              </span>
+              <span class="text-success ms-2">In stock</span>
+            </div>
+
+            <div class="mb-3">
+              <span class="h5">
+                ₹<%=product.price%>
+              </span>
+              <span class="text-muted">/per box</span>
+            </div>
+
+            <p>
+              <%=product.description%>
+            </p>
+
+
+
+            <hr />
+
+            <div class="row mb-4">
+              <div class="col-md-4 col-6">
+                <label class="mb-2">Size</label>
+                <select class="form-select border border-secondary" style="height: 35px;">
+                  <option>Small</option>
+                  <option>Medium</option>
+                  <option>Large</option>
+                </select>
+              </div>
+              <!-- col.// -->
+
+            </div>
+
+
+            <% if(email) { %>
+              <!-- User is logged in, show the Buy Now form -->
+              <form action="/checkout-page?prId=<%=product._id%>" method="POST" class="mb-3">
+                  <input type="hidden" name="totalsum" value="<%=product.price%>" hidden>
+                  <button type="submit" class="btn shadow-0"
+                      style="background-color: #FFA530; color: #131921; font-weight: bolder; border-radius: 30px; height: 40px;"
+                      data-bs-toggle="modal" data-bs-target="#loginModal">
+                  Buy Now
+              </button>
+              </form>
+          <% } else { %>
+              <!-- User is not logged in, show the Buy Now button with a centered modal -->
+              <button type="button" class="btn shadow-0"
+                      style="background-color: #FFA530; color: #131921; font-weight: bolder; border-radius: 30px; height: 40px;"
+                      data-bs-toggle="modal" data-bs-target="#loginModal">
+                  Buy Now
+              </button>
+          
+              <!-- Modal -->
+              <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                          <div class="modal-header">
+                              <h5 class="modal-title" id="loginModalLabel">Login Required</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body" style="display: flex; justify-content: center;">
+                              <p>Please log in to make a purchase.</p>
+                              <!-- You can add more information or instructions here -->
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="color:white; background-color: #131921">Close</button>
+                             <a href="/login"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="color: #131921; background-color: #FFA530;">Login</button></a>
+                              <!-- You can add additional buttons or actions here -->
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          <% } %>
+          
+          <!-- Bootstrap JS (Make sure to include this if not included already) -->
+          <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+                  integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+                  crossorigin="anonymous"></script>
+          
+
+                  <% if(email) { %>
+                    <!-- User is logged in, show the Buy Now form -->
+                    <a href="/api/cart?email=<%=email%>&&id=<%=product._id%>" class="btn shadow-0"
+                      style="background-color: #131921; color: white; font-weight: bolder; border-radius: 30px; height: 40px;">
+                      <i class="me-1 fa fa-shopping-basket"></i> Add to Cart
+                    </a>
+                <% } else { %>
+                    <!-- User is not logged in, show the Buy Now button with a centered modal -->
+                    <button type="button" class="btn shadow-0"
+                    style="background-color: #131921; color: white; font-weight: bolder; border-radius: 30px; height: 40px;"
+                            data-bs-toggle="modal" data-bs-target="#loginModal">
+                        Add To cart
+                    </button>
+                
+                    <!-- Modal -->
+                    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="loginModalLabel">Login Required</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body" style="display: flex; justify-content: center;">
+                                    <p>Please log in to make a purchase.</p>
+                                    <!-- You can add more information or instructions here -->
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="color:white; background-color: #131921">Close</button>
+                                   <a href="/login"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="color: #131921; background-color: #FFA530;">Login</button></a>
+                                    <!-- You can add additional buttons or actions here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+
+                <% if(email) { %>
+                  <!-- User is logged in, show the Buy Now form -->
+                  <a href="/api/wishlist?email=<%=email%>&&id=<%=product._id%>"
+                    class="btn btn-light border border-secondary py-2 icon-hover px-3">
+                    <i class="me-1 fa fa-heart fa-lg"></i> Wishlist
+                  </a>
+              <% } else { %>
+                  <!-- User is not logged in, show the Buy Now button with a centered modal -->
+                  <a href=""
+                    class="btn btn-light border border-secondary py-2 icon-hover px-3"   data-bs-toggle="modal" data-bs-target="#loginModal">
+                    <i class="me-1 fa fa-heart fa-lg"></i> Wishlist
+                  </a>
+              
+                  <!-- Modal -->
+                  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                              <div class="modal-header">
+                                  <h5 class="modal-title" id="loginModalLabel">Login Required</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body" style="display: flex; justify-content: center;">
+                                  <p>Please log in to make a purchase.</p>
+                                  <!-- You can add more information or instructions here -->
+                              </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="color:white; background-color: #131921">Close</button>
+                                 <a href="/login"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="color: #131921; background-color: #FFA530;">Login</button></a>
+                                  <!-- You can add additional buttons or actions here -->
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              <% } %>
+
+
+                    
+
+           
+            
+  
+          </div>
+        </main>
+      </div>
+    </div>
+  </section>
+  <!-- content -->
+
+  <section class="bg-light border-top py-4">
+    <div class="container">
+      <div class="row gx-4">
+        <div class="col-lg-8 mb-4">
+          <div class="border rounded-2 px-3 py-2 bg-white">
+            <!-- Pills navs -->
+            <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
+              <li class="nav-item d-flex" role="presentation">
+                <a class="nav-link d-flex align-items-center justify-content-center w-100 active" id="ex1-tab-1"
+                  data-mdb-toggle="pill" href="#ex1-pills-1" role="tab" aria-controls="ex1-pills-1"
+                  aria-selected="true">Specification</a>
+              </li>
+              <li class="nav-item d-flex" role="presentation">
+                <a class="nav-link d-flex align-items-center justify-content-center w-100" id="ex1-tab-2"
+                  data-mdb-toggle="pill" href="#ex1-pills-2" role="tab" aria-controls="ex1-pills-2"
+                  aria-selected="false">Warranty info</a>
+              </li>
+              <li class="nav-item d-flex" role="presentation">
+                <a class="nav-link d-flex align-items-center justify-content-center w-100" id="ex1-tab-3"
+                  data-mdb-toggle="pill" href="#ex1-pills-3" role="tab" aria-controls="ex1-pills-3"
+                  aria-selected="false">Shipping info</a>
+              </li>
+              <li class="nav-item d-flex" role="presentation">
+                <a class="nav-link d-flex align-items-center justify-content-center w-100" id="ex1-tab-4"
+                  data-mdb-toggle="pill" href="#ex1-pills-4" role="tab" aria-controls="ex1-pills-4"
+                  aria-selected="false">Seller profile</a>
+              </li>
+            </ul>
+            <!-- Pills navs -->
+
+            <!-- Pills content -->
+            <div class="tab-content" id="ex1-content">
+              <div class="tab-pane fade show active" id="ex1-pills-1" role="tabpanel" aria-labelledby="ex1-tab-1">
+                <p>
+                  With supporting text below as a natural lead-in to additional content. Lorem ipsum dolor sit amet,
+                  consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+                  enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                  consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+                  nulla
+                  pariatur.
+                </p>
+                <div class="row mb-2">
+                  <div class="col-12 col-md-6">
+                    <ul class="list-unstyled mb-0">
+                      <li><i class="fas fa-check text-success me-2"></i>Some great feature name here</li>
+                      <li><i class="fas fa-check text-success me-2"></i>Lorem ipsum dolor sit amet, consectetur</li>
+                      <li><i class="fas fa-check text-success me-2"></i>Duis aute irure dolor in reprehenderit</li>
+                      <li><i class="fas fa-check text-success me-2"></i>Optical heart sensor</li>
+                    </ul>
+                  </div>
+                  <div class="col-12 col-md-6 mb-0">
+                    <ul class="list-unstyled">
+                      <li><i class="fas fa-check text-success me-2"></i>Easy fast and ver good</li>
+                      <li><i class="fas fa-check text-success me-2"></i>Some great feature name here</li>
+                      <li><i class="fas fa-check text-success me-2"></i>Modern style and design</li>
+                    </ul>
+                  </div>
+                </div>
+                <table class="table border mt-3 mb-2">
+                  <tr>
+                    <th class="py-2">Display:</th>
+                    <td class="py-2">13.3-inch LED-backlit display with IPS</td>
+                  </tr>
+                  <tr>
+                    <th class="py-2">Processor capacity:</th>
+                    <td class="py-2">2.3GHz dual-core Intel Core i5</td>
+                  </tr>
+                  <tr>
+                    <th class="py-2">Camera quality:</th>
+                    <td class="py-2">720p FaceTime HD camera</td>
+                  </tr>
+                  <tr>
+                    <th class="py-2">Memory</th>
+                    <td class="py-2">8 GB RAM or 16 GB RAM</td>
+                  </tr>
+                  <tr>
+                    <th class="py-2">Graphics</th>
+                    <td class="py-2">Intel Iris Plus Graphics 640</td>
+                  </tr>
+                </table>
+              </div>
+              <div class="tab-pane fade mb-2" id="ex1-pills-2" role="tabpanel" aria-labelledby="ex1-tab-2">
+                Tab content or sample information now <br />
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
+                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+                officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+                sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+                nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+              </div>
+              <div class="tab-pane fade mb-2" id="ex1-pills-3" role="tabpanel" aria-labelledby="ex1-tab-3">
+                Another tab content or sample information now <br />
+                Dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+                commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+                deserunt
+                mollit anim id est laborum.
+              </div>
+              <div class="tab-pane fade mb-2" id="ex1-pills-4" role="tabpanel" aria-labelledby="ex1-tab-4">
+                Some other tab content or sample information now <br />
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
+                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+                officia deserunt mollit anim id est laborum.
+              </div>
+            </div>
+            <!-- Pills content -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+  <!-- Add this at the end of your body -->
+<div class="modal fade" id="verificationModal" tabindex="-1" aria-labelledby="verificationModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="verificationModalLabel">Account Verification</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>You need to verify your account before adding items to the cart.</p>
+        <!-- You can add more information or instructions here -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <!-- You can add additional buttons or actions here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Initialize magnify.js
+      var magnifier = new Magnify({
+        magnifiedWidth: 600, // Adjust the magnified width as needed
+        magnifiedHeight: 400, // Adjust the magnified height as needed
+        limitBounds: true, // Restrict magnification to the bounds of the image
+      });
+      magnifier.attach({
+        thumb: '#largeImage', // ID of the large image
+      });
+    });
+  </script>
+  <script>
+
+    function updateLargeImage(imagePath) {
+      var largeImageContainer = document.getElementById('largeImageContainer');
+      var largeImage = document.getElementById('largeImage');
+
+
+      largeImage.src = imagePath;
+
+
+    }
+
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+      var currentStock = 10
+
+     
+      var quantityInput = document.getElementById('quantity-input');
+      var decreaseBtn = document.getElementById('decrease-btn');
+      var increaseBtn = document.getElementById('increase-btn');
+
+      
+      decreaseBtn.addEventListener('click', function () {
+        updateQuantity(-1);
+      });
+
+      increaseBtn.addEventListener('click', function () {
+        updateQuantity(1);
+      });
+
+      // Function to update the quantity
+      function updateQuantity(change) {
+        // Get the current quantity value
+        var currentQuantity = parseInt(quantityInput.value) || 0;
+
+        // Update the quantity based on the change
+        var newQuantity = currentQuantity + change;
+
+        // Ensure the quantity is within the available stock
+        newQuantity = Math.max(0, Math.min(currentStock, newQuantity));
+
+        // Update the input field with the new quantity
+        quantityInput.value = newQuantity;
+      }
+    });
+  </script>
+
+<script>
+  // Assuming you have a function to display a modal
+  function displayErrorModal(message) {
+      // Your logic to display the error message, for example, show a modal
+      alert(message);
+  }
+
+  // Assuming you have a way to make the AddToCart request, e.g., using fetch
+ // Assuming you have a function to display a modal
+function displayVerificationModal() {
+  // Trigger the Bootstrap modal
+  var myModal = new bootstrap.Modal(document.getElementById('verificationModal'));
+  myModal.show();
+}
+
+// Assuming you have a way to make the AddToCart request, e.g., using fetch
+fetch('/addToCart?email=test@example.com&id=123')
+  .then((response) => response.json())
+  .then((data) => {
+    // Check if there is an error in the response
+    if (data.error) {
+      // Display the error message
+      displayErrorModal(data.error);
+
+      // Check if it's a verification error
+      if (data.error === 'You need to verify your account before adding items to the cart.') {
+        // Display the verification modal
+        displayVerificationModal();
+      }
+    }
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+
+</script>
+
+  <%- include('include/_footer') %>

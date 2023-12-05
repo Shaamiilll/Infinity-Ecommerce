@@ -1,0 +1,343 @@
+<!-- include footer -->
+<%- include('include/_header.ejs') %>
+  <!-- /include footer -->
+  <style>
+    body {
+      background: #eee;
+    }
+
+    .card {
+      box-shadow: 0 20px 27px 0 rgb(0 0 0 / 5%);
+    }
+
+    .card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      word-wrap: break-word;
+      background-color: #fff;
+      background-clip: border-box;
+      border: 0 solid rgba(0, 0, 0, .125);
+      border-radius: 1rem;
+    }
+
+    .card-body {
+      -webkit-b-flex: 1;
+      -ms-flex: 1 1 auto;
+      flex: 1 1 auto;
+      padding: 1.5rem 1.5rem;
+    }
+  </style>
+  </head>
+
+  <body>
+    <form action="/order-submited" method="post">
+      <div class="container">
+        <h1 class="h3 mb-9 mt-2">Payment</h1>
+        <div class="row">
+          <!-- Left -->
+          <div class="col-lg-9">
+            <div class="accordion" id="accordionPayment">
+              <!-- Credit card -->
+              <div class="accordion-item mb-3">
+                <h2 class="h5 px-4 py-3 accordion-header d-flex justify-content-between align-items-center">
+                  <div class="form-check w-100 collapsed" data-bs-toggle="collapse" data-bs-target="#collapseCC"
+                    aria-expanded="false">
+                    <input class="form-check-input" type="radio" name="payment" id="payment1">
+                    <label class="form-check-label pt-1" for="payment1">
+                      Credit Card
+                    </label>
+                  </div>
+                  <span>
+                    <svg width="34" height="25" xmlns="http://www.w3.org/2000/svg">
+                      <g fill-rule="nonzero" fill="#333840">
+                        <path
+                          d="M29.418 2.083c1.16 0 2.101.933 2.101 2.084v16.666c0 1.15-.94 2.084-2.1 2.084H4.202A2.092 2.092 0 0 1 2.1 20.833V4.167c0-1.15.941-2.084 2.102-2.084h25.215ZM4.203 0C1.882 0 0 1.865 0 4.167v16.666C0 23.135 1.882 25 4.203 25h25.215c2.321 0 4.203-1.865 4.203-4.167V4.167C33.62 1.865 31.739 0 29.418 0H4.203Z">
+                        </path>
+                        <path
+                          d="M4.203 7.292c0-.576.47-1.042 1.05-1.042h4.203c.58 0 1.05.466 1.05 1.042v2.083c0 .575-.47 1.042-1.05 1.042H5.253c-.58 0-1.05-.467-1.05-1.042V7.292Zm0 6.25c0-.576.47-1.042 1.05-1.042H15.76c.58 0 1.05.466 1.05 1.042 0 .575-.47 1.041-1.05 1.041H5.253c-.58 0-1.05-.466-1.05-1.041Zm0 4.166c0-.575.47-1.041 1.05-1.041h2.102c.58 0 1.05.466 1.05 1.041 0 .576-.47 1.042-1.05 1.042H5.253c-.58 0-1.05-.466-1.05-1.042Zm6.303 0c0-.575.47-1.041 1.051-1.041h2.101c.58 0 1.051.466 1.051 1.041 0 .576-.47 1.042-1.05 1.042h-2.102c-.58 0-1.05-.466-1.05-1.042Zm6.304 0c0-.575.47-1.041 1.051-1.041h2.101c.58 0 1.05.466 1.05 1.041 0 .576-.47 1.042-1.05 1.042h-2.101c-.58 0-1.05-.466-1.05-1.042Zm6.304 0c0-.575.47-1.041 1.05-1.041h2.102c.58 0 1.05.466 1.05 1.041 0 .576-.47 1.042-1.05 1.042h-2.101c-.58 0-1.05-.466-1.05-1.042Z">
+                        </path>
+                      </g>
+                    </svg>
+                  </span>
+                </h2>
+                <div id="collapseCC" class="accordion-collapse collapse show" data-bs-parent="#accordionPayment">
+                  <div class="accordion-body">
+                    <div class="mb-3">
+                      <label class="form-label">Card Number</label>
+                      <input type="text" class="form-control" placeholder="">
+                    </div>
+                    <div class="row">
+                      <div class="col-lg-6">
+                        <div class="mb-3">
+                          <label class="form-label">Name on card</label>
+                          <input type="text" class="form-control" placeholder="">
+                        </div>
+                      </div>
+                      <div class="col-lg-3">
+                        <div class="mb-3">
+                          <label class="form-label">Expiry date</label>
+                          <input type="text" class="form-control" placeholder="MM/YY">
+                        </div>
+                      </div>
+                      <div class="col-lg-3">
+                        <div class="mb-3">
+                          <label class="form-label">CVV Code</label>
+                          <input type="password" class="form-control">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- PayPal -->
+              <div class="accordion-item mb-3 border">
+                <h2 class="h5 px-4 py-3 accordion-header d-flex justify-content-between align-items-center">
+                  <div class="form-check w-100 collapsed" data-bs-toggle="collapse" data-bs-target="#collapsePP"
+                    aria-expanded="false">
+                    <input class="form-check-input" type="radio" name="payment" id="payment2">
+                    <label class="form-check-label pt-1" for="payment2">
+                      Cash On Delivery(COD)
+                    </label>
+                  </div>
+
+                </h2>
+                <div id="collapseP" class="accordion-collapse collapse" data-bs-parent="#accordionPayment">
+                  <div class="accordion-body">
+                    <!-- <div class="px-2 col-lg-6 mb-3">
+                      <label class="form-label">Email address</label>
+                      <input type="email" class="form-control">
+                    </div> -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Right -->
+          <div class="col-lg-3">
+            <div class="card position-sticky top-0">
+              <div class="p-3 bg-light bg-opacity-10">
+                <h6 class="card-title mb-3">Order Summary</h6>
+                <div class="d-flex justify-content-between mb-1 small">
+                  <span>Subtotal</span> <span>₹<%= price %></span>
+                </div>
+                <!-- <div class="d-flex justify-content-between mb-1 small">
+                  <span>Shipping</span> <span>$20.00</span>
+                </div> -->
+                <div class="d-flex justify-content-between mb-1 small">
+                  <span>Coupon (Code: NEWYEAR)</span> <span class="text-danger">0</span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between mb-4 small">
+                  <span>TOTAL</span> <strong class="text-dark">₹<%= price %></strong>
+                </div>
+                <div class="form-check mb-1 small">
+                  <input class="form-check-input" type="checkb" value="" id="tnc">
+                  <label class="form-check-label" for="tnc">
+                    I agree to the <a href="#">terms and conditions</a>
+                  </label>
+                </div>
+                <div class="form-check mb-3 small">
+                  <input class="form-check-input" type="checkb" value="" id="subscribe">
+                  <label class="form-check-label" for="subscribe">
+                    Get emails about product updates and events. If you change your mind, you can unsubscribe at any
+                    time. <a href="#">Privacy Policy</a>
+                  </label>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mt-2">Place order</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+  </body>
+  <!DOCTYPE html>
+  <html lang="en">
+
+
+  <body>
+    <!-- Remove the container if you want to extend the Footer to full width. -->
+
+    <!-- Footer -->
+    <footer class="text-center text-white" style="background-color: #232f3e; margin-top: 100px;">
+      <!-- Grid container -->
+      <div class="container p-4">
+        <!-- Section: Social media -->
+        <section class="mb-4 m">
+          <!-- Facebook -->
+          <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i
+              class="fab fa-facebook-f"></i></a>
+
+          <!-- Twitter -->
+          <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i class="fab fa-twitter"></i></a>
+
+          <!-- Google -->
+          <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i class="fab fa-google"></i></a>
+
+          <!-- Instagram -->
+          <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i class="fab fa-instagram"></i></a>
+
+          <!-- Linkedin -->
+          <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i
+              class="fab fa-linkedin-in"></i></a>
+
+          <!-- Github -->
+          <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i class="fab fa-github"></i></a>
+        </section>
+        <!-- Section: Social media -->
+
+        <!-- Section: Form -->
+        <section class="">
+          <form action="">
+            <!--Grid row-->
+            <div class="row d-flex justify-content-center">
+              <!--Grid column-->
+              <div class="col-auto">
+                <p class="pt-2">
+                  <strong>Sign up for our newsletter</strong>
+                </p>
+              </div>
+              <!--Grid column-->
+
+              <!--Grid column-->
+              <div class="col-md-5 col-12">
+                <!-- Email input -->
+                <div class="form-outline form-white mb-4 ">
+                  <input type="email" id="form5Example2" class="form-control" placeholder="Email" />
+
+                </div>
+              </div>
+              <!--Grid column-->
+
+              <!--Grid column-->
+              <div class="col-auto">
+                <!-- Submit button -->
+                <button type="submit" class="btn btn-outline-light mb-4 btn shadow-none">
+                  Subscribe
+                </button>
+              </div>
+              <!--Grid column-->
+            </div>
+            <!--Grid row-->
+          </form>
+        </section>
+        <!-- Section: Form -->
+
+        <!-- Section: Text -->
+
+        <!-- Section: Text -->
+
+        <!-- Section: Links -->
+        <section class="">
+          <!--Grid row-->
+          <div class="row">
+            <!--Grid column-->
+            <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+
+
+              <ul class="list-unstyled mb-0" style="line-height: 40px;">
+                <li>
+                  <a href="#!" class="text-white">infinty store</a>
+                </li>
+                <li>
+                  <a href="#!" class="text-white">No.369 Malappuram Kerala </a>
+                </li>
+                <li>
+                  <a href="#!" class="text-white">+91 987654543</a>
+                </li>
+                <li>
+                  <a href="#!" class="text-white">infinity@gmail.com</a>
+                </li>
+              </ul>
+            </div>
+            <!--Grid column-->
+
+            <!--Grid column-->
+            <div class="col-lg-3 col-md-6 mb-4 mb-md-0" style="line-height: 40px;">
+
+
+              <ul class="list-unstyled mb-0">
+                <li>
+                  <a href="#!" class="text-white">Privacy And Policy</a>
+                </li>
+                <li>
+                  <a href="#!" class="text-white">Shipping Policy</a>
+                </li>
+                <li>
+                  <a href="#!" class="text-white">Terms and Services</a>
+                </li>
+                <li>
+                  <a href="#!" class="text-white">Blogs</a>
+                </li>
+              </ul>
+            </div>
+            <!--Grid column-->
+
+            <!--Grid column-->
+            <div class="col-lg-3 col-md-6 mb-4 mb-md-0" style="line-height: 40px;">
+
+
+              <ul class="list-unstyled mb-0">
+                <li>
+                  <a href="#!" class="text-white">Laptop</a>
+                </li>
+                <li>
+                  <a href="#!" class="text-white">Smartphone</a>
+                </li>
+                <li>
+                  <a href="#!" class="text-white">Speakers</a>
+                </li>
+                <li>
+                  <a href="#!" class="text-white">Watches</a>
+                </li>
+              </ul>
+            </div>
+            <!--Grid column-->
+
+            <!--Grid column-->
+            <div class="col-lg-3 col-md-6 mb-4 mb-md-0" style="line-height: 40px;">
+
+
+              <ul class="list-unstyled mb-0">
+                <li>
+                  <a href="#!" class="text-white">Search</a>
+                </li>
+                <li>
+                  <a href="#!" class="text-white">About us</a>
+                </li>
+                <li>
+                  <a href="#!" class="text-white">FAQ</a>
+                </li>
+                <li>
+                  <a href="#!" class="text-white">Contact Us</a>
+                </li>
+              </ul>
+            </div>
+            <!--Grid column-->
+          </div>
+          <!--Grid row-->
+        </section>
+        <!-- Section: Links -->
+      </div>
+      <!-- Grid container -->
+      <hr class="hr hr-blurry" />
+      <!-- Copyright -->
+      <div class="text-center p-3" style="background-color:#232f3e">
+        © 2020 Copyright:
+        <a class="text-white" href="https://mdbootstrap.com/">infinty</a>
+      </div>
+      <!-- Copyright -->
+    </footer>
+    <!-- Footer -->
+
+    </div>
+    <!-- End of .container -->
+  </body>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
+
+  </html>
+
+  </html>

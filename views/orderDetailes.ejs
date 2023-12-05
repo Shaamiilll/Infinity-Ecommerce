@@ -1,0 +1,33 @@
+<!-- order-details.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+</head>
+<body>
+    <h1>Order Details</h1>
+    <h2>Order ID: <%= data[0]._id %></h2>
+
+    <% if (data.products && Array.isArray(data.products)) { %>
+        <% data[0].products.forEach(product => { %>
+            <div>
+                <img src="primg/<%= product.prd_images[0] %>" alt="<%= product.pname %>">
+                <p>Product Name: <%= product.pname %></p>
+                <p>Product Price: <%= product.price %></p>
+                <p>Product Category: <%= product.category %></p>
+            </div>
+        <% }); %>
+    <% } else { %>
+        <p>No products found for this order.</p>
+    <% } %>
+    <p>Product Category: <%= data[0].products[0].category %></p>
+    <p>Username: <%= data[0].user %></p>
+
+    <!-- Add more order details as needed -->
+
+    <a href="/">Back to Home</a>
+</body>
+</html>

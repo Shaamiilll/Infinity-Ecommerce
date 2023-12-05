@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- OWL Carousel -->
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="css/owl.theme.default.min.css">
+    <!-- Showmore CSS -->
+    <link rel="stylesheet" href="css/showMoreItems-theme.min.css">
+</head>
+
+<body>
+
+    <section>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-10 col-md-8 ml-auto">
+                    <div class="row align-items-center pt-md-5 mt-md-5 mb-5">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-title text-center mt-3">
+                                    <h3>Add Product</h3>
+                                </div>
+
+                                <div class="card-body">
+                                    <form action="/api/add-product" method="POST" enctype="multipart/form-data">
+                                        <div class="form-group">
+                                            <label for="productName">Product Name:</label>
+                                            <input type="text" name="prd_name" class="form-control" id="productName" placeholder="Enter Product Name">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="productDescription">Description:</label>
+                                            <input type="text" name="description" class="form-control" id="productDescription" placeholder="Enter Description">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="productCategory">Category:</label>
+                                            <select name="category" id="productCategory" class="form-control">
+                                                <% for(let i=0;i<data.length;i++){ %>
+                                                <option value="<%=data[i].name  %>"><%= data[i].name %></option>
+                                                <% } %>
+                                            </selectA>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="productPrice">Product Price:</label>
+                                            <input type="number" name="price" class="form-control" id="productPrice" placeholder="Enter Product Price">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="productPrice">Add Stock:</label>
+                                            <input type="number" name="stock" class="form-control" id="productPrice" placeholder="Enter Product Price">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="productPrice">Add Discound percentage:</label>
+                                            <input type="number" name="discound" class="form-control" id="productPrice" placeholder="Enter Product Price">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="productImage">Product Image:</label>
+                                            <input type="file" name="image" multiple class="form-control-file" id="productImage" accept="image/*">
+                                            <img id="imagePreview" class="mt-2" style="max-width: 100%; height: auto;" src="#" alt="Image Preview">
+                                        </div>
+
+                                        <button class="btn btn-dark mt-5 mx-auto d-block" type="submit">Add Product</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <!-- Custom Script for Image Preview -->
+    <script>
+        // Function to handle image preview
+        function previewImage() {
+            var input = document.getElementById('productImage');
+            var preview = document.getElementById('imagePreview');
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Attach the preview function to the file input change event
+        document.getElementById('productImage').addEventListener('change', previewImage);
+    </script>
+
+</body>
+</html>

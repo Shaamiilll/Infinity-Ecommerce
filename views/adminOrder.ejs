@@ -1,0 +1,67 @@
+<!-- include footer -->
+<%- include('include/_adminbase.ejs') %>
+<!-- /include footer -->
+
+<!-- CONTENT -->
+<section id="content">
+    <!-- NAVBAR -->
+
+    <!-- NAVBAR -->
+
+    <!-- MAIN -->
+    <main>
+        <div class="table-data">
+            <div class="order">
+                <div class="head">
+                    <h3>Recent Orders</h3>
+                    <i class='bx bx-search'></i>
+                    <i class='bx bx-filter'></i>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Order Id</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <% for (let i = 0; i < data.length; i++) { %>
+                        <tbody>
+                            <% for (let j = 0; j < data[i].products.length; j++) { %>
+                                <tr onclick="userdetails('<%= data[i]._id %>', '<%= data[i].products[j]._id %>')">
+                                    <td>
+                                        <img src="primg/<%= data[i].products[j].prd_images[0] %>">
+                                        <p><%= data[i].products[j].pname %></p>
+                                        <!-- Additional product information can be added here -->
+                                    </td>
+                                    <td><%= data[i]._id %></td>
+                                    <td><%= data[i].user %></td>
+                                    <% if(data[i].status=='pending'){ %>
+                                        <td><span class="status pending">pending</span></td>
+                                    <% } else { %>
+                                        <td><span class="status completed">Completed</span></td>
+                                    <% } %>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    <% } %>
+                </table>
+            </div>
+        </div>
+    </main>
+    <!-- MAIN -->
+</section>
+<!-- CONTENT -->
+<script>
+    function userdetails(id,prId) {
+        const userDetailURL = `/order-details?userId=${id}&id=${prId}`;
+
+        // Redirect to the user details page.
+        window.location.href = userDetailURL;
+    }
+</script>
+
+<script src="js/adminserver.js"></script>
+</body>
+</html>

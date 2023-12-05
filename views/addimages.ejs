@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Images</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/
+    <link rel=" stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+
+
+</head>
+<style></style>
+
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Add Images</h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Image Upload Form -->
+                        <form action="/upload-image?id=<%= id %>" method="post" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="image">Select Images:</label>
+                                <input type="file" class="form-control-file" id="image" name="image" multiple
+                                    accept="image/*">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Upload Images</button>
+                        </form>
+                        <!-- Image Preview Section -->
+                        <div class="mt-4">
+                            <h5>Image Preview:</h5>
+                            <div id="imagePreview" class="d-flex flex-wrap">
+                                <% for(let i=0; i < images.length; i++) { %>
+                                    <div class="image-container d-inline-block">
+                                        <img src="/primg/<%= images[i] %>" alt="" class="img-thumbnail m-2">
+                                        <button class="btn btn-danger btn-sm mt-2"
+                                            onclick="deleteImage('<%= images[i] %>','<%=id%>')">Remove</button>
+                                        <button class="btn btn-danger crop btn-sm mt-2">crop</button>
+                                    </div>
+                                    <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <!-- Cropping Modal -->
+    <div class="modal fade" id="cropModal" tabindex="-1" role="dialog" aria-labelledby="cropModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cropModalLabel">Crop Image</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="height: 400px;">
+                    <img id="cropperImage" src="" alt="" style="height: 400px;">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveCroppedImage">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    <!-- Custom Script for Image Preview -->
+    <script>
+        // Function to handle image preview
+        function previewImages() {
+            var previewContainer = document.getElementById('imagePreview');
+            var files = document.getElementById('image').files;
+            for (var i = 0; i < files.length; i++) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var imageContainer = document.createElement('div');
+                    imageContainer.className = 'd-inline-block';
+                    // Create the image
+                    var image = document.createElement('img');
+                    image.src = e.target.result;
+                    image.className = 'img-thumbnail m-2';
+                    imageContainer.appendChild(image);
+                    // Create the button
+                    var button = document.createElement('button');
+                    button.textContent = 'Remove';
+                    button.className = 'btn btn-danger btn-sm mt-2';
+                    // Attach a click event listener to the button
+                    button.addEventListener('click', function () {
+                        // Remove both the image and the button when the button is clicked
+                        previewContainer.removeChild(imageContainer);
+                    });
+                    imageContainer.appendChild(button);
+                    // Append the image and button container to the preview container
+                    previewContainer.appendChild(imageContainer);
+                };
+                reader.readAsDataURL(files[i]);
+            }
+        }
+        // Attach the preview function to the file input change event
+        document.getElementById('image').addEventListener('change', previewImages);
+        function deleteImage(imageName, id) {
+            const imageId = `/image-delete?img=${imageName}&id=${id}`
+            var imageContainer = document.querySelector(`.image-container img[src="/primg/${imageName}"]`).parentElement;
+            imageContainer.remove();
+            window.location.href = imageId;
+        }
+
+        // Add click event listener to the crop button
+        document.querySelectorAll('.crop').forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                var imageContainer = this.parentElement;
+                var imageSrc = imageContainer.querySelector('img').src;
+                var cropperImage = document.getElementById('cropperImage');
+                cropperImage.src = imageSrc;
+                $('#cropModal').modal('show');
+
+                // Initialize the cropper.js plugin
+                var cropper = new Cropper(cropperImage, {
+                    aspectRatio: 1 / 1,
+                    crop(event) {
+                        console.log(event.detail.x);
+                        console.log(event.detail.y);
+                        console.log(event.detail.width);
+                        console.log(event.detail.height);
+                    },
+                });
+
+                // Add click event listener to the save button
+                document.getElementById('saveCroppedImage').addEventListener('click', function () {
+                    // Get the cropped image data
+                    var croppedImageDataURL = cropper.getCroppedCanvas().toDataURL();
+                    // Create a new image and set its src to the cropped image data URL
+                    var newImage = new Image();
+                    newImage.src = croppedImageDataURL;
+                    // Replace the old image with the new one
+                    imageContainer.replaceChild(newImage, imageContainer.querySelector('img'));
+                    // Hide the cropping modal
+                    $('#cropModal').modal('hide');
+                    // Destroy the cropper.js instance
+                    cropper.destroy();
+                });
+            });
+        });
+
+
+    </script>
+</body>
+
+</html>
