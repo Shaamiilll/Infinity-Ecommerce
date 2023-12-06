@@ -72,8 +72,6 @@ const sendOTPVerificationeEmail = async ({ _id, email }, res) => {
   }
 };
 
-
-
 //create and save new User
 module.exports = {
   newuser: async (req, res) => {
@@ -100,7 +98,7 @@ module.exports = {
     console.log(req.session.email);
     const saltrounds = 10;
     const hashedPassword = await bcrypt.hash(req.body.password, saltrounds);
-    
+
     //new user
     const user = new Userdb({
       block: "false",
@@ -132,50 +130,43 @@ module.exports = {
 
   isUser: (req, res) => {
     if (!req.body) {
-      res.status(400).redirect("/login");
-      return;
+      return res.status(400).redirect("/login");
     }
-
+  
     const { email: inputEmail, password: inputPassword } = req.body;
-
+  
     Userdb.findOne({ email: inputEmail })
       .then((userdata) => {
         if (!userdata) {
-          res.status(400).redirect("/login");
-          return;
+          return res.status(400).redirect("/login");
         }
-
+  
         bcrypt.compare(inputPassword, userdata.password, (err, result) => {
           if (err) {
             console.error("Error comparing passwords:", err);
-            res.status(500).send("Internal Server Error");
-            return;
+            return res.status(500).send("Internal Server Error");
           }
-
+  
           if (result) {
             // Passwords match
-            blockdb
-              .find({ email: inputEmail })
+            Userdb.find({ email: inputEmail, blocked: "true" })
               .then((data) => {
-                if (data.length !== 0) {
-                  // User is banned
-                  res.send("banned");
-                } else {
-                  Userdb.updateOne(
-                    { email: inputEmail },
-                    { $set: { status: "Active" } }
-                  )
-                    .then(() => {
-                      req.session.email = inputEmail;
-                      res.redirect(
-                        "/?CreatedAccount=User Account has been Created"
-                      );
-                    })
-                    .catch((updateErr) => {
-                      console.error("Error updating user status:", updateErr);
-                      res.status(500).send("Internal Server Error");
-                    });
+                if (data.length > 0) {
+                  return res.send("blocked");
                 }
+  
+                Userdb.updateOne(
+                  { email: inputEmail },
+                  { $set: { status: "Active" } }
+                )
+                  .then(() => {
+                    req.session.email = inputEmail;
+                    res.redirect("/?CreatedAccount=User Account has been Created");
+                  })
+                  .catch((updateErr) => {
+                    console.error("Error updating user status:", updateErr);
+                    res.status(500).send("Internal Server Error");
+                  });
               })
               .catch((blockErr) => {
                 console.error("Error checking user ban status:", blockErr);
@@ -190,7 +181,8 @@ module.exports = {
         console.error("Error retrieving user:", err);
         res.status(500).send("Internal Server Error");
       });
-  },
+  }
+  ,
 
   // ... (other functions)
 
@@ -523,16 +515,14 @@ module.exports = {
         price,
       };
 
-      res
-        .status(200)
-        .render("ourStore", {
-          products: products,
-          category: catData,
-          page: page,
-          email: email,
-          price,
-          req: req,
-        });
+      res.status(200).render("ourStore", {
+        products: products,
+        category: catData,
+        page: page,
+        email: email,
+        price,
+        req: req,
+      });
     } catch (err) {
       console.log(err);
       res.status(500).json({ error: true, message: "Internal Server Error" });

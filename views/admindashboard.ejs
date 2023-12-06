@@ -1,101 +1,121 @@
 <!-- include footer -->
 <%- include('include/_adminbase.ejs') %>
-	<!-- /include footer -->
+<!-- /include footer -->
+<style>
+	/* Add this to your CSS */
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ddd;
+    z-index: 1;
+}
 
+</style>
+<!-- CONTENT -->
+<section id="content">
+    <!-- NAVBAR -->
 
-	<!-- CONTENT -->
-	<section id="content">
-		<!-- NAVBAR -->
+    <!-- NAVBAR -->
 
-		<!-- NAVBAR -->
-
-		<!-- MAIN -->
-		<main>
-			<div class="head-title">
-				<div class="left">
-					<h1>Dashboard</h1>
-					<ul class="breadcrumb">
-						<li>
-							<a href="#">Dashboard</a>
-						</li>
-						<li><i class='bx bx-chevron-right'></i></li>
-						<li>
-							<a class="active" href="#">Home</a>
-						</li>
-					</ul>
-				</div>
-				<a href="#" class="btn-download">
-					<i class='bx bxs-cloud-download'></i>
-					<span class="text"  data-toggle="modal" data-target="#myModal">Download PDF</span>
-				</a>
-			</div>
-
-			<ul class="box-info">
-				<li>
-					<i class='bx bxs-calendar-check'></i>
-					<span class="text">
-						<h3>1020</h3>
-						<p>New Order</p>
-					</span>
-				</li>
-				<li>
-					<i class='bx bxs-group'></i>
-					<span class="text">
-						<h3>2834</h3>
-						<p>Visitors</p>
-					</span>
-				</li>
-				<li>
-					<i class='bx bxs-dollar-circle'></i>
-					<span class="text">
-						<h3>$2543</h3>
-						<p>Total Sales</p>
-					</span>
-				</li>
-			</ul>
-
-
-
-		</main>
-		<!-- MAIN -->
-	</section>
-	<!-- CONTENT -->
-<div class="modal" id="myModal">
-    <div class="modal-dialog">
-      <div class="modal-content">
-      
-        <!-- Modal Header -->
-        <div class="modal-header">
-          <h4 class="modal-title">Download Sales Report</h4>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-        </div>
-        
-        <!-- Modal body -->
-        <div class="modal-body">
-          <form action="">
-            <div class="form-group">
-              <label for="dateFilter">Choose a filter:</label>
-              <select class="form-control" id="dateFilter">
-                <option value="weekly">Weekly</option>
-                <option value="daily">Daily</option>
-                <option value="yearly">Yearly</option>
-              </select>
+    <!-- MAIN -->
+    <main>
+        <div class="head-title">
+            <div class="left">
+                <h1>Dashboard</h1>
+                <ul class="breadcrumb">
+                    <li>
+                        <a href="#">Dashboard</a>
+                    </li>
+                    <li><i class='bx bx-chevron-right'></i></li>
+                    <li>
+                        <a class="active" href="#">Home</a>
+                    </li>
+                </ul>
             </div>
-            <button type="submit" class="btn btn-primary">Download</button>
-          </form>
+            <!-- Update the href attribute with the route for downloading PDF -->
+            <a href="#" class="btn-download" onclick="showDateRangePopup()">
+                <i class='bx bxs-cloud-download'></i>
+                <span class="text">Download PDF</span>
+            </a>
         </div>
-        
-        <!-- Modal footer -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+
+        <ul class="box-info">
+            <li>
+                <i class='bx bxs-calendar-check'></i>
+                <span class="text">
+                    <h3>
+                        <%= totalOrder %>
+                    </h3>
+                    <p>Total Order</p>
+                </span>
+            </li>
+            <li>
+                <i class='bx bxs-group'></i>
+                <span class="text">
+                    <h3>
+                        <%= amountOfUsers %>
+                    </h3>
+                    <p>Total Users</p>
+                </span>
+            </li>
+
+            <li>
+                <i class='bx bxs-dollar-circle'></i>
+                <span class="text">
+                    <h3>
+                        <%= totalSalesAmount %>
+                    </h3>
+                    <p>Total Sales</p>
+                </span>
+            </li>
+        </ul>
+    </main>
+    <!-- MAIN -->
+
+    <!-- Modal -->
+    <div id="dateRangeModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeDateRangeModal()">&times;</span>
+            <form id="dateRangeForm">
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate" required>
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate" required>
+                <button type="button" onclick="downloadPdfWithDateRange()">Download</button>
+            </form>
         </div>
-        
-      </div>
     </div>
- </div>
-  
-</div>
+    <!-- /Modal -->
 
-	</body>
+</section>
+<!-- CONTENT -->
 
-	</html>
+<script>
+    function showDateRangePopup() {
+        var modal = document.getElementById("dateRangeModal");
+        modal.style.display = "block";
+    }
+
+    function closeDateRangeModal() {
+        var modal = document.getElementById("dateRangeModal");
+        modal.style.display = "none";
+    }
+
+    function downloadPdfWithDateRange() {
+        var startDate = document.getElementById("startDate").value;
+        var endDate = document.getElementById("endDate").value;
+
+        // Close the modal after clicking the download button
+        closeDateRangeModal();
+
+        // Perform your download action with startDate and endDate
+        window.location.href = `/sales-report?startDate=${startDate}&endDate=${endDate}`;
+    }
+</script>
+
+</html>

@@ -47,14 +47,12 @@ app.use("/primg", express.static(path.resolve(__dirname, "images")));
 // load routers
 app.use("/", require("./server/routes/userRouter"));
 app.use("/", require("./server/routes/adminRouter"));
-
+app.get("*",function(req,res){
+  res.render("error404")
+})
 app.post("/verify-payment", (req, res) => {
   const payment = req.body.payment;
   const order = req.body.order;
-
-  // Perform verification logic here
-
-  // Respond with success or failure
   res.json({ success: true, message: "Payment verified successfully" });
 });
 

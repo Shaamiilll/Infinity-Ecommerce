@@ -7,6 +7,7 @@ const cartController = require("../controller/cartController");
 const wishlistController = require("../controller/wishlistController");
 const orderController = require("../controller/orderController.js");
 const paymentController = require("../controller/paymentController");
+const middle = require("../middleware/UserMiddleware.js");
 
 router.get("/", userController.userHome); //home render
 router.get("/our-store", userController.products); //Our Store
@@ -16,7 +17,7 @@ router.get("/login", userServices.login); //Login Render
 router.get("/register", userServices.register); //Register render
 router.post("/api/registeruser", userController.newuser); //For Saving new user
 router.post("/api/login", userController.isUser); //For login the user
-router.get("/account-details", userServices.account); //Account Details
+router.get("/account-details",middle.loggedIn, userServices.account); //Account Details
 router.get("/logout", userController.logout); // User logout
 router.get("/Add-address", userServices.addaddress); // add user to another collction
 router.post("/Add-address", userController.addaddress); // add user to another collction

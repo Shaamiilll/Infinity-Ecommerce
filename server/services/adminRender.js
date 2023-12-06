@@ -38,11 +38,10 @@ exports.renderup = (req, res) => {
   res.render("index");
 };
 exports.adminusers = (req, res) => {
-  axios
-    .get("http://localhost:7000/api/users")
+  Userdb.find()
     .then((response) => {
-      res.render("adminUsers", { users: response.data });
-      //   console.log(response.data);
+      res.render("adminUsers", { users: response});
+        console.log(response.data);
     })
     .catch((err) => {
       res.send(err);
@@ -82,16 +81,19 @@ const adminPassword = "1234";
 exports.isAdmin = (req, res) => {
   const { email: inputEmail, password: inputPassword } = req.body;
   if (inputEmail === adminEmail && inputPassword === adminPassword) {
-    console.log(inputEmail);
+    req.session.admin=inputEmail
     res.redirect("/admin-dash");
   } else {
     res.redirect("/adminlogin");
   }
 };
 
+
 exports.updateproduct = (req, res) => {
   res.render("updateproduct");
 };
+
+
 
 exports.shopingCart = (req, res) => {
   res.render("shoping-cart");
