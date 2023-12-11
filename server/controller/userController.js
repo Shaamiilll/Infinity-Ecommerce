@@ -97,9 +97,6 @@ module.exports = {
     req.session.email = req.body.email;
     console.log(req.session.email);
     const saltrounds = 10;
-    const hashedPassword = await bcrypt.hash(req.body.password, saltrounds);
-
-    //new user
     const user = new Userdb({
       block: "false",
       name: req.body.name,
@@ -132,21 +129,21 @@ module.exports = {
     if (!req.body) {
       return res.status(400).redirect("/login");
     }
-  
+
     const { email: inputEmail, password: inputPassword } = req.body;
-  
+
     Userdb.findOne({ email: inputEmail })
       .then((userdata) => {
         if (!userdata) {
           return res.status(400).redirect("/login");
         }
-  
+
         bcrypt.compare(inputPassword, userdata.password, (err, result) => {
           if (err) {
             console.error("Error comparing passwords:", err);
             return res.status(500).send("Internal Server Error");
           }
-  
+
           if (result) {
             // Passwords match
             Userdb.find({ email: inputEmail, blocked: "true" })
@@ -154,14 +151,16 @@ module.exports = {
                 if (data.length > 0) {
                   return res.send("blocked");
                 }
-  
+
                 Userdb.updateOne(
                   { email: inputEmail },
                   { $set: { status: "Active" } }
                 )
                   .then(() => {
                     req.session.email = inputEmail;
-                    res.redirect("/?CreatedAccount=User Account has been Created");
+                    res.redirect(
+                      "/?CreatedAccount=User Account has been Created"
+                    );
                   })
                   .catch((updateErr) => {
                     console.error("Error updating user status:", updateErr);
@@ -181,9 +180,7 @@ module.exports = {
         console.error("Error retrieving user:", err);
         res.status(500).send("Internal Server Error");
       });
-  }
-  ,
-
+  },
   // ... (other functions)
 
   userHome: (req, res) => {
@@ -191,7 +188,7 @@ module.exports = {
     const blocked = req.session.block;
     console.log(email);
     productDb
-      .find({ active: true, categoryStats: true })
+      .find({ active: true, categoryStats: true, stock: { $gt: 0 } })
       .then((data) => {
         res.render("userHome", {
           products: data,

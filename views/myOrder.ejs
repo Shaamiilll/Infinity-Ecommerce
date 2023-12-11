@@ -1,6 +1,10 @@
-    <!-- include header -->
+<!-- include header -->
 <%- include('include/_header') %>
     <!-- /include header -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    
+
 
     <section class="bg-light my-5">
         <div class="container">
@@ -17,44 +21,146 @@
                                         </span></p>
                                     <% for (let j=0; j < data[i].products.length; j++) { %>
                                         <div class="row gy-3 mb-2">
-                                            <div class="col-2">
+                                            <div class="col-2" onclick="productDetailes('<%= data[i]._id %>')">
                                                 <img src="primg/<%= data[i].products[j].prd_images[0] %>"
                                                     class="img-fluid" alt="<%= data[i].products[j].pname %>" />
                                             </div>
-                                            <div
+                                            <div onclick="productDetailes('<%= data[i]._id %>')"
                                                 class="col-8 d-flex flex-column align-items-start d-flex justify-content-center">
                                                 <h6 class="card-subtitle mb-2 text-muted text-center">
                                                     <%= data[i].products[j].pname %>
                                                 </h6>
                                                 <p class="card-text text-muted text-center">
                                                     <%= data[i].products[j].category %>
-                                                </p> 
+                                                </p>
+                                                <% if(data[i].status=='deliverd' ){ %>
+                                                    <span style="font-weight: 500; color: #28a745;">✓ Delivered</span>
+                                                    <% } %>
                                             </div>
                                             <div class="col-2 d-flex align-items-center">
-                                                <button class="btn btn-outline-primary"
-                                                    onclick="returnProduct('<%= data[i]._id %>','<%= data[i].products[j]._id %>')">Return</button>
+                                                <% if (data[i].status==='pending' || data[i].status==='shipped' ) { %>
+
+                                                    <button class="btn btn-primary"
+                                                        onclick="openCancelConfirmationModal('<%= data[i]._id %>')">cancel</button>
+                                                    <% }else if(data[i].status=='deliverd' ){ %>
+
+
+                                                        <button class="btn btn-dark"
+                                                        onclick="openreturnConfirmationModal('<%= data[i]._id %>')">return</button>
+                                                        <% }else if(data[i].status=='returned' ){ %>
+                                                            <button class="btn btn-dark">returned</button>
+                                                            <% } else{%>
+                                                                <button class="btn btn-danger">Cancelled</button>
+                                                                <% } %>
                                             </div>
                                         </div>
                                         <% } %>
-                                            <script>
-                                                function returnProduct(orderId, productId) {
-                                                    alert('Return product clicked! Order ID: ' + orderId + ', Product ID: ' + productId);
-                                                }
-                                            </script>
-                                         </div>
-                                     </div>
-                                     <% } %>
-                                         <% } else { %>
-                                              <p>No Items In Orders</p>
-                                      <% } %>
-                                  </div>
-                              </div>
-                         </div>
-                    </section>
+
+                                </div>
+                            </div>
+                            <% } %>
+                                <% } else { %>
+                                    <p>No Items In Orders</p>
+                                    <% } %>
+                </div>
+            </div>
+        </div>
+        <!-- Modal for cancel confirmation -->
+        <div class="modal fade" id="cancelConfirmationModal" tabindex="-1" role="dialog"
+        aria-labelledby="cancelConfirmationModalLabel" aria-hidden="true">
+       <div class="modal-dialog modal-dialog-centered" role="document">
+           <div class="modal-content">
+               <div class="modal-header">
+                   <h5 class="modal-title" id="cancelConfirmationModalLabel">Confirm Cancelation</h5>
+               </div>
+               <div class="modal-body">
+                
+                   Are you sure you want to cancel this order?
+               </div>
+               <div class="modal-footer">
+                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                   <button type="button" class="btn btn-primary" id="confirmCancelBtn">Confirm Cancelation</button>
+               </div>
+           </div>
+       </div>
+   </div>
+   <div class="modal fade" id="returnConfirmationModal" tabindex="-1" role="dialog"
+   aria-labelledby="cancelConfirmationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="cancelConfirmationModalLabel">Confirm Return</h5>
+          </div>
+          <div class="modal-body">
+           
+              Are you sure you want to return this order?
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" id="confirmreturnBtn">Confirm Return</button>
+          </div>
+      </div>
+  </div>
+</div>
    
 
-        <!-- include footer -->
+    </section>
+    <script>
+        function openCancelConfirmationModal(orderId) {
+            // Set the orderId in the modal for reference
+            document.getElementById('confirmCancelBtn').setAttribute('data-order-id', orderId);
+    
+            // Open the modal
+            $('#cancelConfirmationModal').modal('show');
+        }
+    
+        // Attach a click event to the Confirm Cancelation button inside the modal
+        document.getElementById('confirmCancelBtn').addEventListener('click', function () {
+            // Retrieve the orderId from the data attribute
+            const orderId = this.getAttribute('data-order-id');
+    
+            // Redirect to the cancel-product route with the orderId
+            window.location.href = `/cancel-product?id=${orderId}`;
+        });
+    
+        function openreturnConfirmationModal(orderId) {
+            // Set the orderId in the modal for reference
+            document.getElementById('confirmreturnBtn').setAttribute('data-order-id', orderId);
+    
+            // Open the modal
+            $('#returnConfirmationModal').modal('show');
+        }
+    
+        // Attach a click event to the Confirm Return button inside the modal
+        document.getElementById('confirmreturnBtn').addEventListener('click', function () {
+            // Retrieve the orderId from the data attribute
+            const orderId = this.getAttribute('data-order-id');
+    
+            // Redirect to the return-product route with the orderId
+            window.location.href = `/return-product?id=${orderId}`;
+        });
+    </script>
+    
+    
+   
+
+
+    <script>
+        function cancelProduct(orderId) {
+            window.location.href = `/cancel-product?id=${orderId}`;
+        }
+    </script>
+    <script>
+        function returnProduct(orderId) {
+            window.location.href = `/return-product?id=${orderId}`;
+        }
+        function productDetailes(orderId) {
+            window.location.href = `/myorder/OrderDetailes?id=${orderId}`;
+        }
+
+    </script>
+    <!-- include footer -->
     <%- include('include/_footer') %>
-         <!-- /include footer -->
+        <!-- /include footer -->
 
         </html>

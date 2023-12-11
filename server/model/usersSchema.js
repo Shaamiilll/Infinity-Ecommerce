@@ -39,6 +39,10 @@ const schema = new mongoose.Schema({
   status: {
     type: String,
   },
+  wallet: {
+    type: Schema.Types.Decimal128,
+        default: 0.0
+},
   verified: Boolean,
   address: [addressSchema],
 

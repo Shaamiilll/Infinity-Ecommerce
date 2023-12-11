@@ -1,3 +1,8 @@
+
+<!-- include header -->
+<%- include('include/_header') %>
+<!-- /include header -->
+
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
@@ -6,21 +11,21 @@
 
 
 <div class="row">
-  <div class="col-md-8 mb-4">
-    <div class="card mb-4">
-      <div class="card-header py-3">
-        <h5 class="mb-0">Biling details</h5>
+  <div class="col-md-8 mb-4 mx-auto mb-4  mt-5" >
+    <div class="card mb-4" style="background-color:#f5f5f7;">
+      <div class="card-header py-3"> 
+        <h5 class="mb-0">Add Your Address</h5>
       </div>
       <div class="card-body">
         <form action="/Add-address/checkout" method="post">
-          <div class="card shadow-0 border">
-            <div class="p-4">
-              <h5 class="card-title mb-3">checkout</h5>
+          <div class="card shadow-0 ">
+            <div class="p-4" style="background-color:#f5f5f7;">
+              <h5 class="card-title mb-3" style="background-color:#f5f5f7;">Checkout</h5>
               <div class="row">
               </div>
       
               <div class="row">
-                <div class="col-sm-8 mb-3">
+                <div class="col-sm-8 mb-3" >
                   <p class="mb-0">Address</p>
                   <div class="form-outline">
                     <input type="text" id="typeText" placeholder="Type here" class="form-control" name="Address" />
@@ -63,12 +68,9 @@
                 </div>
               </div>
 
-              <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault1" />
-                <label class="form-check-label" for="flexCheckDefault1">Save this address</label>
-              </div>
+              
               <div class="float-end">
-                <button type="submit" class="btn btn-success shadow-0 border">Continue</button>
+                <button type="submit" class="btn btn-success shadow-0 border" style="background-color: #131921;">Continue</button>
               </div>
             </div>
           </div>

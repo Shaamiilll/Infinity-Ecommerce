@@ -68,6 +68,33 @@
               </div>
             </div>
             <% } %>
+            <% if(users[0].verified==true) { %>
+              <div class="col-lg-4">
+                <div class="card mb-4">
+                  <div class="card-body text-center">
+                    <h5 class="my-3">
+                      Your Wallet
+                    </h5>
+                    <!-- Credit Card -->
+                    <div class="credit-card">
+                      <div class="card-front">
+                        <div class="chip"></div>
+                        <div class="card-number"><%=users[0]._id  %></div>
+                        <div class="card-holder"><%=users[0].name    %></div>
+                        <div class="card-expiry"> Balance :<%=users[0].wallet    %></div>
+                      </div>
+                      <div class="card-back">
+                        <div class="stripe"></div>
+                        <div class="signature"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% } %>
+            
+            
+           
               <div class="col-lg-8">
                 <div class="card mb-4">
                   <div class="card-body">

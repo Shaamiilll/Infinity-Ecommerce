@@ -5,7 +5,7 @@ const otpVerification = new mongoose.Schema({
   email: String,
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // Assuming your user model is named 'User'
+    ref: "User", 
   },
   otp: String,
   createdAt: Date,

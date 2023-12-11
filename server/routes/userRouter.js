@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-
 const userServices = require("../services/userRender");
 const userController = require("../controller/userController");
 const cartController = require("../controller/cartController");
@@ -49,20 +48,17 @@ router.post("/verifyOTP", userController.otp); //For login the user
 router.post("/resendOTP", userController.resendOTP); //For login the user
 router.get("/verifyUser", userController.verifyuser); //For login the user
 
-//Login/Register
 
-//Cart
-
+//cart
 router.get("/api/cart", cartController.AddToCart); //For login the user
 router.get("/MyCart", cartController.MyCart); //For login the user
 router.get("/remove-product", cartController.RemoveProduct); //For login the user
-router.get("/cart/inc", cartController.inc); // add user to another collction
-router.get("/cart/dec", cartController.decre); // add user to another collction
+router.get("/cart/update",cartController.cartUpdate)
 
-router.get("/wishlist",userServices.wishlist)
-router.get("/api/wishlist", wishlistController.AddToWishlist); //For login the user
-router.get("/Mywishlist", wishlistController.Mywishlist); //For login the user
-router.get("/remove-wishlist", wishlistController.RemoveProduct); //For login the user
+router.get("/wishlist",userServices.wishlist)//wishlist
+router.get("/api/wishlist", wishlistController.AddToWishlist); //add item to wishlist
+router.get("/Mywishlist", wishlistController.Mywishlist); //user wishlist
+router.get("/remove-wishlist", wishlistController.RemoveProduct); //remove items from the wishlist
 
 
 // router.get("/checkout-page", userServices.loadcheckout); //For login the user
@@ -77,13 +73,13 @@ router.get("/my-Orders", orderController.MyOrders); //For login the user
 router.post("/create-order", paymentController.createOrder); //For login the user
 
 
+router.get("/cancel-product", orderController.cancelOrder); //For login the user
+router.get("/return-product", orderController.returnOrder); //For login the user
+router.get("/myorder/OrderDetailes", orderController.OrderDetailes); //For login the user
 
 
 
-
-//pagination serch sort filter
-
-router.get('/products',userController.products)
+router.get('/products',userController.products) //pagination serch sort filter rest api
 
 
 module.exports = router;

@@ -102,41 +102,28 @@ module.exports = {
       res.redirect(`/Mycart`);
     });
   },
-  decre:(req,res)=>{
- const email = req.session.email
-
-    cartDb.findOne({prId:req.query.id,email:email})
-    .then(data=>{
-      if(data.cartQuantity>=2){
-        cartDb.updateOne({prId:req.query.id,email:email},{$inc:{cartQuantity:-1}})
-        .then(data=>{
-          res.redirect("/Mycart")
-        })
+  cartUpdate: async (req,res) =>{
+    const id=req.query.id
+    const delta=parseInt(req.query.change)
+    
+    try {
+      const cartData= await cartDb.findOne({prId:id,email:req.session.email})
+      const newQuantity = cartData.cartQuantity + delta;
+      const stockQuantity=cartData.stock
+  
+      if(newQuantity >= 1 && newQuantity<= stockQuantity){
+       await cartDb.updateOne({prId:id,email:req.session.email},{$inc:{cartQuantity:delta}})
+       const updatedData= await cartDb.findOne({prId:id, email:req.session.email})
+        res.json({success:true, updatedData})
       }else{
-        res.redirect("/Mycart")
-      }        
-    })
-  },
-  inc:(req,res)=>{
-    const id =req.query.id
-    productdb.findOne({_id:id})
-    .then(data=>{
-      const stock=data.stock
-      cartDb.findOne({prId:id,email:req.session.email})
-      .then(data1=>{
-        const count=data1.cartQuantity
-        if(count<stock){
-          cartDb.updateOne({prId:id,email:req.session.email},{$inc:{cartQuantity:1}})
-          .then(data=>{
-            res.redirect("/Mycart")
-          })
-        }else{
-          res.redirect("/Mycart")
-        }
-      })
-    })
+        res.json({success:false, messege:"no cartData"})
+      }
+      
+    } catch (error) {
+      res.json({success:false, messege:"try catch error"})
+      
+    }
   }
-
 };
 
 

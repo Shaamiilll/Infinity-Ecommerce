@@ -2,6 +2,8 @@
 <%- include('include/_header') %>
   <!-- /include header -->
 
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
   <!-- cart + summary -->
   <section class="bg-light my-5">
     <div class="container">
@@ -11,7 +13,7 @@
           <div class="card border shadow-0">
             <div class="m-4">
               <h4 class="card-title mb-4">Your shopping cart</h4>
-              <% if(cart && cart.length > 0){ %>
+              <% if(cart && cart.length> 0){ %>
                 <% for (let i=0;i<cart.length;i++){ %>
                   <div class="row gy-3 mb-4">
                     <div class="col-lg-5 outofstock" onclick="userdetails('<%=cart[i].prId%>')">
@@ -46,41 +48,39 @@
                       </div>
                     </div>
                     <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap">
-                      <!-- <div class="col-md-4 col-6 mb-3">
-                    <label class="mb-2 d-block">Quantity</label>
-                    <div class="input-group mb-3" style="width: 170px;">
-                        <button class="btn btn-white border border-secondary px-3" type="button" id="decrease-btn" data-mdb-ripple-color="dark">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                        <input type="text" class="form-control text-center border border-secondary" placeholder="1" aria-label="Example text with button addon" aria-describedby="button-addon1" id="quantity-input" />
-                        <button class="btn btn-white border border-secondary px-3" type="button" id="increase-btn" data-mdb-ripple-color="dark">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    </div>
-                </div> -->
+
                       <div class="">
-                        <% const discount= cart[i].discount %>
-                        <% const disPrice= cart[i].price*discount/100 %>
-                        <% const showPrice=cart[i].price-disPrice %>
-                        <text class="h6">₹ <%= cart[i].cartQuantity * showPrice %></text> <br />
-                        <small class="text-muted text-nowrap">₹ <%= showPrice %>/ per item </small>
+                        <% const discount=cart[i].discount %>
+                          <% const disPrice=cart[i].price*discount/100 %>
+                            <% const showPrice=Math.floor(cart[i].price - disPrice) %>
+                              <text id="indPrice<%= cart[i].prId %>" class="h6">₹ <%= (cart[i].cartQuantity *
+                                  showPrice).toLocaleString('en-IN') %></text> <br />
+                              <small class="text-muted text-nowrap">₹ <%= showPrice.toLocaleString('en-IN') %>/ per item
+                              </small>
                       </div>
                     </div>
                     <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap">
                       <div class="col-md-4 col-6 mb-3">
                         <label class="mb-2 d-block">Quantity</label>
-                        <div class="input-group mb-3 quantity-container" style="width: 170px;" >
+                        <div class="input-group mb-3 quantity-container" style="width: 170px;">
 
-                          <a href="/cart/dec?id=<%= cart[i].prId %>">
-                            <button class="btn btn-white border border-secondary px-3 decrease-btn" type="button">
-                              <i class="fas fa-minus"></i>
-                            </button>
-                          </a>
-                          <input type="text" class="form-control text-center border border-secondary quantity-input" placeholder="<%= cart[i].cartQuantity %>" disabled />
-                          <a href="/cart/inc?id=<%= cart[i].prId %>"><button class="btn btn-white border border-secondary px-3 increase-btn" type="button">
+
+                          <button class="btn btn-white border border-secondary px-3 decrease-btn" type="button"
+                            onclick="updateCartItem('<%= cart[i].prId %>', -1)">
+                            <i class="fas fa-minus"></i>
+                          </button>
+
+                          <input id="quInput<%=cart[i].prId %>" type="text"
+                            class="form-control text-center border border-secondary quantity-input"
+                            placeholder="<%= cart[i].cartQuantity %>" disabled />
+
+                          <button class="btn btn-white border border-secondary px-3 increase-btn" type="button"
+                            onclick="updateCartItem('<%= cart[i].prId %>', 1)">
                             <i class="fas fa-plus"></i>
-                          </button></a>
+                          </button>
+                          
                         </div>
+                        <label id="stock" style="color: red; display: none;">No More Stock available</label>
                       </div>
                     </div>
                     <div
@@ -119,8 +119,8 @@
             <div class="card-body">
               <div class="d-flex justify-content-between">
                 <p class="mb-2">Total price:</p>
-                <p class="mb-2" id="total-price-before" >
-                  <%= totalsum %>
+                <p class="mb-2" id="total-price-before">
+                  ₹ <%= totalsum.toLocaleString('en-IN') %>
                 </p>
               </div>
               <div class="d-flex justify-content-between">
@@ -133,15 +133,15 @@
               <div class="d-flex justify-content-between">
                 <p class="mb-2">Total price:</p>
                 <p class="mb-2 fw-bold" id="total-price">
-                  <%= totalsum %>
+                  ₹ <%=totalsum.toLocaleString('en-IN') %>
                 </p>
               </div>
-            <form action="/checkout-page" method="post">
-              <input type="hidden" name="totalsum" value="<%= totalsum %>" hidden>
-                 <button class="btn btn-success w-100 shadow-0 mb-2" type="submit">Make Purchase </button> 
-            </form>
+              <form action="/checkout-page" method="post">
+                <input type="hidden" name="totalsum" value="<%= totalsum %>" hidden>
+                <button class="btn btn-success w-100 shadow-0 mb-2" type="submit">Make Purchase </button>
+              </form>
               <div class="mt-3">
-                    <a href=" /" class="btn btn-light w-100 border mt-2"> Back to shop </a>
+                <a href=" /" class="btn btn-light w-100 border mt-2"> Back to shop </a>
               </div>
             </div>
           </div>
@@ -161,57 +161,68 @@
       window.location.href = productDetailURL;
     }
 
+    function updateCartItem(id, delta) {
+      fetch(`/cart/update?id=${id}&change=${delta}`, {
+        method: "GEt",
+        headers: {
+          "Content-Type": "application/json"
+        },
+      })
+        .then(response => response.json())
+        .then(data => {
+            updateUI(data);
+            if(data.updatedData.cartQuantity==data.updatedData.stock){
+              document.getElementById("stock").style.display='block'
+            }else{
+              document.getElementById("stock").style.display='none'
+ 
+            }
+        
+          
+        })
+    }
+
+    function updateUI(data) {
+      console.log(data);
+      console.log(data.updatedData.prId)
+
+      var quantityInput = document.getElementById(`quInput${data.updatedData.prId}`);
+      if (quantityInput) {
+        quantityInput.placeholder = data.updatedData.cartQuantity;
+      }
+
+      var itemPriceElement = document.getElementById(`indPrice${data.updatedData.prId}`);
+      if (itemPriceElement) {
+        itemPriceElement.textContent = data.updatedData.cartQuantity * (data.updatedData.price * data.updatedData.discount / 100);
+      }
+      var totalPriceElement = document.getElementById('total-price');
+      if (totalPriceElement) {
+        const productPrice = data.updatedData.price * (1 - data.updatedData.discount / 100) || 0; // Assuming each item has a 'price' and 'discount' property
+        const totalProductPrice = productPrice * data.updatedData.cartQuantity;
+
+        totalPriceElement.textContent = totalProductPrice;
+      }
+
+
+
+
+
+
+
+    }
+
+    function decrementCartItem(productId) {
+      updateCartItem(productId, -1);
+    }
+
+    function incrementCartItem(productId) {
+      updateCartItem(productId, 1);
+    }
+
+
+
+
   </script>
-
-  <!-- <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    var currentStock = 10;
-
-    // Get the quantity input and buttons
-    var quantityInputs = document.getElementsByClassName('quantity-input');
-    var decreaseBtns = document.getElementsByClassName('decrease-btn');
-    var increaseBtns = document.getElementsByClassName('increase-btn');
-    var quantityInputs = document.getElementsByClassName('quantity-input');
-
-    // Function to update the quantity and total price
-    function updateQuantityAndTotal(index, change) {
-      // Get the current quantity value
-      var currentQuantity = parseInt(quantityInputs[index].value) || 0;
-
-      // Update the quantity based on the change
-      var newQuantity = currentQuantity + change;
-
-      // Ensure the quantity is within the available stock
-      newQuantity = Math.max(1, Math.min(currentStock, newQuantity));
-
-      // Update the input field with the new quantity
-      quantityInputs[index].value = newQuantity;
-
-      // Get the price per item
-      var pricePerItem = parseFloat(document.querySelector('.h6').innerText.replace('₹ ', ''));
-
-      // Calculate and update the total price
-      var totalPrice = newQuantity * pricePerItem;
-      document.querySelector('#total-price').innerText = '₹ ' + totalPrice.toFixed(2);
-      document.querySelector('#total-price-before').innerText = '₹ ' + totalPrice.toFixed(2);
-    }
-
-    // Add click event listeners to the buttons
-    for (var i = 0; i < decreaseBtns.length; i++) {
-      decreaseBtns[i].addEventListener('click', function (index) {
-        return function () {
-          updateQuantityAndTotal(index, -1);
-        };
-      }(i));
-
-      increaseBtns[i].addEventListener('click', function (index) {
-        return function () {
-          updateQuantityAndTotal(index, 1);
-        };
-      }(i));
-    }
-  });
-</script> -->
   </body>
   <!-- include footer -->
   <%- include('include/_footer') %>

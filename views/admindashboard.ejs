@@ -42,6 +42,7 @@
                 <i class='bx bxs-cloud-download'></i>
                 <span class="text">Download PDF</span>
             </a>
+            
         </div>
 
         <ul class="box-info">
@@ -87,6 +88,9 @@
                 <label for="endDate">End Date:</label>
                 <input type="date" id="endDate" required>
                 <button type="button" onclick="downloadPdfWithDateRange()">Download</button>
+                <h1></h1>
+                <button type="button" onclick="downloadPdfForToday()">Today's Sales Report</button>
+
             </form>
         </div>
     </div>
@@ -94,7 +98,9 @@
 
 </section>
 <!-- CONTENT -->
-
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <script>
     function showDateRangePopup() {
         var modal = document.getElementById("dateRangeModal");
@@ -115,6 +121,21 @@
 
         // Perform your download action with startDate and endDate
         window.location.href = `/sales-report?startDate=${startDate}&endDate=${endDate}`;
+    }
+    function downloadPdfForToday() {
+        // Get the current date
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+        var yyyy = today.getFullYear();
+
+        var currentDate = yyyy + '-' + mm + '-' + dd;
+
+        // Perform your download action with the current date
+        window.location.href = `/sales-report?date=${currentDate}`;
+        
+        // Close the modal after clicking the download button
+        closeDateRangeModal();
     }
 </script>
 

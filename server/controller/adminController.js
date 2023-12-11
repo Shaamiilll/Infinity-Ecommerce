@@ -54,61 +54,70 @@ module.exports = {
   },
   salesReport: async (req, res) => {
     try {
-        const startDate = new Date(req.query.startDate);
-        const endDate = new Date(req.query.endDate);
+      let totalOrders;
+      
 
-        // Fetch total orders count
-        const totalOrders = await orderDb.aggregate([
-            { 
-                $match: { 
-                    orderDate: { 
-                        $gte: new Date(startDate.toISOString()), 
-                        $lte: new Date(endDate.toISOString()) 
-                    } 
-                } 
+      const startDate = new Date(req.query.startDate);
+      const endDate = new Date(req.query.endDate);
+
+      
+      totalOrders = await orderDb.aggregate([
+        {
+          $match: {
+            orderDate: {
+              $gte: startDate,
+              $lte: endDate,
             },
-            { $unwind: "$products" },
-            { $group: { _id: null, count: { $sum: 1 } } },
-            { $project: { count: 1 } },
-        ]);
+          },
+        },
+        { $unwind: "$products" },
+        { $group: { _id: null, count: { $sum: 1 } } },
+        { $project: { count: 1 } },
+      ]);
 
-        // Fetch total number of users
-        const totalUsers = await Userdb.countDocuments();
+      
+      const totalUsers = await Userdb.countDocuments();
 
-        // Fetch total sales amount
-        const totalSales = await orderDb.aggregate([
-            { 
-                $match: { 
-                    orderDate: { 
-                        $gte: new Date(startDate.toISOString()), 
-                        $lte: new Date(endDate.toISOString()) 
-                    } 
-                } 
+      
+      const totalSales = await orderDb.aggregate([
+        {
+          $match: {
+            orderDate: {
+              $gte: startDate,
+              $lte: endDate,
             },
-            { $unwind: "$products" },
-            { $group: { _id: null, sum: { $sum: "$products.price" } } },
-        ]);
+          },
+        },
+        { $unwind: "$products" },
+        {
+          $group: {
+            _id: null,
+            sum: { $sum: "$products.price" },
+          },
+        },
+      ]);
 
-        // Create CSV data with headers
-        const csvFields = ["Total Orders", "Total Users", "Total Sales"];
-        const csvHeader = csvFields.join(",") + "\n";
-        const csvValues = `${totalOrders[0]?.count || 0},${totalUsers},${totalSales[0]?.sum || 0}\n`;
-        const csvData = csvHeader + csvValues;
+      console.log(totalOrders);
 
-        // Set response headers
-        res.setHeader("Content-Type", "text/csv");
-        res.setHeader("Content-Disposition", "attachment;filename=salesData.csv");
+      
+      const csvFields = ["Total Orders", "Total Users", "Total Sales"];
+      const csvHeader = csvFields.join(",") + "\n";
+      const csvValues = `${totalOrders[0]?.count || 0},${totalUsers},${
+        totalSales[0]?.sum || 0
+      }\n`;
+      const csvData = csvHeader + csvValues;
 
-        // Send CSV data as response
-        res.status(200).send(csvData);
+      
+      res.setHeader("Content-Type", "text/csv");
+      res.setHeader("Content-Disposition", "attachment;filename=salesData.csv");
+
+      
+      res.status(200).send(csvData);
     } catch (error) {
-        console.error(error);
-        res.status(500).send("Internal Server Error");
+      console.error(error);
+      res.status(500).send("Internal Server Error");
     }
-}
-
-,
-  
+  },
 
   download: (req, res) => {
     console.log("download sales report");
@@ -128,15 +137,8 @@ module.exports = {
   },
   admindash: async (req, res) => {
     try {
-      const totalOrder = await orderDb.aggregate([
-        { $unwind: "$products" },
-        { $group: { _id: null, count: { $sum: 1 } } },
-        { $project: { count: 1 } },
-      ]);
+      const totalOrder = await orderDb.find({}).count();
 
-  
-      const totalCount = totalOrder[0]?.count || 0;
-      
       const amountOfUsers = await Userdb.find({}).count();
       const totalSales = await orderDb.aggregate([
         { $unwind: "$products" },
@@ -145,12 +147,11 @@ module.exports = {
 
       const totalSalesAmount = totalSales[0]?.sum || 0;
       res.render("admindashboard", {
-        totalOrder: totalCount,
+        totalOrder: totalOrder,
         amountOfUsers,
         totalSalesAmount,
       });
     } catch (error) {
-    
       res.status(500).send("Internal Server Error");
     }
   },

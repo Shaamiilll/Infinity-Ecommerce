@@ -2,6 +2,7 @@ const axios = require("axios");
 const Userdb = require("../model/usersSchema");
 const productdb = require("../model/productsSchema");
 const orderdb = require("../model/orderSchema");
+const mongoose = require("mongoose");
 
 exports.adminlogin = (req, res) => {
   res.render("adminlogin");
@@ -11,11 +12,10 @@ exports.admindash = (req, res) => {
   res.render("admindashboard");
 };
 
-exports.adminorder = (req, res) => {
-  orderdb.find().then((data) => {
-    console.log(data);
-    res.render("adminOrder", { data: data });
-  });
+exports.adminorder = async (req, res) => {
+  const data = await orderdb.find();
+  console.log(data);
+  res.render("adminOrder", { data: data });
 };
 
 exports.adminproducts = (req, res) => {
@@ -40,8 +40,8 @@ exports.renderup = (req, res) => {
 exports.adminusers = (req, res) => {
   Userdb.find()
     .then((response) => {
-      res.render("adminUsers", { users: response});
-        console.log(response.data);
+      res.render("adminUsers", { users: response });
+      console.log(response.data);
     })
     .catch((err) => {
       res.send(err);
@@ -81,19 +81,16 @@ const adminPassword = "1234";
 exports.isAdmin = (req, res) => {
   const { email: inputEmail, password: inputPassword } = req.body;
   if (inputEmail === adminEmail && inputPassword === adminPassword) {
-    req.session.admin=inputEmail
+    req.session.admin = inputEmail;
     res.redirect("/admin-dash");
   } else {
     res.redirect("/adminlogin");
   }
 };
 
-
 exports.updateproduct = (req, res) => {
   res.render("updateproduct");
 };
-
-
 
 exports.shopingCart = (req, res) => {
   res.render("shoping-cart");
@@ -129,20 +126,35 @@ exports.restoreProduct = (req, res) => {
 exports.updateimage = (req, res) => {
   const id = req.query.id;
   productdb.findById(id).then((data) => {
-    
     const image = data.prd_images;
     res.render("addimages", { images: image, id: id });
   });
 };
 
-exports.order = (req, res) => {
-  const userId=req.query.userId
-  const id=req.query.id
-  console.log(userId);
-  orderdb.find({_id:userId})
-  .then(data=>{
-    console.log(data);
-    res.render("orderDetailes",{data:data});
-  })
-  
+exports.order = async (req, res) => {
+  const id = req.query.Id;
+  console.log("Received Id:", id);
+
+  const data = await orderdb.findById(id);
+
+  console.log("Aggregation Result:", data);
+
+  res.render("orderDetailes", { data });
+};
+exports.changeStatus = async (req, res) => {
+  const status = req.query.status;
+  const id = req.query.id;
+  if (status === "pending") {
+    const data = await orderdb.updateOne(
+      { _id: id },
+      { $set: { status: "shipped" } }
+    );
+  } else if (status === "shipped") {
+    const data = await orderdb.updateOne(
+      { _id: id },
+      { $set: { status: "deliverd" } }
+    );
+  }
+
+  res.redirect(`order-details?Id=${id}`);
 };
