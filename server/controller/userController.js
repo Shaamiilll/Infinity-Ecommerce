@@ -97,6 +97,7 @@ module.exports = {
     req.session.email = req.body.email;
     console.log(req.session.email);
     const saltrounds = 10;
+    const hashedPassword = await bcrypt.hash(req.body.password, saltrounds);
     const user = new Userdb({
       block: "false",
       name: req.body.name,
