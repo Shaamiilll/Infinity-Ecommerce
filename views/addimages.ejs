@@ -43,7 +43,9 @@
                                         <img src="/primg/<%= images[i] %>" alt="" class="img-thumbnail m-2">
                                         <button class="btn btn-danger btn-sm mt-2"
                                             onclick="deleteImage('<%= images[i] %>','<%=id%>')">Remove</button>
-                                        <button class="btn btn-danger crop btn-sm mt-2">crop</button>
+                                           <form action="/crop-image?id=" method="post">
+                                            <button class="btn btn-danger  btn-sm mt-2" type="submit">crop</button>
+                                           </form> 
                                     </div>
                                     <% } %>
                             </div>
@@ -65,8 +67,8 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body" style="height: 400px;">
-                    <img id="cropperImage" src="" alt="" style="height: 400px;">
+                <div class="modal-body" style="height: 100px;">
+                    <img id="cropperImage" src="" alt="" style="height:10px">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -160,6 +162,8 @@
                 });
             });
         });
+
+        
 
 
     </script>

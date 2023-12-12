@@ -25,12 +25,18 @@
       -webkit-line-clamp: 2;
       /* number of lines to show */
     }
-    .selected-category {
-  margin-top: 10px;
-  font-weight: bold;
-  color:#232F3E; /* Change this to your desired color */
-}
 
+    .selected-category {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #232F3E;
+      /* Change this to your desired color */
+    }
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
   </style>
 </head>
 
@@ -201,11 +207,12 @@
                       <div>
                         <% for(let i=0; i<category.length; i++){ %>
                           <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="<%= category[i].name %>"
-                              id="checkbox_<%= i %>" />
-                            <label class="form-check-label" for="checkbox_<%= i %>">
-                              <%= category[i].name %>
-                            </label>
+                            <input class="form-check-input" type="checkbox" value="<%= category[i].name %>" <%=( cat
+                              !="All" && cat.includes(category[i].name ))?'checked':'' %>
+                            id="checkbox_<%= i %>" />
+                              <label class="form-check-label" for="checkbox_<%= i %>">
+                                <%= category[i].name %>
+                              </label>
 
                           </div>
                           <% } %>
@@ -235,7 +242,7 @@
                                   const updatedUrl = currentUrl.toString().replace(/%2C/g, ',');
 
                                   // Replace the current URL with the updated one
-                                  window.history.replaceState({}, '', updatedUrl);
+                                  window.location.href = updatedUrl;
                                 }
                               });
                             </script>
@@ -270,9 +277,9 @@
                       <!-- <div class="range">
                       <input type="range" class="form-range" id="customRange1" />
                     </div> -->
-                    <input type="hidden" name="page" value="<%= page %>">
+                      <input type="hidden" name="page" value="<%= page %>">
 
-                      <form action="">
+                      <form action="" id="fromPrice">
 
                         <div class="row mb-3">
                           <div class="col-6">
@@ -280,8 +287,9 @@
                               Min
                             </p>
                             <div class="form-outline">
-                              <input type="number" name="maxPrice" id="typeNumber" class="form-control" />
-                              <label class="form-label" for="typeNumber">Max Price</label>
+                              <input type="number" name="minPrice" id="typeNumber" class="form-control minPrice"
+                                value="<%= priceMinMax.min %>" />
+                              <label class="form-label" for="typeNumber">Min Price</label>
                             </div>
                           </div>
                           <div class="col-6">
@@ -289,8 +297,9 @@
                               Max
                             </p>
                             <div class="form-outline">
-                              <input type="number" name="minPrice" id="typeNumber" class="form-control" />
-                              <label class="form-label" for="typeNumber">Min Price</label>
+                              <input type="number" name="maxPrice" id="typeNumber" class="form-control maxPrice"
+                                value="<%= priceMinMax.max %>" />
+                              <label class="form-label" for="typeNumber">Max Price</label>
                             </div>
                           </div>
                         </div>
@@ -317,7 +326,7 @@
                   <option value="2">High rated</option>
                   <option value="3">Randomly</option>
                 </select>
-              
+
               </div>
             </header>
 
@@ -352,19 +361,12 @@
                                   <% if(discount> 0) { %>
                                     <span class="original-price"
                                       style="color: #131921; text-decoration: line-through;">₹<%= originalPrice %>
-                                        </span>
+                                    </span>
                                     <% } %>
                                       ₹<%= discountedPrice %>
                                 </p>
                               </div>
-                              <!-- <div class="card-footer">
-                      <div class="d-flex justify-content-between align-items-center">
-                        <a href="/api/cart?email=<%= email %>&id=<%= products[i]._id %>" class="btn btn-primary">Add to cart</a>
-                        <a href="#!" class="btn btn-light border icon-hover">
-                          <i class="fas fa-heart text-secondary"></i>
-                        </a>
-                      </div>
-                    </div> -->
+
                         </div>
                       </div>
                       <% } %>
@@ -382,29 +384,29 @@
 
           <% var total=total %>
             <% var limit=limit %>
-            <nav aria-label="Page navigation example" class="d-flex justify-content-center mt-3">
-              <ul class="pagination">
-                <li class="page-item <%= page === 0 ? 'disabled' : '' %>">
-                  <a class="page-link" href="/products?page=<%= page %>" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                  </a>
-                </li>
-            
-                <% for (let i = 0; i < 3; i++) { %>
-                  <li class="page-item <%= page === i ? 'active' : '' %>">
-                    <a class="page-link" href="/products?page=<%= i + 1 %>">
-                      <%= i + 1 %>
+              <nav aria-label="Page navigation example" class="d-flex justify-content-center mt-3">
+                <ul class="pagination">
+                  <li class="page-item <%= page === 1 ? 'disabled' : '' %>">
+                    <a class="page-link" href="/products?page=<%= page - 1 %>" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
                     </a>
                   </li>
-                <% } %>
-            
-                <li class="page-item">
-                  <a class="page-link" href="/products?page=<%= page + 2 %>" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
+
+                  <% for (let i=0; i < noPages; i++) { %>
+                    <li class="page-item <%= (page === (i + 1) )? 'active' : '' %>">
+                      <a class="page-link" href="/products?page=<%= i + 1 %>">
+                        <%= i + 1 %>
+                      </a>
+                    </li>
+                    <% } %>
+
+                      <li class="page-item <%= page === noPages ? 'disabled' : '' %>">
+                        <a class="page-link" href="/products?page=<%= page + 1 %>" aria-label="Next">
+                          <span aria-hidden="true">&raquo;</span>
+                        </a>
+                      </li>
+                </ul>
+              </nav>
               <!-- Pagination -->
 
               <!-- Pagination -->
@@ -414,6 +416,25 @@
     </section>
     <!-- sidebar + content -->
     <script>
+      document.getElementById('fromPrice').addEventListener('submit', (e) => {
+        e.preventDefault();
+        updateUrlPrice();
+      })
+      function updateUrlPrice() {
+
+        // Build the new URL
+        const currentUrl = new URL(window.location.href);
+
+        // Replace the current Category parameter with the updated one
+        currentUrl.searchParams.set('minPrice', Number(document.querySelector('.minPrice').value));
+        currentUrl.searchParams.set('maxPrice', Number(document.querySelector('.maxPrice').value));
+
+        // Replace URL encoding with commas
+        const updatedUrl = currentUrl.toString().replace(/%2C/g, ',');
+
+        // Replace the current URL with the updated one
+        window.location.href = updatedUrl;
+      }
       function userdetails(id) {
         const productDetailURL = `/product-details?productId=${id}`;
 
@@ -422,24 +443,24 @@
       }
 
     </script>
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-  const currentUrl = new URL(window.location.href);
-  const categoryParam = currentUrl.searchParams.get('category');
-  const bestMatchSelect = document.querySelector('.form-select');
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const currentUrl = new URL(window.location.href);
+        const categoryParam = currentUrl.searchParams.get('category');
+        const bestMatchSelect = document.querySelector('.form-select');
 
-  // Display the selected category near the Best Match dropdown
-  if (categoryParam) {
-    const selectedCategoryDiv = document.createElement('div');
-    selectedCategoryDiv.innerHTML = `Selected Category: ${categoryParam}`;
-    selectedCategoryDiv.className = 'selected-category';
+        // Display the selected category near the Best Match dropdown
+        if (categoryParam) {
+          const selectedCategoryDiv = document.createElement('div');
+          selectedCategoryDiv.innerHTML = `Selected Category: ${categoryParam}`;
+          selectedCategoryDiv.className = 'selected-category';
 
-    // Insert the new div after the Best Match dropdown
-    bestMatchSelect.parentNode.insertBefore(selectedCategoryDiv, bestMatchSelect.nextSibling);
-  }
-});
+          // Insert the new div after the Best Match dropdown
+          bestMatchSelect.parentNode.insertBefore(selectedCategoryDiv, bestMatchSelect.nextSibling);
+        }
+      });
 
-</script>
+    </script>
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
     <!-- Footer -->

@@ -260,4 +260,7 @@ module.exports = {
       res.render("addproduct", { data: data });
     });
   },
+  cropeimage:(req,res)=>{
+    res.render("cropimage")
+  }
 };

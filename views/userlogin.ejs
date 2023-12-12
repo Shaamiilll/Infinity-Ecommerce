@@ -23,7 +23,13 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="css/userlogin.css">
 
+<style>
+    .errorP{
+        color: red;
+        font-size: small;
 
+    }
+</style>
   <main>
     <section>
         <div class="container-fluid">
@@ -37,9 +43,14 @@
                         <div class="inputForm d-inline-block">
                             <form action="/api/login" method="POST">
                                 <label class="d-block" for="email">Email</label>
-                                <input class="d-block" type="email" name="email"  required />
+                                <input class="d-block <%= (errMsg.email || invalid)?'border-danger':''  %>" type="text" name="email" value="<%= savedInfo?savedInfo:'' %>"   />
+                                <p class="errorP <%= !errMsg.email?'d-none':''  %> " ><%=errMsg.email  %></p>
                                 <label class="d-block" for="password">Password</label>
-                                <input class="d-block" type="password" name="password" required/>
+                                
+                                <input class="d-block <%= (errMsg.password || invalid)?'border-danger':''  %>" type="password" name="password" />
+                                <p class="errorP text-start <%= !errMsg.password?'d-none':''  %>" ><%=errMsg.password  %></p>
+                                <p class="errorP <%= !invalid?'d-none':''  %>" ><%=invalid  %></p>
+
                                 <div class="text-end"">
                                     <a href="/forget-password"  style="color: #131921 ; text-decoration: none;">Forgot Password ?</a>
                                 </div>

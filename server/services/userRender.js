@@ -5,9 +5,30 @@ const dotenv = require("dotenv");
 const productdb = require("../model/productsSchema");
 dotenv.config({ path: "config.env" });
 
-
 exports.login = (req, res) => {
-  res.render("userlogin");
+  res.render(
+    "userlogin",
+    {
+      errMsg: {
+        email: req.session.errorEmail,
+        password: req.session.errorPass,
+      },
+      savedInfo: req.session.savedInfo,
+      invalid:req.session.invalid
+    },
+    (err, html) => {
+      if (err) {
+        return res.send("Internal Server error " + "1");
+      }
+      delete req.session.errorEmail;
+      delete req.session.errorPass;
+      delete req.session.savedInfo;
+      delete req.session.invalid
+      
+
+      res.send(html);
+    }
+  );
 };
 
 exports.product = (req, res) => {
@@ -80,12 +101,10 @@ exports.otp = (req, res) => {
 exports.productdetalis = (req, res) => {
   const id = req.query.productId;
   console.log(id);
-  productdb
-    .findOne({ _id: id })
-    .then((data) => {
-      email = req.session.email;
-      res.render("productDetails", { product: data, email: req.session.email });
-    });
+  productdb.findOne({ _id: id }).then((data) => {
+    email = req.session.email;
+    res.render("productDetails", { product: data, email: req.session.email });
+  });
 };
 
 exports.Success = (req, res) => {
@@ -184,7 +203,7 @@ exports.changeAddress = (req, res) => {
   const email = req.session.email;
   const totalprice = req.body.totalsum;
   const index = req.query.id || 0;
-  const prId=req.query.prId
+  const prId = req.query.prId;
 
   console.log(totalprice + "from checkot 2");
   Userdb.findOne({ email: email })
@@ -193,11 +212,10 @@ exports.changeAddress = (req, res) => {
         users: userdata,
         price: totalprice,
         a: index,
-        prId:prId
+        prId: prId,
       });
     })
     .catch((err) => {
       res.send(err);
     });
 };
-  

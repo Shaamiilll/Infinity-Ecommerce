@@ -127,7 +127,17 @@ module.exports = {
   },
 
   isUser: (req, res) => {
-    if (!req.body) {
+    if (!req.body.email) {
+      req.session.errorEmail = "This feild is required";
+    }
+    if (req.body.email && !/^[A-Za-z0-9]+@gmail\.com$/.test(req.body.email)) {
+      req.session.errorEmail = "Not a valid Gmail address";
+    }
+    if (!req.body.password) {
+      req.session.errorPass = "This feild is required";
+    }
+    if (req.session.errorEmail || req.session.errorPass) {
+      req.session.savedInfo = req.body.email;
       return res.status(400).redirect("/login");
     }
 
@@ -136,6 +146,7 @@ module.exports = {
     Userdb.findOne({ email: inputEmail })
       .then((userdata) => {
         if (!userdata) {
+          req.session.invalid = "Invalid Credential"
           return res.status(400).redirect("/login");
         }
 
@@ -173,6 +184,8 @@ module.exports = {
                 res.status(500).send("Internal Server Error");
               });
           } else {
+            req.session.invalid = "Invalid Credntials";
+            console.log(req.session.errorPass);
             res.status(400).redirect("/login");
           }
         });
@@ -447,7 +460,7 @@ module.exports = {
 
   products: async (req, res) => {
     try {
-      const page = parseInt(req.query.page) - 1 || 0;
+      const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 9;
       const search = req.query.search || "";
       let sort = req.query.sort || "price";
@@ -456,11 +469,8 @@ module.exports = {
       const minPrice = req.query.minPrice || 0; // Default to 0 if not provided
       const maxPrice = req.query.maxPrice || Number.MAX_SAFE_INTEGER; // Default to maximum safe integer if not provided
 
-      // Your database query should use these parameters
-      const price = await productDb.find({
-        //
-        price: { $gte: minPrice, $lte: maxPrice },
-      });
+      req.session.min = req.query.minPrice || "";
+      req.session.max = req.query.maxPrice || "";
 
       const categoryOptions = [
         "SmartPhone",
@@ -468,12 +478,16 @@ module.exports = {
         "Laptop",
         "Speakers",
         "Camera",
-        "Human",
+        "Headset",
       ];
+
+      req.session.cat =
+        category === "All" ? "All" : req.query.category.split(",");
 
       category === "All"
         ? (category = [...categoryOptions])
         : (category = req.query.category.split(","));
+
       req.query.sort ? (sort = req.query.sort.split(",")) : (sort = [sort]);
 
       let sortBy = {};
@@ -487,39 +501,55 @@ module.exports = {
           pname: { $regex: search, $options: "i" },
           active: true,
           categoryStats: true,
+          price: { $gte: minPrice, $lte: maxPrice },
         })
         .where("category")
         .in([...category])
         .sort(sortBy)
-        .skip(page * limit)
+        .skip((page - 1) * limit)
         .limit(limit);
+      console.log(limit + "limit");
+      console.log(page + "limit");
 
+      console.log("Products with category:", products);
       const total = await productDb.countDocuments({
         category: { $in: [...category] },
         pname: { $regex: search, $options: "i" },
+        active: true,
+        categoryStats: true,
       });
+      const noPages = Math.ceil(total / limit);
+
+      console.log(noPages);
+      console.log("Total with category:", total);
       const product = await productDb.find({
         active: true,
         categoryStats: true,
       });
       const catData = await categoryDb.find();
-      const response = {
-        error: false,
-        total,
-        page: page + 1,
-        limit,
-        categories: categoryOptions, // Update with your actual categories
-        products,
-        price,
-      };
+      // const response = {
+      //   error: false,
+      //   noPages,
+      //   page: page,
+      //   categories: categoryOptions, // Update with your actual categories
+      //   products,
+
+      // };
+
+      console.log(minPrice, req.session.cat);
 
       res.status(200).render("ourStore", {
         products: products,
         category: catData,
         page: page,
+        noPages,
         email: email,
-        price,
         req: req,
+        cat: req.session.cat,
+        priceMinMax: {
+          min: req.session.min,
+          max: req.session.max,
+        },
       });
     } catch (err) {
       console.log(err);

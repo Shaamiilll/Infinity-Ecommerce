@@ -41,6 +41,7 @@ router.get("/update-image",middle.loggedIn, adminServices.updateimage); // updat
 router.post("/api/add-product",middle.loggedIn,upload.array("image", 12),productController.newproduct); // Add new Image
 router.post("/upload-image",middle.loggedIn,upload.array("image", 12),productController.uploadimage); // upload image
 router.get("/image-delete",middle.loggedIn, productController.deleteImage); // deleting the image
+router.post("/crop-image",middle.loggedIn, productController.cropeimage); // deleting the image
 
 router.get("/adminlogin",middle.notlogged, adminServices.adminlogin); //adminlogin loginpage render
 router.post("/adminlogin",middle.notlogged,adminServices.isAdmin); //Checking Admin Post
