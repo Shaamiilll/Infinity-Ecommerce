@@ -80,7 +80,7 @@
                           </button>
                           
                         </div>
-                        <label id="stock" style="color: red; display: none;">No More Stock available</label>
+                        <label id='stock<%=cart[i]._id  %>' style="color: red; display: none;">No More Stock available</label>
                       </div>
                     </div>
                     <div
@@ -172,7 +172,7 @@
         .then(data => {
             updateUI(data);
             if(data.updatedData.cartQuantity==data.updatedData.stock){
-              document.getElementById("stock").style.display='block'
+              document.getElementById(`stock${data.updatedData._id}`).style.display='block'
             }else{
               document.getElementById("stock").style.display='none'
  
@@ -223,6 +223,9 @@
 
 
   </script>
+
+
+  
   </body>
   <!-- include footer -->
   <%- include('include/_footer') %>

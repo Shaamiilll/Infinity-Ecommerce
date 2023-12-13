@@ -3,7 +3,7 @@ const productdb = require("../model/productsSchema");
 const userDb = require("../model/usersSchema");
 module.exports = {
   AddToCart: (req, res) => {
-    let email = req.query.email;
+    let email = req.session.email;
     let productId = req.query.id;
   
     console.log(email + "from cart session");

@@ -14,7 +14,7 @@ exports.login = (req, res) => {
         password: req.session.errorPass,
       },
       savedInfo: req.session.savedInfo,
-      invalid:req.session.invalid
+      invalid: req.session.invalid,
     },
     (err, html) => {
       if (err) {
@@ -23,8 +23,7 @@ exports.login = (req, res) => {
       delete req.session.errorEmail;
       delete req.session.errorPass;
       delete req.session.savedInfo;
-      delete req.session.invalid
-      
+      delete req.session.invalid;
 
       res.send(html);
     }
@@ -40,7 +39,7 @@ exports.forgetPassword = (req, res) => {
 };
 
 exports.newPassword = (req, res) => {
-  const email = req.query.email;
+  const email = req.session.email;
   res.render("newPassword", { email: email });
 };
 
@@ -90,7 +89,32 @@ exports.updateAddress = (req, res) => {
 exports.register = (req, res) => {
   const exist = req.session.emailExist;
   req.session.emailExist = null;
-  res.render("userRegister", { exist });
+  res.render(
+    "userRegister",
+    {
+      exist,
+      invalid: req.session.CheckPass,//checking pass is correct
+      invalidEmail: req.session.errorPattern,//invalid email pattrn
+      userExist: req.session.userRegistered,//already user exist
+      savedInfo: req.session.email,
+      phone: req.session.errorPhone,
+      savedPhone:req.session.phone
+    },
+    (err, html) => {
+      if (err) {
+        
+        return res.send(err);
+      }
+      delete req.session.CheckPass;
+      console.log(req.session.email);
+      delete req.session.userRegistered;
+      delete req.session.errorPattern;
+      delete req.session.email
+      delete req.session.errorPhone
+      delete req.session.phone
+      res.send(html);
+    }
+  );
 };
 
 exports.otp = (req, res) => {

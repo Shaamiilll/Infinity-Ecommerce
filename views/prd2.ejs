@@ -1,0 +1,681 @@
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Itim&family=Jockey+One&display=swap" rel="stylesheet">
+  
+    <style>
+      /* Styles for the popup */
+    
+    
+      #popup {
+          border-radius: 6px;
+          display: none;
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          padding: 20px;
+          background-color: #f8f8f8;
+          border: 1px solid #ccc;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          z-index: 1000;
+          max-width: 400px;
+          width: 100%;
+          text-align: center;
+      }
+    
+      /* Styles for the overlay background */
+      #overlay {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.5);
+          z-index: 999;
+      }
+    
+      /* Styles for the close button */
+      #popup-close {
+          cursor: pointer;
+          margin-top: -15px;
+          margin-right: -15px;
+    
+      }
+    
+      /* Styles for the login button */
+      #login-button {
+          cursor: pointer;
+          margin-top: 20px;
+          padding: 10px;
+          background-color: #BF7DC1;
+          color: white;
+          border: none;
+          border-radius: 5px;
+      }
+      #register-button{
+        cursor: pointer;
+          margin-top: 20px;
+          padding: 10px;
+          margin-left: 10px;
+          background-color: #392539;
+          color: white;
+          border: none;
+          border-radius: 5px;
+      }
+      body{
+        overflow-x: hidden;
+        margin-right: 0;
+        padding: 0;
+        padding-left: 0;
+      }
+      #preloader{
+              background: white url(img/load.gif) no-repeat  center;
+              background-size: 15%;
+              height: 100vh;
+              width: 100%;
+              position: fixed;
+              z-index:100;
+              }
+    </style>
+  </head>
+  <div id="preloader"></div>
+  <header>
+    <!-- Jumbotron -->
+    <div class="p-2 text-center" style="background-color: #392539 !important;">
+  
+      <div class="container-fluid">
+        <div class="row gy-3">
+          <!-- Left elements -->
+          <div class="col-lg-2 col-sm-4 col-4">
+            <a href="/" class="float-start">
+              <h2 style="font-weight: 400;color: #ffff; font-family: 'Jockey One', sans-serif;"><span
+                  style="font-family: 'Itim', cursive; ">M</span>ega<span
+                  style="color: #BF7DC1; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 20px; font-weight: 400;">Cart.</span>
+              </h2>
+            </a>
+          </div>
+          <!-- Left elements -->
+  
+          <!-- Center elements -->
+          <div class="order-lg-last col-lg-5 col-sm-8 col-8">
+            <div class="d-flex float-end">
+              <% if(email){ %>
+                <a href="/userDetails/?email=<%=email%>" class="me-1 py-1 px-3 nav-link" style="color: #FFF;"> <i
+                    class="fas fa-user-alt m-1 me-md-2"></i>
+                  <p class="d-none d-md-block mb-0">Account</p>
+                </a>
+                <a href="/wishlist?email=<%=email %>" class="me-1  py-1 px-3 nav-link" style="color:#FFF;"> <i
+                  class="fas fa-heart m-1 me-md-2"></i>
+                <p class="d-none d-md-block mb-0">Wishlist</p>
+              </a>
+              <a href="/cart?email=<%=email%>" class=" py-1 px-3 nav-link" style="color: #FFF;"> <i
+                class="fas fa-shopping-cart m-1 me-md-2 "></i>
+              <p class="d-none d-md-block mb-0">My cart</p>
+            </a>
+                <% }else{%>
+                  <a  href="/login" class="me-1  py-1 px-3 nav-link" style="color: #FFF;"> <i
+                      class="fas fa-user-alt m-1 me-md-2"></i>
+                    <p class="d-none d-md-block mb-0">Login</p>
+                  </a>
+                  <a onclick="showPopup()" class="me-1  py-1 px-3 nav-link" style="color:#FFF; cursor: pointer;"> <i
+                    class="fas fa-heart m-1 me-md-2"></i>
+                  <p class="d-none d-md-block mb-0">Wishlist</p>
+                </a>
+                  <a onclick="showPopup()" class=" py-1 px-3 nav-link" style="color: #FFF; cursor: pointer;"> <i
+                    class="fas fa-shopping-cart m-1 me-md-2 "></i>
+                  <p class="d-none d-md-block mb-0">My cart</p>
+                </a>
+  
+                  <% } %>
+            </div>
+          </div>
+          <!-- Center elements -->
+  
+          <!-- Right elements -->
+          <div class="col-lg-5 mt-md-4 col-md-12 col-12" style="visibility: hidden;">
+            <form action="/our-store" method="get">
+            <div class="input-group  float-center">
+              <div class="form-outline bg-white" style="border-radius: 5px;">
+                <input type="search" value="" id="form1" name="search" class="form-control" />
+                <label class="form-label" for="form1">Search</label>
+              </div>
+              <button type="submit" class="btn btn-white shadow-0" style="background-color: #BF7DC1 ;">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </form>
+          </div>
+          <!-- Right elements -->
+        </div>
+      </div>
+    </div>
+    <!-- Jumbotron -->
+  
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white"  style="background-color: #756275 !important; font-size: 12px;">
+      <!-- Container wrapper -->
+      <div class="container justify-content-center justify-content-md-between">
+        <!-- Toggle button -->
+        <button class="navbar-toggler  py-2 text-white" type="button" data-mdb-toggle="collapse"
+          data-mdb-target="#navbarLeftAlignExample" aria-controls="navbarLeftAlignExample" aria-expanded="false"
+          aria-label="Toggle navigation">
+          <i class="fas fa-bars"></i>
+        </button>
+  
+        <!-- Collapsible wrapper -->
+        <div class="collapse navbar-collapse" id="navbarLeftAlignExample">
+          <!-- Left links -->
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <!-- Navbar dropdown -->
+  
+            <li class="nav-item">
+              <a class="nav-link text-white" href="/">HOME</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="/our-store">OUR STORE</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="#">BLOGS</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="#">CONTACT</a>
+            </li>
+  
+          </ul>
+          <!-- Left links -->
+        </div>
+      </div>
+      <!-- Container wrapper -->
+    </nav>
+  
+    <!-- Navbar -->
+  </header>
+    <style>
+      .rounded-4 {
+        border-radius: 4px;
+      }
+  
+      .main-image {
+        max-width: auto;
+        max-height: auto;
+        margin: auto;
+      }
+  
+      .image-container {
+    position: relative;
+    overflow: hidden;
+    width: 400px;
+    height: 400px;
+    cursor: pointer; /* Set the default cursor style */
+  }
+  
+  .image-container:hover {
+    cursor: zoom-in; /* Change cursor style on hover */
+  }
+  
+  .zoom-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s ease-in-out;
+    cursor: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"%3E%3Cg fill="%23000"%3E%3Cpath fill="none" d="M0 0h24v24H0z"%3E%3C/path%3E%3Cpath d="M21.7 21.3l-6-6a9.5 9.5 0 1 0-1.4 1.4l6 6a1 1 0 0 0 1.4 0 1 1 0 0 0 0-1.4zM10 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"%3E%3C/path%3E%3Cpath d="M10.5 11H13v2h-2v1.5a.5.5 0 0 1-1 0V13H7v-2h2V9.5a.5.5 0 0 1 1 0V11z"%3E%3C/path%3E%3Ccircle cx="12" cy="12" r="1.5"%3E%3C/circle%3E%3C/g%3E%3C/svg%3E') 15 15, auto;
+  }
+  
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  
+  }
+  
+  .overlay p {
+    margin: 0;
+  }
+  
+    </style>
+  
+  
+    <!-- content -->
+    <section class="py-5">
+      <div class="container">
+        <div class="row gx-5">
+          <aside class="col-lg-6">
+            <div class="container rounded-4 d-flex justify-content-center mb-3 image-container" style="max-width: 400px; max-height: 400px;">
+              <a style="cursor: pointer;" id="imageLink">
+                  <img id="zoomImage" class="rounded-4 main-image zoom-image fit img-fluid" style="object-fit: contain; aspect-ratio: 1/1;" src="/primg/<%=product.prd_images[0]%>" alt="Product Image">
+              </a>
+              <div class="overlay" id="overlay"></div>
+          </div>
+          
+  
+  
+          
+            <div class="d-flex justify-content-center mb-3">
+              <% for(let i=0; i<product.prd_images.length; i++){ %>
+                <a onclick="imgchange('/primg/<%=product.prd_images[i]%>')" data-fslightbox="mygallery" style="cursor: pointer;" class="border mx-1 myimage rounded-2" data-type="image">
+                  <img width="50" height="60" style="object-fit: contain;"  class="rounded-2 myimage1" src="/primg/<%=product.prd_images[i]%>" />
+                </a>
+              <% } %>
+            </div>
+          </aside>
+          
+          <main class="col-lg-6">
+            <div class="ps-lg-3">
+              <h4 class="title text-dark">
+                <%=product.pname%>
+              </h4>
+              <div class="d-flex flex-row my-3">
+                <div class="text-warning mb-1 me-2">
+                  <i class="fa fa-star"></i>
+                  <i class="fa fa-star"></i>
+                  <i class="fa fa-star"></i>
+                  <i class="fa fa-star"></i>
+                  <i class="fas fa-star-half-alt"></i>
+                  <span class="ms-1">
+                    4.5
+                  </span>
+                </div>
+                <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>
+                  <%=product.stock%>
+                </span>
+                <% if(product.stock==0){ %>
+                  <span class="text-danger ms-2">Out of stock</span>
+                  <% }else{ %>
+                <span class="text-success ms-2">In stock</span>
+                <% } %>
+              </div>
+  
+              <div class="mb-3">
+                <span class="h5">
+                  <% var discount = product.discount %>
+                  <% var Odiscount = product.price * discount / 100 %>
+                  <% var showPrice= product.price-Odiscount %>
+                  ₹<%=Math.floor(showPrice)  %>
+                </span>
+                <span class="text-muted">/per box</span>
+                <p style="color: green;">-<%=product.discount  %>% Off <span class="h6 text-black" style="text-decoration: line-through; opacity: .5;">₹<%= product.price %></span></p>
+                 
+              </div>
+              <p>
+                <%=product.description%>
+              </p>
+  
+  
+  
+              <hr />
+  
+              <div class="row mb-4">
+                <div class="col-md-4 col-6">
+                  <label class="mb-2">Size</label>
+                  <select class="form-select border border-secondary" style="height: 35px;">
+                    <option>Small</option>
+                    <option>Medium</option>
+                    <option>Large</option>
+                  </select>
+                </div>
+                <!-- col.// -->
+              
+              </div>
+              <% if(product.catStatus==false || product.unlist==true){ %>
+                <h6 style="color: red; margin-left: 10px;">Product is not Available</h6>
+                <% }else if(product.stock==0){ %>
+                  <h6 style="color: red; margin-left: 10px;">Products Out Of stock</h6>
+                  <% }else{ %>
+                    <% if(email){ %>
+                        <a class="btn  shadow-0"
+                          style="background-color: #392539; color: white; font-weight: bolder; border-radius: 30px; height: 40px;">
+                          <form action="/checkout?prId=<%=product._id %>" method="post">
+                            <%let prPrice=Math.floor(showPrice)  %>
+                            <input type="number" name="totalsum" value="<%=prPrice %>" hidden>
+                            <button type="submit" style="background-color: #392539;border: none; color: white; font-size: 15px; margin-top: -3px; font-weight: 500;"> Buy
+                              Now </button>
+                          </form></a>
+                          <% }else{ %>
+                            <a class="btn  shadow-0"
+                            style="background-color: #392539; color: white; font-weight: bolder; border-radius: 30px; height: 40px;">
+                              <button onclick="showPopup()" style="background-color: #392539;border: none; color: white; font-size: 15px; margin-top: -3px; font-weight: 500;"> Buy
+                                Now </button>
+                              </a>
+                            <% } %>
+                      
+                    <% } %>
+                    <% if(cart.length==1&&email){%>
+                      <a href="/cart/api?email=<%=email%>&&id=<%=product._id  %>" class="btn  shadow-0"
+                        style="background-color:#FFA530; color: white; font-weight: bolder; border-radius: 30px; height: 40px;">
+                        <i class="me-1 fa fa-shopping-basket"></i> remove from cart</a>
+                      <% }else{ %>
+                        <% if(email){ %>
+                        <a href="/cart/api?email=<%=email%>&&id=<%=product._id%>&&stock=<%=product.stock  %>" class="btn  shadow-0"
+                          style="background-color: #BF7DC1; color: white; font-weight: bolder; border-radius: 30px; height: 40px;">
+                          <i class="me-1 fa fa-shopping-basket"></i> Add to cart </a>
+                          <% }else{ %>
+                            <a  onclick="showPopup()" class="btn  shadow-0"
+                              style="background-color: #BF7DC1; color: white; font-weight: bolder; border-radius: 30px; height: 40px;">
+                              <i class="me-1 fa fa-shopping-basket"></i> Add to cart </a>
+                              <% } %>
+  
+                        <% } %>
+                        <%if(wishdata) {%>
+                          <a href="/wish/api?email=<%=email%>&id=<%=product._id  %>"
+                            class="btn btn-light border border-secondary  icon-hover" style="color: red;  margin-top: 18px;margin-left: 14px;"> <i
+                              class="me-1 fa fa-heart fa-lg" style="color: red;"></i> Saved </a>
+                              <% }else{ %>
+                                <% if(email){ %>
+                                <a style="margin-top: 18px;margin-left: 14px;" href="/wish/api?email=<%=email%>&id=<%=product._id  %>"
+                                  class="btn btn-light border border-secondary icon-hover  saveclass"> <i
+                                    class="me-1 fa fa-heart fa-lg"></i> Save </a>
+                                    <% }else{ %>
+                                      <a style="  margin-top: 18px;margin-left: 14px;" onclick="showPopup()"
+                                        class="btn btn-light border border-secondary icon-hover  saveclass"> <i
+                                          class="me-1 fa fa-heart fa-lg"></i> Save </a>
+                                      <% } %>
+                                <% } %>
+                              <% if(product.stock<=15 && product.stock>6){ %>
+                                <h6 style="color: red; margin-left: 10px; margin-top: 20px; font-style: italic; font-weight: bold;">
+                                  Hurry, Limited Stock Available!
+                                </h6>
+                              <% }else if(product.stock<=6 && product.stock>=1){ %>         
+                                <h6 style="color: red; margin-left: 10px; margin-top: 20px; font-style: italic; font-weight: bold;">
+                                  Hurry, Only <%=product.stock  %> Stock Available!
+                                </h6>
+                              <% } %>
+                          <!-- Your webpage content here -->
+                          
+                          <!-- Popup content -->
+                          <div id="overlay"></div>
+                          <div id="popup">
+                            <div style="display: flex; width: 100%; justify-content: end;">
+                              <span style="font-size: 13px;" id="popup-close" onclick="closePopup()">✖ Close</span>
+                            </div>
+                            <p id="popup-message">Please login or register</p>
+                            <!-- Add login and register links or buttons here -->
+                            <a href="/login">
+                              <button id="login-button">Login</button>
+                            </a>
+                            <a href="/signup">
+                              <button id="register-button">Register</button>
+                            </a>
+                          </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </section>
+    <!-- content -->
+  
+    <section class="bg-light border-top py-4">
+      <div class="container">
+        <div class="row gx-4">
+          <div class="col-lg-8 mb-4">
+            <div class="border rounded-2 px-3 py-2 bg-white">
+              <!-- Pills navs -->
+              <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
+                <li class="nav-item d-flex" role="presentation">
+                  <a class="nav-link d-flex align-items-center justify-content-center w-100 active" id="ex1-tab-1"
+                    data-mdb-toggle="pill" href="#ex1-pills-1" role="tab" aria-controls="ex1-pills-1"
+                    aria-selected="true">Specification</a>
+                </li>
+                <li class="nav-item d-flex" role="presentation">
+                  <a class="nav-link d-flex align-items-center justify-content-center w-100" id="ex1-tab-2"
+                    data-mdb-toggle="pill" href="#ex1-pills-2" role="tab" aria-controls="ex1-pills-2"
+                    aria-selected="false">Warranty info</a>
+                </li>
+                <li class="nav-item d-flex" role="presentation">
+                  <a class="nav-link d-flex align-items-center justify-content-center w-100" id="ex1-tab-3"
+                    data-mdb-toggle="pill" href="#ex1-pills-3" role="tab" aria-controls="ex1-pills-3"
+                    aria-selected="false">Shipping info</a>
+                </li>
+                <li class="nav-item d-flex" role="presentation">
+                  <a class="nav-link d-flex align-items-center justify-content-center w-100" id="ex1-tab-4"
+                    data-mdb-toggle="pill" href="#ex1-pills-4" role="tab" aria-controls="ex1-pills-4"
+                    aria-selected="false">Seller profile</a>
+                </li>
+              </ul>
+              <!-- Pills navs -->
+  
+              <!-- Pills content -->
+              <div class="tab-content" id="ex1-content">
+                <div class="tab-pane fade show active" id="ex1-pills-1" role="tabpanel" aria-labelledby="ex1-tab-1">
+                  <p>
+                    With supporting text below as a natural lead-in to additional content. Lorem ipsum dolor sit amet,
+                    consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+                    enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+                    nulla
+                    pariatur.
+                  </p>
+                  <div class="row mb-2">
+                    <div class="col-12 col-md-6">
+                      <ul class="list-unstyled mb-0">
+                        <li><i class="fas fa-check text-success me-2"></i>Some great feature name here</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Lorem ipsum dolor sit amet, consectetur</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Duis aute irure dolor in reprehenderit</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Optical heart sensor</li>
+                      </ul>
+                    </div>
+                    <div class="col-12 col-md-6 mb-0">
+                      <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-2"></i>Easy fast and ver good</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Some great feature name here</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Modern style and design</li>
+                      </ul>
+                    </div>
+                  </div>
+                  <table class="table border mt-3 mb-2">
+                    <tr>
+                      <th class="py-2">Display:</th>
+                      <td class="py-2">13.3-inch LED-backlit display with IPS</td>
+                    </tr>
+                    <tr>
+                      <th class="py-2">Processor capacity:</th>
+                      <td class="py-2">2.3GHz dual-core Intel Core i5</td>
+                    </tr>
+                    <tr>
+                      <th class="py-2">Camera quality:</th>
+                      <td class="py-2">720p FaceTime HD camera</td>
+                    </tr>
+                    <tr>
+                      <th class="py-2">Memory</th>
+                      <td class="py-2">8 GB RAM or 16 GB RAM</td>
+                    </tr>
+                    <tr>
+                      <th class="py-2">Graphics</th>
+                      <td class="py-2">Intel Iris Plus Graphics 640</td>
+                    </tr>
+                  </table>
+                </div>
+                <div class="tab-pane fade mb-2" id="ex1-pills-2" role="tabpanel" aria-labelledby="ex1-tab-2">
+                  Tab content or sample information now <br />
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
+                  dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                  aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                  dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+                  officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+                  sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+                  nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                </div>
+                <div class="tab-pane fade mb-2" id="ex1-pills-3" role="tabpanel" aria-labelledby="ex1-tab-3">
+                  Another tab content or sample information now <br />
+                  Dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                  aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+                  commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                  fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+                  deserunt
+                  mollit anim id est laborum.
+                </div>
+                <div class="tab-pane fade mb-2" id="ex1-pills-4" role="tabpanel" aria-labelledby="ex1-tab-4">
+                  Some other tab content or sample information now <br />
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
+                  dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                  aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                  dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+                  officia deserunt mollit anim id est laborum.
+                </div>
+              </div>
+              <!-- Pills content -->
+            </div>
+          </div>
+  
+        </div>
+      </div>
+  
+      <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    </section>
+    <%- include('include/footer') %>
+  
+  
+  
+      <!-- Include Elevate Zoom -->
+  
+      <script>
+        function showPopup() {
+          document.getElementById('overlay').style.display = 'block';
+          document.getElementById('popup').style.display = 'block';
+          // Set the error message in the popup
+         
+        }
+      
+        function closePopup() {
+          document.getElementById('overlay').style.display = 'none';
+          document.getElementById('popup').style.display = 'none';
+        }
+  
+        const imageContainer = document.getElementById('imageLink');
+        const zoomImage = document.getElementById('zoomImage');
+        const overlay = document.getElementById('overlay');
+  
+      imageContainer.addEventListener('mousemove', function (event) {
+          const { offsetX, offsetY } = event;
+          const { offsetWidth, offsetHeight } = this;
+          const xPercentage = (offsetX / offsetWidth) * 100;
+          const yPercentage = (offsetY / offsetHeight) * 100;
+  
+          zoomImage.style.transformOrigin = `${xPercentage}% ${yPercentage}%`;
+          zoomImage.style.transform = 'scale(1.5)'; // Adjust the scale factor as needed
+  
+          overlay.style.opacity = 1;
+      });
+  
+      imageContainer.addEventListener('mouseleave', function () {
+          zoomImage.style.transform = 'scale(1)';
+          overlay.style.opacity = 0;
+      });
+   
+  
+      
+       
+      </script>
+      
+  
+      <script>
+  
+  
+  
+  
+  
+        $(document).ready(function () {
+          // Initialize Elevate Zoom
+          $('#zoom-image').elevateZoom({
+            zoomType: 'inner',
+            cursor: 'crosshair',
+            zoomWindowFadeIn: 500,
+            zoomWindowFadeOut: 500,
+            onComplete: function () {
+              // Show the zoomed image in the separate container
+              $('#zoomed-image').attr('src', $('#zoom-image').data('elevateZoom').getGalleryList()[0].src);
+              $('#zoomed-image-container').show();
+            },
+            onClose: function () {
+              // Hide the zoomed image container when zoom is closed
+              $('#zoomed-image-container').hide();
+            }
+          });
+        });
+  
+        var loader=document.getElementById("preloader");
+                  window.addEventListener("load",function(){
+                  loader.style.display="none"
+                  })
+  
+      </script>
+  
+  
+      <script>
+        function imgchange(img) {
+          var imageElement = document.querySelector('.main-image');
+          imageElement.src = img
+  
+        }
+      </script>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          // Get the quantity input and buttons
+          var quantityInput = document.getElementById('quantity-input');
+          var decreaseBtn = document.getElementById('decrease-btn');
+          var increaseBtn = document.getElementById('increase-btn');
+  
+          // Add click event listeners to the buttons
+          decreaseBtn.addEventListener('click', function () {
+            updateQuantity(-1);
+          });
+  
+          increaseBtn.addEventListener('click', function () {
+            updateQuantity(1);
+          });
+  
+          // Function to update the quantity
+          function updateQuantity(change) {
+            // Get the current quantity value
+            var currentQuantity = parseInt(quantityInput.value) || 0;
+  
+            // Update the quantity based on the change
+            if (currentQuantity === 10) {
+              document.getElementById("limitr").style.display = 'block'
+              document.getElementById("limitr").innerHTML = 'Product stock reached'
+  
+  
+            } else {
+              var newQuantity = currentQuantity + change;
+  
+              // Ensure the quantity is not negative
+              newQuantity = Math.max(0, newQuantity);
+  
+              // Update the input field with the new quantity
+              quantityInput.value = newQuantity;
+            }
+          }
+        });
+  
+      </script>

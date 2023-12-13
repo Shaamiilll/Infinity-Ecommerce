@@ -75,27 +75,30 @@ const sendOTPVerificationeEmail = async ({ _id, email }, res) => {
 //create and save new User
 module.exports = {
   newuser: async (req, res) => {
-    if (!req.body) {
-      res.status(400).send({ message: "Content can not be empty!" });
-      return;
+    
+    if (!req.body.email) {
+      req.session.errorEmail = "This feild is required";
     }
     if (req.body.password !== req.body.confirmPassword) {
-      return res
-        .status(400)
-        .send({ message: "Password and Confirm Password do not match!" });
+      req.session.CheckPass="Password and Confirm Password do not match!" 
     }
     const phoneNumber = req.body.Phone;
     if (!/^\d{10}$/.test(phoneNumber)) {
-      return res
-        .status(400)
-        .send({ message: "Phone number must be 10 digits long!" });
+      req.session.errorPhone= "Phone number must be 10 digits long!"
     }
+    req.session.phone=req.body.phone
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     if (!emailPattern.test(req.body.email)) {
-      return res.status(400).send({ message: "Invalid email format!" });
+      req.session.errorPattern= "Invalid email format!"
     }
+
     req.session.email = req.body.email;
     console.log(req.session.email);
+    if(req.session.errorEmail||req.session.errorPass||req.session.errorPattern|| req.session.errorPhone || req.session.CheckPass){
+      console.log("hyy");
+      req.session.savedInfo=req.body.email;
+      return res.redirect("/register")
+    }
     const saltrounds = 10;
     const hashedPassword = await bcrypt.hash(req.body.password, saltrounds);
     const user = new Userdb({
@@ -122,6 +125,7 @@ module.exports = {
         }); // Include OTP in the rendering
       })
       .catch((err) => {
+        req.session.userRegistered="User Already Exist"
         res.redirect("/register");
       });
   },
@@ -171,7 +175,7 @@ module.exports = {
                   .then(() => {
                     req.session.email = inputEmail;
                     res.redirect(
-                      "/?CreatedAccount=User Account has been Created"
+                      "/"
                     );
                   })
                   .catch((updateErr) => {
@@ -184,6 +188,7 @@ module.exports = {
                 res.status(500).send("Internal Server Error");
               });
           } else {
+            req.sessi
             req.session.invalid = "Invalid Credntials";
             console.log(req.session.errorPass);
             res.status(400).redirect("/login");
@@ -371,7 +376,8 @@ module.exports = {
   },
   forgetPassword: async (req, res) => {
     try {
-      const email = req.body.email;
+      req.session.OTPemail=req.body.email
+      const email=req.session.OTPemail
 
       const user = await Userdb.findOne({ email });
 
@@ -393,7 +399,7 @@ module.exports = {
   newPassword: async (req, res) => {
     const password = req.body.password;
     const confirmPassword = req.body.confirmPassword;
-    const email = req.query.email;
+    const email = req.session.OTPemail;
 
     console.log(email + " add password");
 
