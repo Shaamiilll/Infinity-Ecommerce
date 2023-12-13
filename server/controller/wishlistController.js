@@ -5,7 +5,7 @@ const wishlistDb = require("../model/wishlistSchema");
 
 module.exports = {
 AddToWishlist: (req, res) => {
-    let email = req.query.email;
+    let email = req.session.email;
     let productId = req.query.id;
 
     console.log(email + "from cart session");
@@ -20,10 +20,10 @@ AddToWishlist: (req, res) => {
           wishlist
             .save()
             .then((data) => {
-              res.redirect(`/MyWishlist?email=${email}`);
+              res.redirect(`/MyWishlist`);
             })
             .catch((err) => {
-              res.redirect(`/MyWishlist?email=${email}`);
+              res.redirect(`/MyWishlist`);
             });
         } else {
         }
@@ -34,7 +34,7 @@ AddToWishlist: (req, res) => {
       });
   },
   Mywishlist: (req, res) => {
-    email = req.query.email;
+    email = req.session.email;
     console.log(email);
     wishlistDb
       .aggregate([
@@ -70,10 +70,10 @@ AddToWishlist: (req, res) => {
       });
   },
   RemoveProduct: (req, res) => {
-    email = req.query.email;
+    email = req.session.email;
     id = req.query.id;
     wishlistDb.deleteOne({ email: email, prId: id }).then((data) => {
-      res.redirect(`/MyWishlist?email=${email}`);
+      res.redirect(`/MyWishlist`);
     });
   }
 }
