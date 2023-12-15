@@ -2,9 +2,11 @@ const cartDb = require("../model/cartSchema");
 const productdb = require("../model/productsSchema");
 const userDb = require("../model/usersSchema");
 module.exports = {
+  
   AddToCart: (req, res) => {
+    
     let email = req.session.email;
-    let productId = req.query.id;
+    let productId = req.session.singleProductId;
   
     console.log(email + "from cart session");
     productdb
@@ -57,6 +59,7 @@ module.exports = {
   },
   
   MyCart: async (req, res) => {
+    req.session.singleProductId=''
     try {
       const email = req.session.email;
       console.log(email);

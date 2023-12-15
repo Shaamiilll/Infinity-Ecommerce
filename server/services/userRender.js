@@ -34,6 +34,7 @@ exports.product = (req, res) => {
   res.render("productDetails");
 };
 
+
 exports.forgetPassword = (req, res) => {
   res.render("forgetPassword");
 };
@@ -123,13 +124,19 @@ exports.otp = (req, res) => {
 };
 
 exports.productdetalis = (req, res) => {
-  const id = req.query.productId;
+  const id = req.session.singleProductId
   console.log(id);
   productdb.findOne({ _id: id }).then((data) => {
     email = req.session.email;
     res.render("productDetails", { product: data, email: req.session.email });
   });
 };
+exports.SaveSession=(req,res)=>{
+  req.session.singleProductId=req.query.id
+  console.log(req.session.singleProductId);
+  res.send('/product-details')
+
+}
 
 exports.Success = (req, res) => {
   const orderId = req.query.id;
@@ -206,7 +213,7 @@ exports.loadcheckout = (req, res) => {
   const email = req.session.email;
   const totalprice = req.body.totalsum;
   const index = req.query.id || 0;
-  const prId = req.query.prId;
+  const prId = req.session.singleProductId;
 
   console.log(totalprice + "from checkot 2");
   Userdb.findOne({ email: email })
@@ -227,7 +234,7 @@ exports.changeAddress = (req, res) => {
   const email = req.session.email;
   const totalprice = req.body.totalsum;
   const index = req.query.id || 0;
-  const prId = req.query.prId;
+  const prId = req.session.singleProductId;
 
   console.log(totalprice + "from checkot 2");
   Userdb.findOne({ email: email })

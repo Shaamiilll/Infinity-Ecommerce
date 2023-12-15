@@ -2,6 +2,7 @@ const axios = require("axios");
 const Userdb = require("../model/usersSchema");
 const productdb = require("../model/productsSchema");
 const orderdb = require("../model/orderSchema");
+const coupen = require("../model/couponSchema");
 const mongoose = require("mongoose");
 
 exports.adminlogin = (req, res) => {
@@ -95,6 +96,52 @@ exports.updateproduct = (req, res) => {
 exports.shopingCart = (req, res) => {
   res.render("shoping-cart");
 };
+
+exports.loadCoupon=async(req,res)=>{
+  const currentDate = new Date();
+  await coupen.updateMany({ expirationDate: { $lt: currentDate } },{$set:{expired:true}});
+  const data= await coupen.find({active:true,expired:false})
+  res.render("coupon",{data})
+},
+exports.deletedCoupon = async (req, res) => {
+  try {
+    
+    const currentDate = new Date();
+    
+     await coupen.updateMany({ expirationDate: { $lt: currentDate } },{$set:{expired:true}});
+     const data = await coupen.find({
+      $or: [
+        { active: false },
+        { expired: true }
+      ]
+    });
+    
+    res.render("deletedCoupon", { data });
+  } catch (error) {
+    console.error("Error deleting expired coupons:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+exports.restoreCoupon=async(req,res)=>{
+
+  const id = req.query.id
+  await coupen.updateOne({_id:id},{$set:{active:true}})
+  res.redirect("/admin-coupon")
+  const repeatedCharacter = function(s) {
+
+    for (let i = 0; i < s.length; i++) {
+      for (let j = 0; j < i; j++) {
+        if (s[i] === s[j]) {
+          return s[i];
+        }
+      }
+    }
+  
+    return '\0';
+  };
+},
+
+
 
 exports.softDelete = (req, res) => {
   productdb

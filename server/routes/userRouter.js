@@ -41,6 +41,8 @@ router.post("/verify-password", userController.newPassword); //rendering post pa
 
 router.get("/product", userServices.product); //otp product
 router.get("/product-details", userServices.productdetalis); // add user to another collction
+router.get("/save-singleProduct-session", userServices.SaveSession); // add user to another collction
+
 
 //otp
 router.get("/otpLogin", userServices.otp); //otp render
@@ -64,6 +66,7 @@ router.get("/remove-wishlist", wishlistController.RemoveProduct); //remove items
 // router.get("/checkout-page", userServices.loadcheckout); //For login the user
 router.post("/checkout-page", userServices.loadcheckout); //For login the user
 router.post("/checkout/address", userServices.changeAddress); //For login the user
+router.post("/apply-promo", userController.promoCode); //For login the user
 
 router.post("/payment", userServices.loadPayment); //For login the user
 router.post("/submit-order", orderController.order); //For login the user

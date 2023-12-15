@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>infinity</title>
-  <link rel="icon" type="image/x-icon" href="images/fav.png">
+  <title>infinity store</title>
+  <link rel="icon" type="image/x-icon" href="images/fav-icon.png">
   <!-- Font Awesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
   <!-- Google Fonts -->
@@ -435,11 +435,33 @@
         // Replace the current URL with the updated one
         window.location.href = updatedUrl;
       }
-      function userdetails(id) {
-        const productDetailURL = `/product-details?productId=${id}`;
+      
 
-        // Redirect to the user details page.
-        window.location.href = productDetailURL;
+    </script>
+    <script>
+      function userdetails(id) {
+        fetch(`/save-singleProduct-session?id=${id}`, {
+          method: "GET",
+          "Content-Type": "application/json",
+
+        })
+          .then((response) => {
+
+
+            if (!response) {
+              new Error("Network response was not ok: " + response.statusText);
+
+            }
+           
+
+
+            window.location.href = '/product-details';
+          })
+          .catch((error) => {
+            // Handle errors
+            console.error("Error during fetch operation:", error);
+          });
+
       }
 
     </script>

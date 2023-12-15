@@ -1,0 +1,83 @@
+<!-- include footer -->
+<%- include('include/_adminbase.ejs') %>
+    <!-- /include footer -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" rel="stylesheet" />
+
+
+    <!-- CONTENT -->
+    <section id="content">
+
+
+        <!-- MAIN -->
+        <main>
+            <div class="table-data">
+                <div class="order">
+                    <div class="head">
+                        <h3>Diactivated coupons</h3>
+
+                        <a href="/admin-coupon"> <button class="btn btn-rounded"> <i class='bx bx-trash'></i>Active Coupons</button></i></a>
+                                
+
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Coupon Code</th>
+                                <th>Discount</th>
+                                <th>Expires At</th>
+                                
+                                <th>Restore</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for(let i=0;i<data.length;i++){ %>
+                                <tr>
+                                    <td>
+                                        <%= data[i].code %>
+                                    </td>
+                                    <td>
+                                        <%=data[i]. discountPercentage %>%
+                                    </td>
+                                    <td>
+                                        <%= data[i].expirationDate.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) %>
+
+                                    </td>
+                                    
+                                    <td>
+                                        <% if(data[i].expired==false){ %>
+                                        <a href="/restore-coupon?id=<%= data[i]._id %>"> <i class="fas fa-trash-restore" style="color: black;"></i> </a>
+                                        <% }  %>
+                                         
+                                        
+                                    </td>
+                                </tr>
+                                <% } %>
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </main>
+        <!-- MAIN -->
+    </section>
+    <!-- CONTENT -->
+    <script>
+        function userdetails(id, prId) {
+            const userDetailURL = `/order-details?Id=${id}`;
+
+            // Redirect to the user details page.
+            window.location.href = userDetailURL;
+        }
+    </script>
+
+    <script src="js/adminserver.js"></script>
+    <script>import { Modal, Ripple, initMDB } from "mdb-ui-kit";
+
+        initMDB({ Modal, Ripple });</script>
+    </body>
+
+    </html>

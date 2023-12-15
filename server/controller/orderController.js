@@ -13,10 +13,11 @@ module.exports = {
   order: async (req, res) => {
     try {
       let email = req.session.email;
-      const id = req.query.prId;
+      const id = req.session.singleProductId;
+      
       req.session.prId = id;
       const totalAmount = req.body.totalsum;
-      if (id) {
+      if (req.session.singleProductId) {
         const data = await productdb.find({ _id: id });
         const orderDetails = {
           user: email,
@@ -73,6 +74,7 @@ module.exports = {
           res.json({ url: `/successOrder?id=${data._id}` });
         }
       }  else {
+        
         const productData = await cartDb.find({ email: email });
         const allOrderDetails = [];
       
@@ -175,7 +177,7 @@ module.exports = {
   payment: async (req, res) => {
     try {
       const email = req.session.email;
-      const prId = req.session.prId;
+      const prId = req.session.singleProductId;
       console.log(prId);
       const allOrderDetails = req.session.orderDetails;
 

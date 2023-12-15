@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>checkout-page</title>
-  <link rel="icon" type="image/x-icon" href="images/fav.png">
+  <link rel="icon" type="image/x-icon" href="images/fav-icon.png">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
     crossorigin="anonymous"></script>
@@ -151,20 +151,21 @@
                       </div>
                       <div class="mb-3">
                         <h5>Select Payment Method</h5>
-                      
+
                         <!-- Credit Card Payment -->
                         <div class="form-check mb-3">
-                          <input class="form-check-input " type="radio" name="payment" id="creditCardPayment" value="Online_Payment">
+                          <input class="form-check-input " type="radio" name="payment" id="creditCardPayment"
+                            value="Online_Payment">
                           <label class="form-check-label d-flex align-items-center" for="creditCardPayment">
-                              Online Payment
+                            Online Payment
                           </label>
-                      </div>
-                      <div class="form-check">
+                        </div>
+                        <div class="form-check">
                           <input class="form-check-input" type="radio" name="payment" id="payment2" value="COD">
                           <label class="form-check-label d-flex align-items-center" for="payment2">
-                              Cash On Delivery (COD)
+                            Cash On Delivery (COD)
                           </label>
-                      </div>
+                        </div>
                       </div>
 
                       <div class="float-end">
@@ -196,18 +197,40 @@
                 <p class="mb-2 text-danger">- ₹60.00</p>
               </div>
               <div class="d-flex justify-content-between">
+                <p class="mb-2" style="display: none;" id="co">Coupon Code:</p>
+                <p class="mb-2 text-success" id="couponDis"></p>
+              </div>
+              <div class="d-flex justify-content-between">
                 <p class="mb-2">Shipping cost:</p>
                 <p class="mb-2">+ ₹40.00</p>
+
+              </div>
+              <div class="d-flex justify-content-between">
+                <p id="coupon" style="color: red;"></p>
+
               </div>
               <hr />
               <div class="d-flex justify-content-between">
                 <p class="mb-2">Total price:</p>
-                <p class="mb-2 fw-bold">₹<%= updateprice %>
+                <p class="mb-2 fw-bold" id="updatedPrice">₹<%= updateprice %>
                 </p>
               </div>
+
               <div class="input-group mt-3 mb-4">
-                <input type="text" class="form-control border" name="" placeholder="Promo code" />
-                <button class="btn btn-light text-primary border">Apply</button>
+                <form id="promo-code-form">
+                  <p id="price1" class="d-none">
+                    <%= updateprice %>
+                  </p>
+                  <input type="text" class="form-control border" name="coupon" id="coupon-input"
+                    placeholder="Promo code" />
+                    <h1></h1>
+                    <input type="number" class="form-control border" name="wallet" id="coupon-input"
+                    placeholder="Wallet" />
+                    <h1></h1>
+                    <p class="text-success text-end">*₹ <%=users.wallet  %> Available in Wallet</p>
+                  <button type="button" class="btn btn-light text-primary border"
+                    onclick="applyPromoCode()">Apply</button>
+                </form>
               </div>
             </div>
           </div>
@@ -233,7 +256,7 @@
               <p>Address <%= i + 1 %>: <%=users.address[i].City%>,<%=users.address[i].House_No%>
 
                       <%=users.address[i].postcode%>
-                        <form action="/checkout/address?id=<%= i %>&prId=<%= prId %>" method="post">
+                        <form action="/checkout/address?id=<%= i %>" method="post">
                           <input type="text" value="<%=price %>" hidden name="totalsum">
                           <button type="submit" class="btn btn-primary">Select</button>
                         </form>
@@ -307,5 +330,44 @@
     rzp.open();
   }
 </script>
+<script>
+  function applyPromoCode() {
+    var promoCode = document.getElementById('coupon-input').value;
+    console.log(promoCode);
+
+    // Use AJAX to send promoCode to the server
+    $.ajax({
+      url: '/apply-promo',
+      method: 'post',
+      data: { coupon: promoCode },
+      success: function (response) {
+
+        // Handle the response from the server
+        if (response.success) {
+
+          document.getElementById('coupon').innerText = ""
+          document.getElementById('couponDis').innerText = '-' + response.discountPercentage + '%'
+          document.getElementById('co').style.display = "block"
+          const og=document.getElementById('price1').innerText
+          const discount = (document.getElementById('price1').innerText * response.discountPercentage) / 100
+          document.getElementById("updatedPrice").innerText = document.getElementById('price1').innerText - discount
+
+
+
+        } else {
+          document.getElementById('coupon').innerText = "Invalid Coupon"
+          
+        }
+      },
+      error: function () {
+        alert('Error applying promo code. Please try again.');
+      }
+    });
+  }
+  document.addEventListener('contextmenu', function (e) {
+    e.preventDefault();
+});
+</script>
+
 
 </html>

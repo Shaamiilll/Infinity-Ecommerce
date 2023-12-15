@@ -47,6 +47,14 @@ router.get("/adminlogin",middle.notlogged, adminServices.adminlogin); //adminlog
 router.post("/adminlogin",middle.notlogged,adminServices.isAdmin); //Checking Admin Post
 
 router.get("/admin-dash",middle.loggedIn, adminController.admindash); //Admin Dashboard render
+router.get("/admin-coupon",middle.loggedIn, adminServices.loadCoupon); //Admin Dashboard render
+router.get("/deleted-coupon",middle.loggedIn, adminServices.deletedCoupon); //Admin Dashboard render
+router.get("/restore-coupon",middle.loggedIn, adminServices.restoreCoupon); //Admin Dashboard render
+router.get("/add-coupon", adminController.addCoupon); //Admin Dashboard render
+router.post("/save-coupon",middle.loggedIn, adminController.saveCoupon); //Admin Dashboard render
+router.get("/delete-coupon",middle.loggedIn, adminController.deleteCoupon); //Admin Dashboard render
+
+
 
 router.get("/admin-order", middle.loggedIn,adminServices.adminorder); // admin order render
 router.get("/order-details",middle.loggedIn, adminServices.order); // admin order render

@@ -3,6 +3,7 @@ const blockdb = require("../model/blockedUsers");
 const productDb = require("../model/productsSchema");
 const categoryDb = require("../model/categorySchema");
 const otpverification = require("../model/otpSchema");
+const couponDb = require("../model/couponSchema");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const express = require("express");
@@ -562,4 +563,20 @@ module.exports = {
       res.status(500).json({ error: true, message: "Internal Server Error" });
     }
   },
+  promoCode: async (req, res) => {
+
+    const promoCode = req.body.coupon.toUpperCase();
+    const price=req.body.price
+    try {
+      const data = await couponDb.findOne({ code: promoCode });
+      if (data) {
+        return res.json({ success: true, discountPercentage: data.discountPercentage ,price:price});
+      } else {
+        return res.json({ success: false, message: "Coupon is invalid" });
+      }
+    } catch (error) {
+      res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+  }
+  
 };

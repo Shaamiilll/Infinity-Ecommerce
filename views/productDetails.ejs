@@ -4,7 +4,7 @@
 <script src="/path/to/extm.min.js"></script>
 <script src="path/to/magnify.js"></script>
 
-
+<title>product-details <%=product.pname%> </title>
 
   <!-- content -->
   <section class="py-5">
@@ -82,7 +82,7 @@
 
             <% if(email) { %>
               <!-- User is logged in, show the Buy Now form -->
-              <form action="/checkout-page?prId=<%=product._id%>" method="POST" class="mb-3">
+              <form action="/checkout-page" method="POST" class="mb-3">
                   <input type="hidden" name="totalsum" value="<%=product.price%>" hidden>
                   <button type="submit" class="btn shadow-0"
                       style="background-color: #FFA530; color: #131921; font-weight: bolder; border-radius: 30px; height: 40px;"
