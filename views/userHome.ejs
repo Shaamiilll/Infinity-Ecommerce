@@ -28,7 +28,6 @@
     -webkit-line-clamp: 2;
     /* number of lines to show */
   }
-  
 </style>
 
 <body style="background-color: ghostwhite">
@@ -246,15 +245,15 @@
         </header>
 
         <div class=" row">
-                <div class="row" style="display: contents;">
+                <div class="row " style="display: contents;">
                   <% for(let i=0;i<products.length&&i < 12;i++) { %>
                     <% var discount=products[i].discount %>
                       <% var Odiscount=products[i].price * discount / 100 %>
                         <% var showPrice=products[i].price-Odiscount %>
 
-                          <div class="col-lg-2  col-md-3 col-sm-4 d-flex" onclick="userdetails('<%=products[i]._id%>')">
+                          <div class="col-lg-2 mt-3 col-md-3 col-sm-4 d-flex" onclick="userdetails('<%=products[i]._id%>')">
 
-                            <div class=" card w-100 my-2 border-" style="   box-shadow: 0 0 10px #0000001a;">
+                            <div id="card" class=" card w-100 my-2 border-" style="   box-shadow: 0 0 10px #0000001a;">
                               <% if(discount> 0) { %>
                                 <div class="discount-badge position-absolute top-0 start-0 mt-2 px-1 py-0"
                                   style="background-color: #febd69; color: #131921; border-radius: 90px; margin-left: 8px; font-size: 0.75rem; font-weight: bolder;">
@@ -264,8 +263,35 @@
                                   <!-- <p class="card-text" style="font-size: smaller; margin-left: 5px;"> <span>
                             <%=products[i].stock%>
                           </span> stock left</p> -->
-                                  <img src="primg/<%=products[i].prd_images[0] %>" class="card-img-top"
+                                  <img src="primg/<%=products[i].prd_images[0] %>" class="card-img-top main-image"
                                     style="aspect-ratio: 1 / 1" />
+                                  <img src="primg/<%=products[i].prd_images[1] %>" class="card-img-top  hover-image"
+                                    style="aspect-ratio: 1 / 1 ;display: none;" />
+                                 <style>  .card-title {
+                                  display: -webkit-box;
+                                  -webkit-box-orient: vertical;
+                                  overflow: hidden;
+                                  -webkit-line-clamp: 2;
+                                  /* number of lines to show */
+                                }
+                              
+                                .card {
+                                  transition: transform 0.3s ease;
+                                }
+                              
+                                .card.hovered {
+                                  transform: scale(1.05); /* Adjust the scale value based on your preference */
+                                }
+                              
+                                .card .card-body {
+                                  transition: background-color 0.3s ease;
+                                }
+                              
+                                .card:hover .card-body {
+                                  background-color:white; /* Adjust the background color on hover */
+                                }
+                              </style>
+                              
                                   <div class="card-body d-flex flex-column">
                                     <p class="card-text" style="color: #bf4800;;">
                                       <%=products[i].category%>
@@ -275,9 +301,7 @@
                                       style="color: #1c1b1b; font-family: 'Rubik', sans-serif;font-size: 15px;    font-weight: 600;">
                                       <%=products[i].pname %>
                                     </h6>
-                                    <!-- <div style="width: 100%; display: flex; justify-content: end;">
-                      <p style="position: absolute; text-align: end;margin-right: 20px; margin-top: 10px; font-size: 25px;"><i class="fa-regular fa-heart"></i></p> 
-                    </div> -->
+
                                     <p></p>
 
                                     <p class="card-text" style="font-weight: 400;
@@ -299,10 +323,11 @@
 
 
 
-          
+
       </div>
       </div>
       </section>
+
 
 
 
@@ -318,6 +343,29 @@
         crossorigin="anonymous"></script>
 
       <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+          var cards = document.querySelectorAll('.card');
+
+          cards.forEach(function (card) {
+            var mainImage = card.querySelector('.main-image');
+            var hoverImage = card.querySelector('.hover-image');
+
+            card.addEventListener('mouseover', function () {
+              mainImage.style.display = 'none';
+              hoverImage.style.display = 'block';
+              card.classList.add('hovered');
+            });
+
+            card.addEventListener('mouseout', function () {
+              mainImage.style.display = 'block';
+              hoverImage.style.display = 'none';
+              card.classList.remove('hovered');
+            });
+          });
+        });
+
+
         function userdetails(id) {
           fetch(`/save-singleProduct-session?id=${id}`, {
             method: "GET",
@@ -344,7 +392,8 @@
         }
 
       </script>
-<script src="https://chatrace.com/webchat/plugin.js?v=5"></script><script>ktt10.setup({id:"qyHHsazOlvJ",accountId:"1174942",color:"#006dff"})</script>
+      <script src="https://chatrace.com/webchat/plugin.js?v=5"></script>
+      <script>ktt10.setup({ id: "qyHHsazOlvJ", accountId: "1174942", color: "#006dff" })</script>
       <%- include('include/_footer') %>
 
 
