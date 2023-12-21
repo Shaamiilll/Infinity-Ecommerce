@@ -62,8 +62,8 @@ module.exports = {
     req.session.singleProductId=''
     try {
       const email = req.session.email;
-      console.log(email);
-  
+      
+      console.log('start');
       const cartData = await cartDb.find({ email: email });
       const productId = cartData.map((item) => item.prId);
   console.log(productId +"from ProductId");
@@ -71,6 +71,7 @@ module.exports = {
       console.log(productData + "from ProductData");
       let sum = 0;
   
+
       for (let i = 0; i < productData.length; i++) {
         const cartItem = await cartDb.findOne({ prId: productData[i]._id });
   
@@ -83,7 +84,8 @@ module.exports = {
         sum += count;
       }
       // sum = sum.toFixed(2);
-      console.log(sum);
+      req.session.discountApplied = false
+      req.session.totalAmountSession=sum
       if(productData){
         res.render("cart", { cart: cartData, totalsum: sum, email: email });
       }else{

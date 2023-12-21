@@ -9,6 +9,8 @@ const bcrypt = require("bcrypt");
 const express = require("express");
 const dotenv = require("dotenv");
 dotenv.config({ path: "config.env" });
+const Decimal128 = require("mongodb").Decimal128;
+
 console.log(process.env.EMAIL);
 console.log(process.env.APP_PASSWORD);
 
@@ -76,29 +78,34 @@ const sendOTPVerificationeEmail = async ({ _id, email }, res) => {
 //create and save new User
 module.exports = {
   newuser: async (req, res) => {
-    
     if (!req.body.email) {
       req.session.errorEmail = "This feild is required";
     }
     if (req.body.password !== req.body.confirmPassword) {
-      req.session.CheckPass="Password and Confirm Password do not match!" 
+      req.session.CheckPass = "Password and Confirm Password do not match!";
     }
     const phoneNumber = req.body.Phone;
     if (!/^\d{10}$/.test(phoneNumber)) {
-      req.session.errorPhone= "Phone number must be 10 digits long!"
+      req.session.errorPhone = "Phone number must be 10 digits long!";
     }
-    req.session.phone=req.body.phone
+    req.session.phone = req.body.phone;
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     if (!emailPattern.test(req.body.email)) {
-      req.session.errorPattern= "Invalid email format!"
+      req.session.errorPattern = "Invalid email format!";
     }
 
     req.session.email = req.body.email;
     console.log(req.session.email);
-    if(req.session.errorEmail||req.session.errorPass||req.session.errorPattern|| req.session.errorPhone || req.session.CheckPass){
+    if (
+      req.session.errorEmail ||
+      req.session.errorPass ||
+      req.session.errorPattern ||
+      req.session.errorPhone ||
+      req.session.CheckPass
+    ) {
       console.log("hyy");
-      req.session.savedInfo=req.body.email;
-      return res.redirect("/register")
+      req.session.savedInfo = req.body.email;
+      return res.redirect("/register");
     }
     const saltrounds = 10;
     const hashedPassword = await bcrypt.hash(req.body.password, saltrounds);
@@ -126,7 +133,7 @@ module.exports = {
         }); // Include OTP in the rendering
       })
       .catch((err) => {
-        req.session.userRegistered="User Already Exist"
+        req.session.userRegistered = "User Already Exist";
         res.redirect("/register");
       });
   },
@@ -151,7 +158,7 @@ module.exports = {
     Userdb.findOne({ email: inputEmail })
       .then((userdata) => {
         if (!userdata) {
-          req.session.invalid = "Invalid Credential"
+          req.session.invalid = "Invalid Credential";
           return res.status(400).redirect("/login");
         }
 
@@ -175,9 +182,7 @@ module.exports = {
                 )
                   .then(() => {
                     req.session.email = inputEmail;
-                    res.redirect(
-                      "/"
-                    );
+                    res.redirect("/");
                   })
                   .catch((updateErr) => {
                     console.error("Error updating user status:", updateErr);
@@ -189,7 +194,7 @@ module.exports = {
                 res.status(500).send("Internal Server Error");
               });
           } else {
-            req.sessi
+            req.sessi;
             req.session.invalid = "Invalid Credntials";
             console.log(req.session.errorPass);
             res.status(400).redirect("/login");
@@ -377,8 +382,8 @@ module.exports = {
   },
   forgetPassword: async (req, res) => {
     try {
-      req.session.OTPemail=req.body.email
-      const email=req.session.OTPemail
+      req.session.OTPemail = req.body.email;
+      const email = req.session.OTPemail;
 
       const user = await Userdb.findOne({ email });
 
@@ -473,8 +478,8 @@ module.exports = {
       let sort = req.query.sort || "price";
       let category = req.query.category || "All";
       const email = req.session.email;
-      const minPrice = req.query.minPrice || 0; // Default to 0 if not provided
-      const maxPrice = req.query.maxPrice || Number.MAX_SAFE_INTEGER; // Default to maximum safe integer if not provided
+      const minPrice = req.query.minPrice || 0;
+      const maxPrice = req.query.maxPrice || Number.MAX_SAFE_INTEGER;
 
       req.session.min = req.query.minPrice || "";
       req.session.max = req.query.maxPrice || "";
@@ -503,7 +508,7 @@ module.exports = {
       } else {
         sortBy[sort[0]] = "asc";
       }
-      const products = await productDb
+      let products = await productDb
         .find({
           pname: { $regex: search, $options: "i" },
           active: true,
@@ -515,10 +520,7 @@ module.exports = {
         .sort(sortBy)
         .skip((page - 1) * limit)
         .limit(limit);
-      console.log(limit + "limit");
-      console.log(page + "limit");
 
-      console.log("Products with category:", products);
       const total = await productDb.countDocuments({
         category: { $in: [...category] },
         pname: { $regex: search, $options: "i" },
@@ -534,16 +536,6 @@ module.exports = {
         categoryStats: true,
       });
       const catData = await categoryDb.find();
-      // const response = {
-      //   error: false,
-      //   noPages,
-      //   page: page,
-      //   categories: categoryOptions, // Update with your actual categories
-      //   products,
-
-      // };
-
-      console.log(minPrice, req.session.cat);
 
       res.status(200).render("ourStore", {
         products: products,
@@ -564,19 +556,82 @@ module.exports = {
     }
   },
   promoCode: async (req, res) => {
-
     const promoCode = req.body.coupon.toUpperCase();
-    const price=req.body.price
+    let price = req.body.price;
+
     try {
       const data = await couponDb.findOne({ code: promoCode });
+
       if (data) {
-        return res.json({ success: true, discountPercentage: data.discountPercentage ,price:price});
+        
+        if (req.session.discountApplied) {
+          return res.json({
+            success: false,
+            message: "Coupon has already been applied",
+          });
+        }
+        if (price <= 100) {
+          return res.json({
+            success: false,
+            message: "Can't Apply Coupon Code price should be more than 100",
+          });
+        }
+
+        const discountedPrice = price - (price / 100) * data.discountPercentage;
+        console.log(discountedPrice);
+
+        req.session.discountApplied = true;
+        req.session.discountPercentage=data.discountPercentage // Set the flag to indicate discount applied
+        return res.json({
+          success: true,
+          discount: discountedPrice,
+          discountPercent: data.discountPercentage,
+        });
       } else {
+        console.log(6);
         return res.json({ success: false, message: "Coupon is invalid" });
       }
     } catch (error) {
-      res.status(500).json({ success: false, message: "Internal Server Error" });
+      res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error" });
     }
-  }
-  
+  },
+  wallet: async (req, res) => {
+    try {
+      const price = req.body.price
+      const email = req.session.email;
+      const user = await Userdb.findOne({ email: email });
+
+      if (user) {
+        const userWalletAmount = user.wallet;
+        req.session.userWallet = 0;
+
+        if (userWalletAmount => price) {
+          req.session.userWalletbalance = userWalletAmount-price;
+          return res.json({
+            success: true,
+            price:price-userWalletAmount,
+            walletAmount: req.session.totalAmountSession - 20,
+          });
+        } else {
+          return res.json({
+            success: false,
+            message: "Insufficient funds in the wallet or  ",
+          });
+        }
+      } else {
+        return res.json({
+          success: false,
+          message: "User not found.",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
+    }
+  },
 };

@@ -68,6 +68,11 @@ router.post("/checkout-page", userServices.loadcheckout); //For login the user
 router.post("/checkout/address", userServices.changeAddress); //For login the user
 router.post("/apply-promo", userController.promoCode); //For login the user
 
+
+router.post("/apply-wallet", userController.wallet); //For login the user
+
+
+
 router.post("/payment", userServices.loadPayment); //For login the user
 router.post("/submit-order", orderController.order); //For login the user
 router.get('/order-success',orderController.orderid)

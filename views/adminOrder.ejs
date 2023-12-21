@@ -1,6 +1,9 @@
 <!-- include footer -->
 <%- include('include/_adminbase.ejs') %>
-    <!-- /include footer -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+<!-- /include footer -->
+
     <style>
         .product-name {
             max-width: 150px;
@@ -11,6 +14,7 @@
         }
     </style>
     <!-- CONTENT -->
+
     <section id="content">
         <!-- NAVBAR -->
 
@@ -25,7 +29,7 @@
                         <i class='bx bx-search'></i>
                         <i class='bx bx-filter'></i>
                     </div>
-                    <table>
+                    <table id="table_id" class="display">
                         <thead>
                             <tr>
                                 <th>Product</th>
@@ -83,8 +87,19 @@
             window.location.href = userDetailURL;
         }
     </script>
-
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
     <script src="js/adminserver.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+    <script>
+        $(document).ready(function () {
+    $('#table_id').DataTable();
+});
+
+    </script>
     </body>
 
     </html>

@@ -18,6 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/userHome.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
 <style>
@@ -219,22 +220,7 @@
                       </button>
         </div>
 
-        <!-- 
-    <div class="container py-5">
-      <h1 style="color: #1D1C1B;">
-        Best products & <br />
-        brands in our store
-      </h1>
-      <p style="color: #1D1C1B;">
-        Trendy Products, Factory Prices, Excellent Service
-      </p>
-      <button type="button" class="btn ">
-        Learn more
-      </button>
-      <button type="button" class="btn ">
-        Purchase Now
-      </button>
-    </div> -->
+
 
         <section>
           <div class="container my-5">
@@ -251,7 +237,8 @@
                       <% var Odiscount=products[i].price * discount / 100 %>
                         <% var showPrice=products[i].price-Odiscount %>
 
-                          <div class="col-lg-2 mt-3 col-md-3 col-sm-4 d-flex" onclick="userdetails('<%=products[i]._id%>')">
+                          <div class="col-lg-2 mt-3 col-md-3 col-sm-4 d-flex"
+                            onclick="userdetails('<%=products[i]._id%>')">
 
                             <div id="card" class=" card w-100 my-2 border-" style="   box-shadow: 0 0 10px #0000001a;">
                               <% if(discount> 0) { %>
@@ -267,31 +254,34 @@
                                     style="aspect-ratio: 1 / 1" />
                                   <img src="primg/<%=products[i].prd_images[1] %>" class="card-img-top  hover-image"
                                     style="aspect-ratio: 1 / 1 ;display: none;" />
-                                 <style>  .card-title {
-                                  display: -webkit-box;
-                                  -webkit-box-orient: vertical;
-                                  overflow: hidden;
-                                  -webkit-line-clamp: 2;
-                                  /* number of lines to show */
-                                }
-                              
-                                .card {
-                                  transition: transform 0.3s ease;
-                                }
-                              
-                                .card.hovered {
-                                  transform: scale(1.05); /* Adjust the scale value based on your preference */
-                                }
-                              
-                                .card .card-body {
-                                  transition: background-color 0.3s ease;
-                                }
-                              
-                                .card:hover .card-body {
-                                  background-color:white; /* Adjust the background color on hover */
-                                }
-                              </style>
-                              
+                                  <style>
+                                    .card-title {
+                                      display: -webkit-box;
+                                      -webkit-box-orient: vertical;
+                                      overflow: hidden;
+                                      -webkit-line-clamp: 2;
+                                      /* number of lines to show */
+                                    }
+
+                                    .card {
+                                      transition: transform 0.3s ease;
+                                    }
+
+                                    .card.hovered {
+                                      transform: scale(1.05);
+                                      /* Adjust the scale value based on your preference */
+                                    }
+
+                                    .card .card-body {
+                                      transition: background-color 0.3s ease;
+                                    }
+
+                                    .card:hover .card-body {
+                                      background-color: white;
+                                      /* Adjust the background color on hover */
+                                    }
+                                  </style>
+
                                   <div class="card-body d-flex flex-column">
                                     <p class="card-text" style="color: #bf4800;;">
                                       <%=products[i].category%>
@@ -342,7 +332,15 @@
         integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
         crossorigin="anonymous"></script>
 
+
+
       <script>
+
+
+
+
+
+
 
         document.addEventListener("DOMContentLoaded", function () {
           var cards = document.querySelectorAll('.card');

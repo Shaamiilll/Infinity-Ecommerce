@@ -125,9 +125,11 @@ exports.otp = (req, res) => {
 
 exports.productdetalis = (req, res) => {
   const id = req.session.singleProductId
+  req.session.discountApplied=false
   console.log(id);
   productdb.findOne({ _id: id }).then((data) => {
-    email = req.session.email;
+    const email = req.session.email;
+    req.session.totalAmountSession=data.price
     res.render("productDetails", { product: data, email: req.session.email });
   });
 };
@@ -210,8 +212,12 @@ exports.address = (req, res) => {
 };
 
 exports.loadcheckout = (req, res) => {
+  let totalprice
   const email = req.session.email;
-  const totalprice = req.body.totalsum;
+
+     totalprice = req.session.totalAmountSession;
+ 
+  
   const index = req.query.id || 0;
   const prId = req.session.singleProductId;
 
@@ -224,6 +230,13 @@ exports.loadcheckout = (req, res) => {
         users: userdata,
         price: totalprice,
         a: index,
+      },(err, html) => {
+        if (err) {
+          return res.send("Internal Server error " + "1");
+        }
+        delete req.session.discountApplied
+  
+        res.send(html);
       });
     })
     .catch((err) => {

@@ -40,7 +40,7 @@ const schema = new mongoose.Schema({
     type: String,
   },
   wallet: {
-    type: Schema.Types.Decimal128,
+    type: Number,
         default: 0.0
 },
   verified: Boolean,

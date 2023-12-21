@@ -3,7 +3,7 @@ const productdb = require("../model/productsSchema");
 const orderDb = require("../model/orderSchema");
 const Razorpay = require("razorpay");
 const Userdb = require("../model/usersSchema");
-
+const val=productdb.find({price:111})
 const razorpayInstance = new Razorpay({
   key_id: process.env.RAZORPAY_ID_KEY,
   key_secret: process.env.RAZORPAY_SECRET_KEY,
@@ -11,17 +11,28 @@ const razorpayInstance = new Razorpay({
 
 module.exports = {
   order: async (req, res) => {
+    console.log("ordere");
     try {
       let email = req.session.email;
       const id = req.session.singleProductId;
+      let amount= req.session.totalAmountSession
+      if(req.session.userWallet||req.session.discountPercentage){
+        const wallet = req.session.userWallet
+        const couponPercentage = req.session.discountPercentage
+        
+      }
+   
+    
       
-      req.session.prId = id;
-      const totalAmount = req.body.totalsum;
+      
+      
+      console.log(1);
+     console.log(req.session.totalAmountSession);
       if (req.session.singleProductId) {
-        const data = await productdb.find({ _id: id });
+        const data = await productdb.find({ _id: req.session.singleProductId });
         const orderDetails = {
           user: email,
-          totalAmount: req.body.totalsum,
+          totalAmount:req.session.totalAmountSession ,
           shippingAddress: {
             Address: req.body.address,
             city: req.body.city,
@@ -30,20 +41,25 @@ module.exports = {
             AlternateNumber: req.body.alternateNumber,
           },
           products: data,
-
           PaymentMethod: req.body.payment,
         };
+        
         req.session.orderDetails = orderDetails;
         const neworder = new orderDb(orderDetails);
 
         if (req.body.payment === "Online_Payment") {
           const randomOrderID = Math.floor(Math.random() * 1000000).toString();
           const options = {
-            amount: totalAmount * 100,
+            amount:req.body.totalsum ,
             currency: "INR",
             receipt: randomOrderID,
           };
+          const wallet =  req.session.userWallet? req.session.userWallet:0
+          const amount = (((amount - wallet) )-20)*100 ;
 
+          // Ensure amount is not negative, if negative, set it to zero
+          const finalAmount = Math.max(0, amount);
+          console.log(finalAmount);
           await new Promise((resolve, reject) => {
             razorpayInstance.orders.create(options, (err) => {
               if (!err) {
@@ -51,9 +67,9 @@ module.exports = {
                 res.status(200).send({
                   razorSuccess: true,
                   msg: "order created",
-                  amount: totalAmount * 100,
+                  amount: finalAmount  ,
                   key_id: process.env.RAZORPAY_ID_KEY,
-                  name: "shamil",
+                  name: req.session.email,
                   contact: "9744676504",
                   email: "shamil@gmail.com",
                 });
@@ -74,6 +90,7 @@ module.exports = {
           res.json({ url: `/successOrder?id=${data._id}` });
         }
       }  else {
+        console.log("cart");
         
         const productData = await cartDb.find({ email: email });
         const allOrderDetails = [];
@@ -81,7 +98,7 @@ module.exports = {
         for (let i = 0; i < productData.length; i++) {
           const orderDetails = {
             user: email,
-            totalAmount: req.body.totalsum,
+            totalAmount:req.body.totalsum ,
             shippingAddress: {
               Address: req.body.address,
               city: req.body.city,
@@ -99,7 +116,7 @@ module.exports = {
         if (req.body.payment === "Online_Payment") {
           const randomOrderID = Math.floor(Math.random() * 1000000).toString();
           const options = {
-            amount: totalAmount * 100,
+            amount: req.body.totalsum  * 100,
             currency: "INR",
             receipt: randomOrderID,
           };
@@ -112,7 +129,7 @@ module.exports = {
                 res.status(200).send({
                   razorSuccess: true,
                   msg: "order created",
-                  amount: totalAmount * 100,
+                  amount: req.session.totalAmountSession* 100,
                   key_id: process.env.RAZORPAY_ID_KEY,
                   name: "shamil",
                   contact: "shamil",

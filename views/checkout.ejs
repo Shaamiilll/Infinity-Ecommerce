@@ -18,6 +18,7 @@
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -212,26 +213,44 @@
               <hr />
               <div class="d-flex justify-content-between">
                 <p class="mb-2">Total price:</p>
-                <p class="mb-2 fw-bold" id="updatedPrice">₹<%= updateprice %>
+                <p class="mb-2 fw-bold" id="updatedPrice">₹<%= updateprice%>
                 </p>
               </div>
 
               <div class="input-group mt-3 mb-4">
+
                 <form id="promo-code-form">
-                  <p id="price1" class="d-none">
-                    <%= updateprice %>
-                  </p>
+
+                  <input type="number" hidden id="price1" value="<%= updateprice  %>" name="totalsum">
+
                   <input type="text" class="form-control border" name="coupon" id="coupon-input"
                     placeholder="Promo code" />
-                    <h1></h1>
-                    <input type="number" class="form-control border" name="wallet" id="coupon-input"
-                    placeholder="Wallet" />
-                    <h1></h1>
-                    <p class="text-success text-end">*₹ <%=users.wallet  %> Available in Wallet</p>
+
+                  <h1></h1>
+
                   <button type="button" class="btn btn-light text-primary border"
                     onclick="applyPromoCode()">Apply</button>
                 </form>
               </div>
+              <div class="input-group mt-3 mb-4">
+                <form id="promo-code-form">
+
+
+                  <!-- Replace the input field with a checkbox -->
+                  <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="wallet-checkbox" onclick="applyWallet()">
+                    <label class="form-check-label" for="wallet-checkbox">Use Wallet Amount</label>
+                  </div>
+
+                  <h1></h1>
+
+                  <p id="wal" class="text-success text-end">₹ <%= users.wallet %> Available in Wallet</p>
+
+                </form>
+              </div>
+
+
+
             </div>
           </div>
         </div>
@@ -278,12 +297,15 @@
 </body>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
+
   $("#checkout-form").submit((e) => {
+    
     e.preventDefault();
     $.ajax({
       url: `/submit-order?prId=${'<%=prId%>'}`,
       method: 'post',
       data: $('#checkout-form').serialize(),
+
       success: (response) => {
         if (response.url) {
           return window.location.href = response.url;
@@ -295,7 +317,7 @@
   function razorpayPayment(order) {
     var options = {
       "key": "rzp_test_JrHZi49O6mvXnR",
-      "amount": "<%= updateprice %>",
+      "amount": order.amount,
       "currency": "INR",
       "name": "infinity",
       "description": "Test Transaction",
@@ -332,41 +354,131 @@
 </script>
 <script>
   function applyPromoCode() {
-    var promoCode = document.getElementById('coupon-input').value;
-    console.log(promoCode);
 
-    // Use AJAX to send promoCode to the server
+
+    var promoCode = document.getElementById('coupon-input').value;
+    var totalsum = document.getElementById('updatedPrice').innerText;
+    var totalsum1 = document.getElementById('price1').value;
+
+
+
+
     $.ajax({
       url: '/apply-promo',
       method: 'post',
-      data: { coupon: promoCode },
+      data: { coupon: promoCode, price: totalsum1 },
       success: function (response) {
 
-        // Handle the response from the server
+
         if (response.success) {
-
+          
           document.getElementById('coupon').innerText = ""
-          document.getElementById('couponDis').innerText = '-' + response.discountPercentage + '%'
+          document.getElementById('couponDis').innerText = '-' + response.discountPercent + '%'
           document.getElementById('co').style.display = "block"
-          const og=document.getElementById('price1').innerText
-          const discount = (document.getElementById('price1').innerText * response.discountPercentage) / 100
-          document.getElementById("updatedPrice").innerText = document.getElementById('price1').innerText - discount
-
+          document.getElementById("updatedPrice").innerText = response.discount
+          document.getElementById('price1').value=response.discount
+          
+          // document.getElementById("price1").innerText = totalsum - (totalsum / 100) * response.discountPercent
+        
+          const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            }
+          });
+          Toast.fire({
+            icon: "success",
+            title:"Coupon Code Applied Succesfully"
+          });
+          
 
 
         } else {
-          document.getElementById('coupon').innerText = "Invalid Coupon"
-          
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: response.message,
+          });
+
         }
       },
       error: function () {
         alert('Error applying promo code. Please try again.');
+
       }
     });
   }
   document.addEventListener('contextmenu', function (e) {
     e.preventDefault();
-});
+  });
+
+  function applyWallet() {
+
+    var isWalletUsed = document.getElementById('wallet-checkbox').checked;
+    let price = document.getElementById('price1').value
+
+    if (isWalletUsed) {
+
+      $.ajax({
+        url: '/apply-wallet',
+        method: 'post',
+        data: {  price: price },
+        success: function (response) {
+          alert(response.price)
+          if (response.success) {
+            const Toast = Swal.mixin({
+              toast: true,
+              position: "top-end",
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+              }
+            });
+            Toast.fire({
+              icon: "success",
+              title: "Withdrawed The Amount From the Wallet"
+            });
+            document.getElementById("updatedPrice").innerText = '<%=updateprice%>' - response.walletAmount;
+            document.getElementById("price1").value = '<%=updateprice%>' - response.walletAmount;
+            if ('<%=users.wallet %>' - response.walletAmount < 0) {
+              document.getElementById('wal').innerText = `₹ 0 Available in wallet`
+              document.getElementById("updatedPrice").innerText = ` ₹ ${('<%=users.wallet %>' - response.walletAmount) * -1}`
+            } else {
+              document.getElementById('wal').innerText = `₹ ${'<%=users.wallet %>' - response.walletAmount} Available in Wallet`;
+
+            }
+
+          } else {
+            document.getElementById('coupon').innerText = response.message;
+          }
+        },
+        error: function () {
+          alert('Error applying wallet. Please try again.');
+        }
+      });
+    } else {
+      // Handle the case where the checkbox is not checked (optional)
+      // You might want to update the UI or perform other actions
+
+      Swal.fire({
+        title: "Adding Money Back to wallet ",
+        icon: "success"
+      });
+    window.location.reload()
+    }
+  }
+
+  document.addEventListener('contextmenu', function (e) {
+    e.preventDefault();
+  });
 </script>
 
 

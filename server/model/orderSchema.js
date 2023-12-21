@@ -47,6 +47,14 @@ const orderSchema = new mongoose.Schema({
   PaymentMethod: {
     type: String,
     required: true,
+  },
+  couponCode:{
+    type:String,
+    default:''
+  },
+  fromWallet:{
+    type:Number,
+    default:0
   }
   
 });

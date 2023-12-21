@@ -1,5 +1,8 @@
 <!-- include footer -->
 <%- include('include/_adminbase.ejs') %>
+<!-- Include Chart.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <!-- /include footer -->
 <style>
 	/* Add this to your CSS */
@@ -49,7 +52,7 @@
             <li>
                 <i class='bx bxs-calendar-check'></i>
                 <span class="text">
-                    <h3>
+                    <h3 class="counter">
                         <%= totalOrder %>
                     </h3>
                     <p>Total Order</p>
@@ -58,7 +61,7 @@
             <li>
                 <i class='bx bxs-group'></i>
                 <span class="text">
-                    <h3>
+                    <h3 class="counter">
                         <%= amountOfUsers %>
                     </h3>
                     <p>Total Users</p>
@@ -68,17 +71,19 @@
             <li>
                 <i class='bx bxs-dollar-circle'></i>
                 <span class="text">
-                    <h3>
+                    <h3 class="counter">
                         <%= totalSalesAmount %>
                     </h3>
                     <p>Total Sales</p>
                 </span>
             </li>
         </ul>
-    </main>
-    <!-- MAIN -->
 
-    <!-- Modal -->
+
+    </main>
+    
+    <canvas id="myChart" width="1300" height="400" ></canvas>
+
     <div id="dateRangeModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeDateRangeModal()">&times;</span>
@@ -137,6 +142,44 @@
         // Close the modal after clicking the download button
         closeDateRangeModal();
     }
-</script>
 
+</script>
+<script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.0/jquery.waypoints.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery.counterup@2.1.0/jquery.counterup.min.js"></script>
+<script>
+    $(".counter").counterUp({
+  delay: 10,
+  time: 1000,
+});
+</script>
+<script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+  
+    var myChart = new Chart(ctx, {
+      type: 'bar', // Specify the chart type (bar, line, pie, etc.)
+      data: {
+        labels: ['Label 1', 'Label 2', 'Label 3'],
+        datasets: [{
+          label: 'My Dataset',
+          data: [10, 20, 30],
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+          ],
+          borderWidth: 1,
+        }]
+      },
+      options: {
+        // Additional options for customization
+      }
+    });
+  </script>
+  
 </html>
