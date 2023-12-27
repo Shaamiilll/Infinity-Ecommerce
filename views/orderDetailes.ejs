@@ -153,11 +153,14 @@
                         <a href="/change-status?status=shipped&id=<%= data._id %>"
                             style="text-decoration: none; font-weight: 500;color: #f4f4f4">Mark as Delivered</a>
                     <% } else if (data.status === 'delivered') { %>
+                       
                         <span style="font-weight: 500; color: #28a745;">✓ Delivered</span>
                     <% } else if (data.status === 'cancelled') { %>
                         <span style="font-weight: 500; color: #dc3545;">✗ Cancelled</span>
                     <% } else { %>
+                        
                         <span style="font-weight: 500; color: #28a745;">✓ Delivered</span>
+                        
                     <% } %>
                 </div>
 

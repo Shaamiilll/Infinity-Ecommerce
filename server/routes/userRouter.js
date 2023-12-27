@@ -7,6 +7,8 @@ const wishlistController = require("../controller/wishlistController");
 const orderController = require("../controller/orderController.js");
 const paymentController = require("../controller/paymentController");
 const middle = require("../middleware/UserMiddleware.js");
+const productController = require("../controller/productController.js");
+const reviewController = require("../controller/reviewController.js");
 
 router.get("/", userController.userHome); //home render
 router.get("/our-store", userController.products); //Our Store
@@ -42,6 +44,7 @@ router.post("/verify-password", userController.newPassword); //rendering post pa
 router.get("/product", userServices.product); //otp product
 router.get("/product-details", userServices.productdetalis); // add user to another collction
 router.get("/save-singleProduct-session", userServices.SaveSession); // add user to another collction
+router.post("/add-review", reviewController.review); // add user to another collction
 
 
 //otp
@@ -84,6 +87,7 @@ router.post("/create-order", paymentController.createOrder); //For login the use
 router.get("/cancel-product", orderController.cancelOrder); //For login the user
 router.get("/return-product", orderController.returnOrder); //For login the user
 router.get("/myorder/OrderDetailes", orderController.OrderDetailes); //For login the user
+
 
 
 

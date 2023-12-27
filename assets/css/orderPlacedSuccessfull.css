@@ -1,0 +1,906 @@
+/*---------- font family ----------*/
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Lemon&family=Ubuntu:wght@300;400;500;700&display=swap");
+/*---------- end of font family ----------*/
+
+*::after,
+*::before,
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+body {
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden;
+}
+body::-webkit-scrollbar {
+  display: none;
+}
+p {
+  margin: 0;
+}
+.row > * {
+  padding: 0;
+  margin: 0;
+}
+a {
+  text-decoration: none;
+}
+
+/*---------- BS var ----------*/
+:root {
+  --bs-body-bg: transparent;
+  --bs-border-color: rgba(255, 255, 255, 0.4);
+  --bs-accordion-btn-focus-border-color: transparent;
+}
+
+
+/*---------- main COntent ----------*/
+.main {
+  padding: 3% 4%;
+}
+.mainContainer {
+  border: 1px solid #e0e0e0;
+  background: #fff;
+}
+.cartHead {
+  padding: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+.cartHead h2 {
+  color: #000;
+  font-family: Ubuntu;
+  font-size: 1.125rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+.cartBody {
+  padding: 1.25rem;
+}
+.cartHead svg {
+  width: 35px;
+  height: 35px;
+}
+.orderSummary {
+  margin-left: auto;
+  width: 80%;
+  background: #fff;
+  margin-bottom: 2rem;
+}
+.orderHeading {
+  padding: 1.2rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+.orderHeading h2 {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.5);
+  font-family: Ubuntu;
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  text-transform: capitalize;
+}
+.orderContent {
+  padding: 1.2rem;
+  border-bottom: 1px solid #e0e0e0;
+  font-family: Ubuntu;
+  font-style: normal;
+  line-height: normal;
+}
+.orderContent div {
+  margin-bottom: 1.75rem;
+}
+.orderContent div:last-child {
+  margin-bottom: 0;
+}
+.commonText {
+  color: rgba(0, 0, 0, 0.75);
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+.commonSub {
+  color: #000;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.ship p:nth-child(2) {
+  color: #3cb77c;
+}
+.tPrice {
+  padding: 1.2rem;
+}
+.tPrice p {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+.deleviryContent {
+  padding: 2rem;
+}
+.chooseAdd {
+  border: 1px solid #e0e0e0;
+  padding: 2rem 1.5rem;
+}
+.existingAddress {
+  width: 65%;
+}
+.existingAddress p {
+  color: rgba(0, 0, 0, 0.75);
+  font-family: Ubuntu;
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+.button {
+  color: #000;
+  font-family: Ubuntu;
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  border: transparent;
+  outline: none;
+  background-color: rgb(0, 0, 0);
+  padding: 0.4rem 1.25rem;
+  top: 20px;
+  right: 20px;
+}
+.phone {
+  width: max-content;
+}
+.checkOut {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  width: 100%;
+  height: 12vh;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 2rem;
+  padding: 0 3%;
+}
+.pInfo{
+    padding: 1rem;
+    border-radius: 9px;
+    border: 1px solid #e0e0e0;
+}
+.editBody h2{
+    color: #000;
+    font-family: Ubuntu;
+    font-size: 0.9rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-bottom: 0.75rem;
+}
+.pInfo p{
+    color: #000;
+    font-family: Ubuntu;
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    margin-bottom: 0.5rem;
+}
+.pInfo span{
+    font-weight: 400;
+}
+.pInfo{
+    margin-bottom: 1.25rem;
+}
+.saveBtn{
+    margin-top: 0.65rem;
+    border: transparent;
+    outline: transparent;
+    background-color: #0f0;
+    color: #000;
+    font-family: Ubuntu;
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    width: 6.5rem;
+    height: 2rem;
+    border-radius: 4px;
+}
+.cardOptions{
+    border-radius: 9px;
+    width: 8rem;
+    border: 1px solid #e0e0e0;
+    padding: 1rem 0;
+    margin-bottom: 1rem;
+}
+.cardOptions svg{
+    width: 42px;
+    height: 42px;
+    margin-bottom: 0.2rem;
+}
+.cardOptions p{
+    color: #000;
+    font-family: Ubuntu;
+    font-size: 0.8rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+.editBody{
+    padding: 2.25rem;
+}
+.editBody label{
+    color: #000;
+    font-family: Ubuntu;
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    margin-bottom: 0.65rem;
+}
+.editBody input{
+    outline: transparent;
+    padding: 0.5rem;
+    border-radius: 10px;
+    border: 1px solid #E0E0E0;
+    background: #FFF;
+    margin-bottom: 0.65rem;
+    font-family: Ubuntu;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+.left{
+    min-width: fit-content;
+    margin-left: auto;
+}
+.twoBtn{
+    display: none;
+}
+.sides{
+    width: 50%;
+}
+.page{
+    height: 75vh;
+}
+.tick{
+    top: 55%;
+    left: 52%;
+    transform: translate(-50%,-50%);
+}
+.page h2{
+    margin: 0;
+    margin-bottom: 0.5rem;
+    color: #000;
+    font-family: Ubuntu;
+    font-size: 1.125rem;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+}
+.page p{
+    margin: 0;
+    margin-bottom: 0.5rem;
+    color: #000;
+    font-family: Ubuntu;
+    font-size: 0.9rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+.okBtn{
+    border: transparent;
+    outline: transparent;
+    width: 5rem;
+    color: #ffffff;
+    font-family: Inter;
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    text-transform: uppercase;
+    padding: 0.5rem;
+    border-radius: 1.5625rem;
+    background: #131921 ;
+}
+.checkmark {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 0.8rem;
+  border-radius: 50%;
+  display: block;
+  stroke-width: 2;
+  stroke: #4bb71b;
+  stroke-miterlimit: 10;
+  box-shadow: inset 0px 0px 0px #4bb71b;
+  animation: fill 0.4s ease-in-out 0.4s forwards,
+    scale 0.3s ease-in-out 0.9s both;
+  position: relative;
+  top: 5px;
+  right: 5px;
+}
+
+.checkmark__circle {
+  stroke-dasharray: 166; 
+  stroke-dashoffset: 166;
+  stroke-width: 2;
+  stroke-miterlimit: 10;
+  stroke: #4bb71b;
+  fill: #fff;
+  animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmark__check {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+
+@keyframes stroke {
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes scale {
+  0%,
+  100% {
+    transform: none;
+  }
+
+  50% {
+    transform: scale3d(1.1, 1.1, 1);
+  }
+}
+
+@keyframes fill {
+  100% {
+    box-shadow: inset 0px 0px 0px 30px #4bb71b;
+  }
+}
+/*---------- end of main COntent ----------*/
+
+/*---------- footer ----------*/
+footer {
+  width: 100vw;
+  padding: 9.25rem 0 9.25rem 9.25rem;
+  background: radial-gradient(
+    1491.2% 240.19% at -108.46% 256.46%,
+    #d9d9d9 0%,
+    #a3a3a3 0%,
+    #000 100%
+  );
+  flex-shrink: 0;
+}
+.subheading h2 {
+  color: #fff;
+  font-family: Ubuntu;
+  font-size: 1.25rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.5rem;
+  margin-bottom: 2rem;
+}
+.descriptionOne svg {
+  margin-right: 1.25rem;
+}
+.contact {
+  color: #fff;
+  font-family: Ubuntu;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+.dateTime {
+  color: rgba(255, 255, 255, 0.4);
+  font-family: Ubuntu;
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  padding-bottom: 2.25rem;
+  border-bottom: 1px solid rgba(224, 224, 224, 0.1);
+  margin-bottom: 1.25rem;
+}
+.descriptionTwo a {
+  color: rgba(255, 255, 255, 0.4);
+  font-family: Ubuntu;
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.5rem;
+}
+.descriptionTwo {
+  gap: 0.75rem;
+}
+.descriptionThree {
+  gap: 2rem;
+}
+.mediumScreen {
+  display: none;
+}
+.social {
+  margin-top: 4rem;
+}
+.socialMedia {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  gap: 1.58rem;
+}
+.socialMedia div {
+  width: 2.62931rem;
+  height: 2.5rem;
+  background: #4c525f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.catgory {
+  width: 100%;
+  height: 100%;
+}
+.catgoryDiv {
+  position: relative;
+  width: 90%;
+  height: 2.5rem;
+  flex-shrink: 0;
+  background: #4c525f;
+  margin-bottom: 10%;
+  padding: 0.5%;
+}
+.catgoryDiv:nth-child(2),
+.catgoryDiv:nth-child(4),
+.catgoryDiv:nth-child(6) {
+  margin: 0;
+}
+.catgoryDiv a {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-family: Ubuntu;
+  font-size: 0.85rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.5rem;
+}
+.smallScreenSocial {
+  display: none;
+  padding-bottom: 1rem;
+}
+/*---------- end of footer ----------*/
+
+/*---------- media query ----------*/
+@media (max-width: 1536px) {
+    .mainContainer{
+        width: 699px;
+    }
+}
+@media (max-width: 1472px) {
+  .navigation {
+    padding: 0 9.5%;
+  }
+}
+@media (max-width: 1401px) {
+  .navigation {
+    padding: 0 6.5%;
+  }
+}
+@media (max-width: 1305px) {
+  .navigation {
+    padding: 0 3.5%;
+  }
+}
+@media (max-width: 1223px) {
+  .navigation {
+    padding: 0 20px;
+  }
+}
+@media (max-width: 1179px) {
+  .navigationnavbar ul li a {
+    font-size: 12px;
+  }
+  .logo svg {
+    width: 87.85px;
+    height: 1.5rem;
+  }
+}
+@media (max-width: 1158px) {
+  .footerdescription {
+    display: none;
+  }
+  footer {
+    padding: 1.5rem 0 2rem 0;
+  }
+  .mediumScreen {
+    display: block;
+  }
+  .subheading h2 {
+    font-size: 1rem;
+    margin-bottom: 0;
+  }
+  .descriptionOne svg:first {
+    margin-bottom: 1.25rem;
+  }
+  .dateTime {
+    border: none;
+    font-size: 0.68rem;
+  }
+  .contact {
+    font-size: 0.75rem;
+  }
+  .accordion-flush .accordion-item:last-child {
+    border-bottom: 1px solid var(--bs-border-color);
+  }
+  .largeScreenSocial {
+    display: none;
+  }
+  .smallScreenSocial {
+    display: block;
+  }
+  .page h2{
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: #000;
+    font-family: Ubuntu;
+    font-size: 0.9rem;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+    }
+    .okBtn{
+        border: transparent;
+        outline: transparent;
+        width: 4rem;
+        color: #000;
+        font-family: Inter;
+        font-size: 0.65rem;
+        font-style: normal;
+        font-weight: 700;
+        line-height: normal;
+        text-transform: uppercase;
+        padding: 0.5rem;
+        border-radius: 1.5625rem;
+        background: #0F0;
+    }
+}
+@media (max-width: 1048px) {
+  .navigationnavbar ul li {
+    margin-left: 1rem;
+  }
+  .navigationnavbar ul li:last-child {
+    margin-right: 1rem;
+  }
+  .tPrice p {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  .productDetails h2 {
+    color: #000;
+    font-family: Ubuntu;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-bottom: 0.75rem;
+  }
+  .quandity div {
+    width: 18px;
+    height: 18px;
+    border: 1px solid #e0e0e0;
+    background-color: white;
+    margin-bottom: 0.75rem;
+  }
+  .quandity div i {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 8px;
+    height: 8px;
+    object-fit: contain;
+  }
+  .quandity div:first-child,
+  .quandity div:last-child {
+    width: 24px;
+    cursor: pointer;
+    background-color: #eee;
+  }
+  #qty {
+    color: #000;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    user-select: none;
+  }
+  .color {
+    color: rgba(0, 0, 0, 0.4);
+    font-family: Inter;
+    font-size: 0.7rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-transform: uppercase;
+  }
+  .cName {
+    text-transform: capitalize;
+    color: #000;
+    font-family: Inter;
+    font-size: 0.65rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    margin-bottom: 1.2rem;
+  }
+  .price {
+    font-style: normal;
+    line-height: normal;
+    text-transform: uppercase;
+    font-family: Ubuntu;
+  }
+  .price p:nth-child(1) {
+    color: #212121;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .price p:nth-child(2) {
+    color: #bdbdbd;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-decoration-line: line-through;
+  }
+  .price p:nth-child(3) {
+    color: #3cb77c;
+    font-size: 0.8rem;
+    width: max-content;
+    font-weight: 500;
+  }
+  .deleteBtn {
+    top: 14px;
+    right: 14px;
+  }
+  .deleteBtn svg {
+    width: 11px;
+    height: 15px;
+  }
+  .checkOut button {
+    width: 8rem;
+    border: transparent;
+    outline: transparent;
+    color: #000;
+    font-family: Inter;
+    font-size: 0.7rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    letter-spacing: 0.175rem;
+    text-transform: uppercase;
+    background-color: #0f0;
+    padding: 0.8rem;
+  }
+  .checkOut {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    width: 100%;
+    height: 10vh;
+    border: 1px solid #e0e0e0;
+    margin-bottom: 2rem;
+    padding: 0 3%;
+  }
+}
+@media (max-width: 871px) {
+  .itemImg {
+    width: 120px;
+  }
+}
+@media (max-width: 771px) {
+  .cartBody {
+    flex-direction: column;
+    align-items: center;
+  }
+  .orderSummary {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-left: 0;
+    width: 100%;
+    background: #fff;
+    margin-bottom: 2rem;
+  }
+  .oneSection {
+    width: 100%;
+  }
+  .cartHead {
+    padding: 0.9rem 1.25rem;
+  }
+  .cartHead h2 {
+    font-weight: 600;
+    font-size: 17px;
+  }
+  .cartHead svg {
+    width: 30px;
+    height: 30px;
+  }
+  .cartBody {
+    padding: 0.9rem 1.25rem;
+  }
+  .quandity div i {
+    font-size: x-small;
+  }
+  .productDetails h2 {
+    font-size: 15px;
+  }
+  .price p:nth-child(1) {
+    font-size: 15px;
+  }
+  .price p:nth-child(2) {
+    font-size: 0.6rem;
+  }
+  .price p:nth-child(3) {
+    font-size: 0.7rem;
+  }
+}
+@media (max-width: 861px) {
+  .navigationnavbar {
+    display: none;
+  }
+  .mobilenavigation {
+    display: block;
+  }
+  .mobilenavigationList {
+    display: block;
+  }
+  .logo.active a {
+    margin-left: 50px;
+  }
+}
+@media (max-width: 654px) {
+    .cardOptions{
+        border-radius: 9px;
+        width: 7rem;
+        border: 1px solid #e0e0e0;
+        padding: 1rem 0;
+        margin-bottom: 1rem;
+    }
+    .cardOptions svg{
+        width: 32px;
+        height: 32px;
+        margin-bottom: 0.2rem;
+    }
+    .cardOptions p{
+        color: #000;
+        font-family: Ubuntu;
+        font-size: 0.7rem;
+        font-style: normal;
+        font-weight: 700;
+        line-height: normal;
+    }
+}
+@media (max-width: 600px) {
+  .loginbox {
+    width: 21rem;
+  }
+  .loginBtn {
+    width: 100px;
+    height: 42px;
+  }
+  .inputForm input {
+    font-size: small;
+  }
+  .useroptions ul li:nth-child(2) {
+    display: none;
+  }
+  .error p {
+    margin-top: 10px;
+    color: red;
+    font-size: 0.75rem;
+    font-weight: bold;
+  }
+  .inputForm a {
+    color: rgba(0, 0, 255, 0.75);
+    font-size: 0.7rem;
+    font-weight: 400;
+    text-decoration-line: underline;
+  }
+  .registerText a {
+    color: black;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-decoration: underline;
+  }
+  .uAcc{
+    flex-direction: column;
+  }
+  .left{
+    margin-left: 0;
+  }
+  .oneBtn{
+    display: none;
+  }
+  .twoBtn{
+    margin-top: 1.3rem;
+    display: block;
+  }
+  .sides{
+    width: 100%;
+  }
+  .editBody label{
+    font-size: small;
+  }
+  .editBody input{
+    width: 100%;
+ }
+}
+@media (max-width: 585px) {
+    .cardOptions{
+        border-radius: 9px;
+        width: 6rem;
+        border: 1px solid #e0e0e0;
+        padding: 1rem 0;
+        margin-bottom: 1rem;
+    }
+    .cardOptions svg{
+        width: 32px;
+        height: 32px;
+        margin-bottom: 0.2rem;
+    }
+    .cardOptions p{
+        color: #000;
+        font-family: Ubuntu;
+        font-size: 0.65rem;
+        font-style: normal;
+        font-weight: 700;
+        line-height: normal;
+    }
+}
+@media (max-width: 481px) {
+  .orderHeading {
+    padding: 0.65rem;
+  }
+  .orderHeading h2 {
+    font-size: 15px;
+  }
+  .orderContent {
+    padding: 0.65rem;
+  }
+  .orderContent div {
+    margin-bottom: 17px;
+  }
+  .tPrice {
+    padding: 0.65rem;
+  }
+  .ship p:nth-child(2) {
+    font-size: 0.8rem;
+  }
+  .checkOut button {
+    width: 7rem;
+    border: transparent;
+    outline: transparent;
+    color: #000;
+    font-family: Inter;
+    font-size: 0.6rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    letter-spacing: 0.175rem;
+    text-transform: uppercase;
+    background-color: rgb(0, 0, 0);
+    padding: 0.6rem;
+  }
+}
+@media (min-width: 1537px) {
+  .catgoryDiv {
+    height: 4em;
+  }
+}
+/*---------- end of media query ----------*/

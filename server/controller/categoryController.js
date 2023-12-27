@@ -1,17 +1,16 @@
 const productdb = require("../model/productsSchema");
 const categorydb = require("../model/categorySchema");
 
+// Admin Category Load
 exports.admincategory = (req, res) => {
-
   categorydb.find({ active: true }).then((data) => {
-    console.log(data);
-    
     res.render("category", { category: data });
   });
 };
 
 exports.singlecategory = (req, res) => {
   const categories = req.query.category;
+
   productdb.find({ category: categories, active: true }).then((data) => {
     console.log(data);
     res.render("singleCategory", { products: data });
@@ -21,7 +20,7 @@ exports.singlecategory = (req, res) => {
 
 exports.deletecategory = (req, res) => {
     const categories = req.query.category;
-  
+
     categorydb.deleteOne({ name: categories }).then((data) => {
       console.log(data);
       res.redirect('/admin-catogary');
@@ -33,13 +32,12 @@ exports.deletecategory = (req, res) => {
 
 exports.unlistcategory = (req, res) => {
   const categories = req.query.category;
-  console.log(categories);
+
     productdb.updateMany({category:categories},{$set:{categoryStats:false}})
     .then()
   categorydb
     .updateOne({ name: categories }, { $set: { active: false } })
     .then((data) => {
-      
       res.redirect("/admin-catogary");
     })
     .catch((error) => {
@@ -47,11 +45,11 @@ exports.unlistcategory = (req, res) => {
       res.status(500).send("Internal Server Error");
     });
 };
+
 exports.addcategory = (req, res) => {
   const category = new categorydb({
     name: req.body.categoryName,
   });
-
   category
     .save()
     .then((data) => {
@@ -81,7 +79,6 @@ exports.restorecategory = (req, res) => {
     categorydb
       .updateOne({ name: categories }, { $set: { active: true } })
       .then((data) => {
-        
         res.redirect("/admin-catogary");
       })
       .catch((error) => {

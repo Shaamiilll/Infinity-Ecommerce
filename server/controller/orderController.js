@@ -3,7 +3,7 @@ const productdb = require("../model/productsSchema");
 const orderDb = require("../model/orderSchema");
 const Razorpay = require("razorpay");
 const Userdb = require("../model/usersSchema");
-const val=productdb.find({price:111})
+const val = productdb.find({ price: 111 });
 const razorpayInstance = new Razorpay({
   key_id: process.env.RAZORPAY_ID_KEY,
   key_secret: process.env.RAZORPAY_SECRET_KEY,
@@ -12,27 +12,25 @@ const razorpayInstance = new Razorpay({
 module.exports = {
   order: async (req, res) => {
     console.log("ordere");
+    let price = parseInt(req.body.totalsum);
+    console.log(price);
     try {
       let email = req.session.email;
       const id = req.session.singleProductId;
-      let amount= req.session.totalAmountSession
-      if(req.session.userWallet||req.session.discountPercentage){
-        const wallet = req.session.userWallet
-        const couponPercentage = req.session.discountPercentage
-        
+      let amount = req.session.totalAmountSession;
+      const wallet = req.session.userWallet ? req.session.userWallet : 0;
+      amount = (price - wallet) * 100;
+      const finalAmount = Math.max(0, amount);
+      if (req.session.userWallet || req.session.discountPercentage) {
+        const wallet = req.session.userWallet;
+        const couponPercentage = req.session.discountPercentage;
       }
-   
-    
-      
-      
-      
-      console.log(1);
-     console.log(req.session.totalAmountSession);
       if (req.session.singleProductId) {
         const data = await productdb.find({ _id: req.session.singleProductId });
+
         const orderDetails = {
           user: email,
-          totalAmount:req.session.totalAmountSession ,
+          totalAmount: finalAmount,
           shippingAddress: {
             Address: req.body.address,
             city: req.body.city,
@@ -42,32 +40,28 @@ module.exports = {
           },
           products: data,
           PaymentMethod: req.body.payment,
+          couponCode: req.session.promocode,
         };
-        
         req.session.orderDetails = orderDetails;
         const neworder = new orderDb(orderDetails);
-
         if (req.body.payment === "Online_Payment") {
+          console.log("razorpay");
           const randomOrderID = Math.floor(Math.random() * 1000000).toString();
           const options = {
-            amount:req.body.totalsum ,
+            amount: finalAmount,
             currency: "INR",
             receipt: randomOrderID,
           };
-          const wallet =  req.session.userWallet? req.session.userWallet:0
-          const amount = (((amount - wallet) )-20)*100 ;
 
-          // Ensure amount is not negative, if negative, set it to zero
-          const finalAmount = Math.max(0, amount);
-          console.log(finalAmount);
           await new Promise((resolve, reject) => {
             razorpayInstance.orders.create(options, (err) => {
+              console.log(err);
               if (!err) {
                 console.log("Reached RazorPay Method on cntrlr", randomOrderID);
                 res.status(200).send({
                   razorSuccess: true,
                   msg: "order created",
-                  amount: finalAmount  ,
+                  amount: finalAmount,
                   key_id: process.env.RAZORPAY_ID_KEY,
                   name: req.session.email,
                   contact: "9744676504",
@@ -89,16 +83,14 @@ module.exports = {
           await productdb.updateOne({ _id: id }, { $inc: { stock: -1 } });
           res.json({ url: `/successOrder?id=${data._id}` });
         }
-      }  else {
-        console.log("cart");
-        
+      } else {
+        // Here After Product Is from cart
         const productData = await cartDb.find({ email: email });
         const allOrderDetails = [];
-      
         for (let i = 0; i < productData.length; i++) {
           const orderDetails = {
             user: email,
-            totalAmount:req.body.totalsum ,
+            totalAmount: req.body.totalsum,
             shippingAddress: {
               Address: req.body.address,
               city: req.body.city,
@@ -112,39 +104,34 @@ module.exports = {
           allOrderDetails.push(orderDetails);
         }
         req.session.orderDetails = allOrderDetails;
-      
+        // Online Payment
         if (req.body.payment === "Online_Payment") {
           const randomOrderID = Math.floor(Math.random() * 1000000).toString();
           const options = {
-            amount: req.body.totalsum  * 100,
+            amount: finalAmount,
             currency: "INR",
             receipt: randomOrderID,
           };
-      
           await new Promise((resolve, reject) => {
             razorpayInstance.orders.create(options, (err) => {
               if (!err) {
                 console.log("Reached RazorPay Method on cntrlr", randomOrderID);
-      
                 res.status(200).send({
                   razorSuccess: true,
                   msg: "order created",
-                  amount: req.session.totalAmountSession* 100,
+                  amount: req.session.totalAmountSession * 100,
                   key_id: process.env.RAZORPAY_ID_KEY,
                   name: "shamil",
                   contact: "shamil",
                   email: "shamil",
                 });
-      
                 resolve();
               } else {
                 console.error("Razorpay Error:", err);
-      
                 res.status(400).send({
                   razorSuccess: false,
                   msg: "Error creating order with Razorpay",
                 });
-      
                 reject(err);
               }
             });
@@ -152,10 +139,9 @@ module.exports = {
         } else {
           for (let i = 0; i < allOrderDetails.length; i++) {
             const email = req.session.email;
-      
             const neworderItem = new orderDb(allOrderDetails[i]);
+
             await neworderItem.save();
-      
             const productId = allOrderDetails[i].products.prId;
             const quantity = allOrderDetails[i].products.cartQuantity; // Correcting the variable name
             await productdb.updateOne(
@@ -163,10 +149,7 @@ module.exports = {
               { $inc: { stock: quantity } }
             );
           }
-      
-          
           await cartDb.deleteMany({ email: email });
-      
           res.json({ url: `/successOrder` });
         }
       }
@@ -179,41 +162,37 @@ module.exports = {
   MyOrders: async (req, res) => {
     try {
       const email = req.session.email;
-
       const data = await orderDb.find({ user: email }).sort({ orderDate: -1 });
-      console.log(data);
+
       res.render("myOrder", { data: data });
     } catch (error) {
       console.error(error);
       res.status(500).send("Internal Server Error");
     }
   },
+
   orderid: (req, res) => {
     res.render("successOrder", { id: data._id });
   },
+
   payment: async (req, res) => {
     try {
       const email = req.session.email;
       const prId = req.session.singleProductId;
-      console.log(prId);
       const allOrderDetails = req.session.orderDetails;
 
       if (prId) {
         const neworder = new orderDb(allOrderDetails);
         await neworder.save();
-
         return res.send(
           `/successOrder?id=${"payment single product from buy now"} `
         );
       }
-
       for (let i = 0; i < allOrderDetails.length; i++) {
         const neworder = new orderDb(allOrderDetails[i]);
         await neworder.save();
       }
-
       await cartDb.deleteMany({ email: email });
-     
       res.send(
         `/successOrder?id=${"payment Multiple product from add to cart"}`
       );
@@ -229,12 +208,10 @@ module.exports = {
       { $set: { status: "cancelled" } }
     );
     const order = await orderDb.findOne({ _id: id });
-
     const walletUpdate = await Userdb.updateOne(
       { email: order.user },
       { $inc: { wallet: order.products[0].price } }
     );
-
     res.redirect("/my-Orders");
   },
   returnOrder: async (req, res) => {
@@ -244,7 +221,6 @@ module.exports = {
       { $set: { status: "returned" } }
     );
     const order = await orderDb.findOne({ _id: id });
-
     const walletUpdate = await Userdb.updateOne(
       { email: order.user },
       { $inc: { wallet: order.products[0].price } }

@@ -19,6 +19,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/userHome.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
 </head>
 <style>
@@ -284,7 +285,7 @@
 
                                   <div class="card-body d-flex flex-column">
                                     <p class="card-text" style="color: #bf4800;;">
-                                      <%=products[i].category%>
+                                      <%=products[i].category.name%>
                                     </p>
 
                                     <h6 class="card-title"
@@ -325,6 +326,7 @@
       </main>
 
       </div>
+      <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous"></script>
@@ -332,14 +334,56 @@
         integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
         crossorigin="anonymous"></script>
 
+<script>
+  function isUserLoggedIn() {
+          if ('<%=logged%>') {
+            return true;
+          } else {
+            return false;
+          }
+        }
 
+        function showLogoutReminder() {
+          Toastify({
+            text: `Login For Complete Accessibility click ctrl + /'`,
+            duration: 3000,
+            destination: "http://localhost:7000/login",
+            newWindow: true,
+            close: true,
+            gravity: "top",
+            position: "right",
+            stopOnFocus: true,
+            style: {
+              background: "white",
+              color: "Black"
+            },
+            onClick: function () { }
+          }).showToast();
+        }
+
+
+        function checkLoginStatus() {
+          if (!isUserLoggedIn()) {
+            showLogoutReminder();
+          }
+        }
+        setInterval(checkLoginStatus, 30 * 1000);
+        checkLoginStatus();
+
+        function showLoginPage() {
+          window.location.href = '/login'
+        }
+        document.onkeydown = function (e) {
+          if (e.ctrlKey && e.key === '/') {
+            showLoginPage();
+          }
+        };
+        btnZ.onclick = showLoginPage;
+</script>
 
       <script>
 
-
-
-
-
+        
 
 
         document.addEventListener("DOMContentLoaded", function () {

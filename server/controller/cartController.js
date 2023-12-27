@@ -1,14 +1,12 @@
 const cartDb = require("../model/cartSchema");
 const productdb = require("../model/productsSchema");
-const userDb = require("../model/usersSchema");
 module.exports = {
-  
+
+  // Adding product To the cart
   AddToCart: (req, res) => {
-    
     let email = req.session.email;
     let productId = req.session.singleProductId;
-  
-    console.log(email + "from cart session");
+
     productdb
       .findById(productId )
       .then((productData) => {
@@ -20,7 +18,6 @@ module.exports = {
             cartQuantity:1,
             pname:productData.pname,
             price:productData.price,
-
             discount:productData.discount,
             description:productData.description,
             stock:productData.stock,
@@ -48,38 +45,32 @@ module.exports = {
         } else {
           // If the user is not verified, you might want to send a response here
           res.status(403).render('error', { message: 'You need to verify your account before adding items to the cart.' });
-
         }
       })
       .catch((err) => {
         console.error(err);
         res.status(500).send("Internal Server Error");
-        console.log("catch 4");
       });
   },
   
+  // Loading the user Cart
   MyCart: async (req, res) => {
     req.session.singleProductId=''
     try {
       const email = req.session.email;
       
-      console.log('start');
       const cartData = await cartDb.find({ email: email });
       const productId = cartData.map((item) => item.prId);
   console.log(productId +"from ProductId");
       const productData = await productdb.find({ _id: { $in: productId } });
       console.log(productData + "from ProductData");
       let sum = 0;
-  
-
       for (let i = 0; i < productData.length; i++) {
         const cartItem = await cartDb.findOne({ prId: productData[i]._id });
-  
         const discount = productData[i].discount;
         const disPrice = productData[i].price * discount / 100;
         const showPrice1 = productData[i].price - disPrice;
         const count = Math.floor(showPrice1 * cartItem.cartQuantity) 
-  
         // Accumulate the sum inside the loop
         sum += count;
       }
@@ -91,15 +82,13 @@ module.exports = {
       }else{
         res.send("working");
       }
-     
-
     } catch (err) {
       console.error(err);
       res.status(500).send("Internal Server Error");
     }
   },
   
-  
+  // Removing product From The cart
   RemoveProduct: (req, res) => {
     email = req.session.email
     id = req.query.id;
@@ -107,10 +96,12 @@ module.exports = {
       res.redirect(`/Mycart`);
     });
   },
+
+// Updating the cart
   cartUpdate: async (req,res) =>{
     const id=req.query.id
     const delta=parseInt(req.query.change)
-    
+
     try {
       const cartData= await cartDb.findOne({prId:id,email:req.session.email})
       const newQuantity = cartData.cartQuantity + delta;
@@ -123,10 +114,8 @@ module.exports = {
       }else{
         res.json({success:false, messege:"no cartData"})
       }
-      
     } catch (error) {
       res.json({success:false, messege:"try catch error"})
-      
     }
   }
 };

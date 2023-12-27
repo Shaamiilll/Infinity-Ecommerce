@@ -1,110 +1,34 @@
 const productdb = require("../model/productsSchema");
 const categorydb = require("../model/categorySchema");
+const reviewdb = require("../model/reviewsSchema");
 const fs = require("fs");
 const path = require("path");
 
 module.exports = {
-  softDelete: (req, res) => {
-    const productId = req.query.id;
-
-    productdb
-      .updateOne({ _id: productId }, { $set: { active: false } })
-      .then((data) => {
-        res.redirect("/admin-products");
-      })
-      .catch((err) => {
-        res.send(err);
-      });
-  },
-  updateproduct: (req, res) => {
-    const productId = req.body.id;
-    console.log(productId + "  this is product id");
-    productdb
-      .updateOne(
-        { _id: productId },
-        {
-          $set: {
-            pname: req.body.prd_name,
-            description: req.body.description,
-            category: req.body.category,
-            price: req.body.price,
-            discount: req.body.discound,
-            stock: req.body.stock,
-          },
-        }
-      )
-      .then((pdata) => {
-        cartDb
-          .updateOne(
-            { prId: productId },
-            {
-              $set: {
-                pname: req.body.prd_name,
-                description: req.body.description,
-                category: req.body.category,
-                price: req.body.price,
-                discount: req.body.discound,
-                stock: req.body.stock,
-              },
-            }
-          )
-          .then((data) => {
-            console.log(pdata);
-            // res.redirect("/admin-products")
-            res.send(
-              "<script>alert('product updated successfully!'); window.location='/admin-products';</script>"
-            );
-            console.log("data updated successfull!");
-          });
-      })
-      .catch((err) => {
-        res.send(
-          "<script>alert('product updated successfully!'); window.location='/admin-products';</script>"
-        );
-      });
-  },
-  updateproductnot: async (req, res) => {
+  newproduct: async (req, res) => {
     try {
-      const id = req.body.id;
+      const newProduct = new productdb({
+        pname: req.body.prd_name,
+        description: req.body.description,
+        category: category._id,
+        price: req.body.price,
+        stock: req.body.stock,
+        discount: req.body.discound,
+        prd_images: req.files.map((file) => file.filename),
+        active: true,
+        categoryStats: true,
+      });
 
-      await productdb.updateOne(
-        { _id: id },
-        {
-          $set: {
-            pname: req.body.prd_name,
-            description: req.body.description,
-            category: req.body.category,
-            price: req.body.price,
-            stock: req.body.stock,
-            discount: req.body.discound ,
-          },
-        }
-      );
+      await newProduct.save();
 
-      res.send(
-        "<script>alert('Data updated successfully!'); window.location='/admin-products';</script>"
-      );
+      res.redirect("/admin-products");
     } catch (err) {
-      res.status(500).send(err);
+      console.error("Error saving product:", err);
+      res.status(500).send("Error occurred while saving the product.");
     }
   },
-  updateproduct1: async (req, res) => {
-    try {
-      const id = req.query.id;
 
-      const data = await productdb.findById(id);
-      const data1=await categorydb.find()
-      console.log(data);
-
-      res.render("updateproduct", {
-        data:data1,
-        product: data,
-        imagePath: `primg/${data.prd_images}`,
-      });
-    } catch (err) {
-      res.send(err);
-    }
-  },
+  // find Products
   findproduct: async (req, res) => {
     try {
       const products = await productdb.find({
@@ -119,32 +43,104 @@ module.exports = {
       });
     }
   },
-  newproduct: async (req, res) => {
-    try {
-      // Create a new product instance using the request data
-      const newProduct = new productdb({
-        pname: req.body.prd_name,
-        description: req.body.description,
-        category: req.body.category,
-        price: req.body.price,
-        stock: req.body.stock,
-        discount: req.body.discound,
-        prd_images: req.files.map((file) => file.filename),
-        active: true,
-        categoryStats: true,
+
+  softDelete: (req, res) => {
+    const productId = req.query.id;
+
+    productdb
+      .updateOne({ _id: productId }, { $set: { active: false } })
+      .then((data) => {
+        res.redirect("/admin-products");
+      })
+      .catch((err) => {
+        res.send(err);
       });
+  },
 
-      // Save the product to the database
-      await newProduct.save();
+  updateproduct: async (req, res) => {
+    try {
+      const category = await categorydb.findOne({ name: req.body.category });
+      const productId = req.body.id;
 
-      // Product was successfully saved, redirect to the desired page
-      res.redirect("/admin-products");
+      await productdb.updateOne(
+        { _id: productId },
+        {
+          $set: {
+            pname: req.body.prd_name,
+            description: req.body.description,
+            category: category._id,
+            price: req.body.price,
+            discount: req.body.discound,
+            stock: req.body.stock,
+          },
+        }
+      );
+
+      await cartDb.updateOne(
+        { prId: productId },
+        {
+          $set: {
+            pname: req.body.prd_name,
+            description: req.body.description,
+            category: category._id,
+            price: req.body.price,
+            discount: req.body.discound,
+            stock: req.body.stock,
+          },
+        }
+      );
+      res.send(
+        "<script>alert('Product updated successfully!'); window.location='/admin-products';</script>"
+      );
     } catch (err) {
-      // Handle the error in a way that suits your application
-      console.error("Error saving product:", err);
-      res.status(500).send("Error occurred while saving the product.");
+      res.send(
+        "<script>alert('An error occurred while updating the product.'); window.location='/admin-products';</script>"
+      );
     }
   },
+
+  updateproductnot: async (req, res) => {
+    const category = await categorydb.findOne({ name: req.body.category });
+    try {
+      const id = req.body.id;
+      await productdb.updateOne(
+        { _id: id },
+        {
+          $set: {
+            pname: req.body.prd_name,
+            description: req.body.description,
+            category: category._id,
+            price: req.body.price,
+            stock: req.body.stock,
+            discount: req.body.discound,
+          },
+        }
+      );
+      res.send(
+        "<script>alert('Data updated successfully!'); window.location='/admin-products';</script>"
+      );
+    } catch (err) {
+      res.status(500).send(err);
+    }
+  },
+
+  updateproduct1: async (req, res) => {
+    try {
+      const id = req.query.id;
+      const data = await productdb.findById(id);
+      const data1 = await categorydb.find();
+
+
+      res.render("updateproduct", {
+        data: data1,
+        product: data,
+        imagePath: `primg/${data.prd_images}`,
+      });
+    } catch (err) {
+      res.send(err);
+    }
+  },
+
   deleteProduct: (req, res) => {
     const productId = req.query.id;
 
@@ -156,7 +152,6 @@ module.exports = {
           res.send("Product not found.");
           return;
         }
-
         const images = data.prd_images;
         const deletePromises = [];
 
@@ -175,7 +170,6 @@ module.exports = {
 
           deletePromises.push(deletePromise);
         }
-
         Promise.all(deletePromises)
           .then(() => {
             return productdb.deleteOne({ _id: productId });
@@ -208,7 +202,6 @@ module.exports = {
           },
         }
       );
-
       res.redirect("/admin-products");
     } catch (err) {
       res.status(500).send({
@@ -226,7 +219,6 @@ module.exports = {
       return;
     }
     const imagePath = `images/${imageName}`;
-
     productdb
       .updateOne({ _id: productId }, { $pull: { prd_images: imageName } })
       .then(() => {
@@ -260,7 +252,7 @@ module.exports = {
       res.render("addproduct", { data: data });
     });
   },
-  cropeimage:(req,res)=>{
-    res.render("cropimage")
-  }
+  cropeimage: (req, res) => {
+    res.render("cropimage");
+  },
 };

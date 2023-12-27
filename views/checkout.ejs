@@ -174,7 +174,7 @@
                           <div class="row">
 
 
-                            <input type="text" hidden name="totalsum" value="<%=updateprice%>">
+                            <input type="text" id="totalsum" hidden name="totalsum" value="<%=updateprice%>">
                             <button type="submit" class="btn shadow-0 border"
                               style="color: antiquewhite; background-color: #232F3E;">Continue</button>
                           </div>
@@ -377,6 +377,8 @@
           document.getElementById('co').style.display = "block"
           document.getElementById("updatedPrice").innerText = response.discount
           document.getElementById('price1').value=response.discount
+          document.getElementById('totalsum').value=response.discount
+
           
           // document.getElementById("price1").innerText = totalsum - (totalsum / 100) * response.discountPercent
         

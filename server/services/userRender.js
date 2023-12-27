@@ -3,6 +3,7 @@ const Userdb = require("../model/usersSchema");
 const categorydb = require("../model/categorySchema");
 const dotenv = require("dotenv");
 const productdb = require("../model/productsSchema");
+const Reviewdb = require("../model/reviewsSchema");
 dotenv.config({ path: "config.env" });
 
 exports.login = (req, res) => {
@@ -33,7 +34,6 @@ exports.login = (req, res) => {
 exports.product = (req, res) => {
   res.render("productDetails");
 };
-
 
 exports.forgetPassword = (req, res) => {
   res.render("forgetPassword");
@@ -94,25 +94,24 @@ exports.register = (req, res) => {
     "userRegister",
     {
       exist,
-      invalid: req.session.CheckPass,//checking pass is correct
-      invalidEmail: req.session.errorPattern,//invalid email pattrn
-      userExist: req.session.userRegistered,//already user exist
+      invalid: req.session.CheckPass, //checking pass is correct
+      invalidEmail: req.session.errorPattern, //invalid email pattrn
+      userExist: req.session.userRegistered, //already user exist
       savedInfo: req.session.email,
       phone: req.session.errorPhone,
-      savedPhone:req.session.phone
+      savedPhone: req.session.phone,
     },
     (err, html) => {
       if (err) {
-        
         return res.send(err);
       }
       delete req.session.CheckPass;
       console.log(req.session.email);
       delete req.session.userRegistered;
       delete req.session.errorPattern;
-      delete req.session.email
-      delete req.session.errorPhone
-      delete req.session.phone
+      delete req.session.email;
+      delete req.session.errorPhone;
+      delete req.session.phone;
       res.send(html);
     }
   );
@@ -123,22 +122,31 @@ exports.otp = (req, res) => {
   res.render("otpLogin", { email: email });
 };
 
-exports.productdetalis = (req, res) => {
-  const id = req.session.singleProductId
-  req.session.discountApplied=false
-  console.log(id);
-  productdb.findOne({ _id: id }).then((data) => {
-    const email = req.session.email;
-    req.session.totalAmountSession=data.price
-    res.render("productDetails", { product: data, email: req.session.email });
-  });
-};
-exports.SaveSession=(req,res)=>{
-  req.session.singleProductId=req.query.id
-  console.log(req.session.singleProductId);
-  res.send('/product-details')
+exports.productdetalis = async (req, res) => {
+  try {
+    const id = req.session.singleProductId;
+    req.session.discountApplied = false;
+    console.log(id);
 
-}
+    const data = await productdb.findOne({ _id: id });
+    const reviewsData = await Reviewdb.find({ product_id: id }); 
+    
+
+    const email = req.session.email;
+    req.session.totalAmountSession = data.price;
+
+    res.render("productDetails", { product: data, email: req.session.email ,reviews:reviewsData});
+  } catch (error) {
+    console.error("Error fetching product details:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+exports.SaveSession = (req, res) => {
+  req.session.singleProductId = req.query.id;
+  console.log(req.session.singleProductId);
+  res.send("/product-details");
+};
 
 exports.Success = (req, res) => {
   const orderId = req.query.id;
@@ -212,12 +220,11 @@ exports.address = (req, res) => {
 };
 
 exports.loadcheckout = (req, res) => {
-  let totalprice
+  let totalprice;
   const email = req.session.email;
 
-     totalprice = req.session.totalAmountSession;
- 
-  
+  totalprice = req.session.totalAmountSession;
+
   const index = req.query.id || 0;
   const prId = req.session.singleProductId;
 
@@ -225,19 +232,23 @@ exports.loadcheckout = (req, res) => {
   Userdb.findOne({ email: email })
     .then((userdata) => {
       console.log(userdata);
-      res.render("checkout", {
-        prId: prId,
-        users: userdata,
-        price: totalprice,
-        a: index,
-      },(err, html) => {
-        if (err) {
-          return res.send("Internal Server error " + "1");
+      res.render(
+        "checkout",
+        {
+          prId: prId,
+          users: userdata,
+          price: totalprice,
+          a: index,
+        },
+        (err, html) => {
+          if (err) {
+            return res.send("Internal Server error " + "1");
+          }
+          delete req.session.discountApplied;
+
+          res.send(html);
         }
-        delete req.session.discountApplied
-  
-        res.send(html);
-      });
+      );
     })
     .catch((err) => {
       res.send(err);

@@ -41,6 +41,7 @@
                         <button  style="text-decoration: none; font-weight: 500; color: #f4f4f4;">Shipped</button>
 
                     <% } else if (data.status === 'delivered') { %>
+                        
                         <span style="font-weight: 500; color: #28a745;">✓ Delivered</span>
                     <% } else if (data.status === 'cancelled') { %>
                         <span style="font-weight: 500; color: #dc3545;">✗ Cancelled</span>
@@ -51,6 +52,7 @@
                                 <% } else if (data.status === 'returned') { %>
                                     <span style="font-weight: 500; color: #dc3545;">✗ Returned</span>
                         <% } else { %>
+                            
                         <span style="font-weight: 500; color: #28a745;">✓ Delivered</span>
                     <% } %>
                 </div>

@@ -8,6 +8,7 @@ const cors = require("cors");
 const connectDB = require("./server/database/connection");
 const cookieParser = require("cookie-parser");
 
+
 const app = express();
 
 dotenv.config({ path: "config.env" });
@@ -32,6 +33,7 @@ connectDB();
 
 // parse request to body-parser
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 // set view engine
 app.set("view engine", "ejs");
@@ -50,11 +52,11 @@ app.use("/", require("./server/routes/adminRouter"));
 app.get("*",function(req,res){
   res.render("error404")
 })
-app.post("/verify-payment", (req, res) => {
-  const payment = req.body.payment;
-  const order = req.body.order;
-  res.json({ success: true, message: "Payment verified successfully" });
-});
+// app.post("/verify-payment", (req, res) => {
+//   const payment = req.body.payment;
+//   const order = req.body.order;
+//   res.json({ success: true, message: "Payment verified successfully" });
+// });
 
 app.listen(PORT, () =>
   console.log(`Server is running on http://localhost:${PORT}`)

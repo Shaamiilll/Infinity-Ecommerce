@@ -208,23 +208,27 @@ module.exports = {
   },
   // ... (other functions)
 
-  userHome: (req, res) => {
-    const email = req.session.email;
-    const blocked = req.session.block;
-    console.log(email);
-    productDb
-      .find({ active: true, categoryStats: true, stock: { $gt: 0 } })
-      .then((data) => {
-        res.render("userHome", {
-          products: data,
-          userLogged: email,
-          blocked: blocked,
-        });
-      })
-      .catch((err) => {
-        console.log("product error");
-        res.send(err);
+  userHome: async (req, res) => {
+    try {
+      const email = req.session.email;
+      const blocked = req.session.block;
+      console.log(email);
+
+      const products = await productDb
+        .find({ active: true, categoryStats: true, stock: { $gt: 0 } })
+        .populate("category") // Populate the 'category' field
+        .exec();
+
+      res.render("userHome", {
+        products: products,
+        userLogged: email,
+        blocked: blocked,
+        logged:email
       });
+    } catch (err) {
+      console.error("Error fetching products:", err);
+      res.send(err);
+    }
   },
 
   logout: (req, res) => {
@@ -497,7 +501,7 @@ module.exports = {
         category === "All" ? "All" : req.query.category.split(",");
 
       category === "All"
-        ? (category = [...categoryOptions])
+        ? (category = categoryOptions)
         : (category = req.query.category.split(","));
 
       req.query.sort ? (sort = req.query.sort.split(",")) : (sort = [sort]);
@@ -508,6 +512,11 @@ module.exports = {
       } else {
         sortBy[sort[0]] = "asc";
       }
+
+      const categoryIds = await categoryDb
+        .find({ name: { $in: category } })
+        .distinct("_id");
+
       let products = await productDb
         .find({
           pname: { $regex: search, $options: "i" },
@@ -516,25 +525,23 @@ module.exports = {
           price: { $gte: minPrice, $lte: maxPrice },
         })
         .where("category")
-        .in([...category])
+        .in(categoryIds)
+        .populate("category") // Add this line to populate the 'category' field
         .sort(sortBy)
         .skip((page - 1) * limit)
         .limit(limit);
 
       const total = await productDb.countDocuments({
-        category: { $in: [...category] },
+        category: { $in: categoryIds },
         pname: { $regex: search, $options: "i" },
         active: true,
         categoryStats: true,
       });
+
       const noPages = Math.ceil(total / limit);
 
       console.log(noPages);
       console.log("Total with category:", total);
-      const product = await productDb.find({
-        active: true,
-        categoryStats: true,
-      });
       const catData = await categoryDb.find();
 
       res.status(200).render("ourStore", {
@@ -555,15 +562,17 @@ module.exports = {
       res.status(500).json({ error: true, message: "Internal Server Error" });
     }
   },
+
   promoCode: async (req, res) => {
+    req.session.promocode=''
     const promoCode = req.body.coupon.toUpperCase();
     let price = req.body.price;
+     req.session.promocode= promoCode
 
     try {
       const data = await couponDb.findOne({ code: promoCode });
 
       if (data) {
-        
         if (req.session.discountApplied) {
           return res.json({
             success: false,
@@ -579,9 +588,9 @@ module.exports = {
 
         const discountedPrice = price - (price / 100) * data.discountPercentage;
         console.log(discountedPrice);
-
+        console.log("discount price ");
         req.session.discountApplied = true;
-        req.session.discountPercentage=data.discountPercentage // Set the flag to indicate discount applied
+        req.session.discountPercentage = data.discountPercentage; // Set the flag to indicate discount applied
         return res.json({
           success: true,
           discount: discountedPrice,
@@ -599,7 +608,7 @@ module.exports = {
   },
   wallet: async (req, res) => {
     try {
-      const price = req.body.price
+      const price = req.body.price;
       const email = req.session.email;
       const user = await Userdb.findOne({ email: email });
 
@@ -607,11 +616,11 @@ module.exports = {
         const userWalletAmount = user.wallet;
         req.session.userWallet = 0;
 
-        if (userWalletAmount => price) {
-          req.session.userWalletbalance = userWalletAmount-price;
+        if ((userWalletAmount) => price) {
+          req.session.userWalletbalance = userWalletAmount - price;
           return res.json({
             success: true,
-            price:price-userWalletAmount,
+            price: price - userWalletAmount,
             walletAmount: req.session.totalAmountSession - 20,
           });
         } else {
