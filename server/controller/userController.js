@@ -3,6 +3,7 @@ const blockdb = require("../model/blockedUsers");
 const productDb = require("../model/productsSchema");
 const categoryDb = require("../model/categorySchema");
 const otpverification = require("../model/otpSchema");
+const bannerDb = require("../model/bannerSchema");
 const couponDb = require("../model/couponSchema");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
@@ -218,12 +219,15 @@ module.exports = {
         .find({ active: true, categoryStats: true, stock: { $gt: 0 } })
         .populate("category") // Populate the 'category' field
         .exec();
+        const banner=await bannerDb.find({active:true}).populate('category')
+        console.log(banner);
 
       res.render("userHome", {
         products: products,
         userLogged: email,
         blocked: blocked,
-        logged:email
+        logged:email,
+        banner
       });
     } catch (err) {
       console.error("Error fetching products:", err);

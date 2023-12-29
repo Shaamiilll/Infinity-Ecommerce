@@ -1,0 +1,98 @@
+<!-- include footer -->
+<%- include('include/_adminbase.ejs') %>
+    <!-- /include footer -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- CONTENT -->
+    <section id="content">
+
+
+        <!-- MAIN -->
+        <main>
+            <div class="table-data">
+                <div class="order">
+                    <div class="head">
+                        <h3>Banners</h3>
+
+                        <a href="/admin-banner"> <button class="btn btn-rounded"> <i class='bx bx-trash'></i>active
+                                Banner</button></i></a>
+                        <a href="/add-admin-banner"> <button class="btn btn-rounded"> <i class='bx bx-plus'></i>Add
+                                Banner</button></i></a>
+
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Banner</th>
+                                <th>Title</th>
+                                <th>discription</th>
+                                <th>category</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <% for(let i=0;i<data.length;i++){ %>
+                            <tbody>
+
+                                <tr>
+                                    <td onclick="banner('<%=data[i].image  %>')">
+                                        <img src="/primg/<%=data[i].image  %>" alt="">
+                                    </td>
+                                    <td onclick="banner('<%=data[i].image  %>')">
+                                        <%= data[i].title %>
+                                    </td>
+                                    <td onclick="banner('<%=data[i].image  %>')">
+                                        <%=data[i]. discription %>
+                                    </td>
+                                    <td onclick="banner('<%=data[i].image  %>')">
+                                        <%=data[i].category.name %>
+                                    </td>
+
+                                    <td>
+                                        <a href="/restore-banner?id=<%= data[i]._id %>"> <i class="fas fa-trash-restore"
+                                                style="color: black; margin-right: 10px;"></i> </a>
+                                        <a href="/edit-coupon?id=<%= data[i]._id %>"> <i class="fas fa-pencil-alt"
+                                                style="color: black;"></i> </a>
+                                    </td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </main>
+        <!-- MAIN -->
+    </section>
+    <!-- CONTENT -->
+    <script>
+        function userdetails(id, prId) {
+            const userDetailURL = `/order-details?Id=${id}`;
+
+            // Redirect to the user details page.
+            window.location.href = userDetailURL;
+        }
+        function banner(img) {
+
+            Swal.fire({
+
+
+                imageUrl: `/primg/${img}`,
+                imageWidth: 400,
+                imageHeight: 200,
+                imageAlt: "Custom image"
+            });
+        }
+    </script>
+
+    <script src="js/adminserver.js"></script>
+    <script>import { Modal, Ripple, initMDB } from "mdb-ui-kit";
+
+        initMDB({ Modal, Ripple });</script>
+    </body>
+
+    </html>

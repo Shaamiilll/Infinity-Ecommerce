@@ -1,0 +1,172 @@
+<!-- include footer -->
+<%- include('include/_adminbase.ejs') %>
+    <!-- /include footer -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/cropperjs/dist/cropper.css" />
+    <script src="https://unpkg.com/cropperjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- CONTENT -->
+    <section id="content">
+
+
+        <!-- MAIN -->
+        <main>
+            <div class="table-data">
+                <div class="order">
+                    <div class="head">
+                        <h3>Add Banner</h3>
+
+                        <a href="/add-coupon"> <button class="btn btn-rounded"
+                                style="background-color: #131921 ; color: white;"> <i class='bx bx-exit'></i>Go
+                                Back</button></i></a>
+                    </div>
+                    <div class="container coupon-container">
+
+                        
+
+                        <form action="/add-admin-banner" method="post" enctype="multipart/form-data">
+                            <div class="form-group"> <label for="coupon-code">Label</label> <input type="text"
+                                    class="form-control" id="coupon-code" placeholder="Enter the Text "
+                                    name="title"> </div>
+
+                            <div class="form-group"> <label for="coupon-code">Discription</label> <input type="text"
+                                    class="form-control" id="coupon-code" placeholder="Enter the Text "
+                                    name="discription"> </div>
+
+                            <div class="form-group">
+                                <label for="category">Select Category</label>
+                                <select class="form-control" id="category" name="category">
+                                    <% for(let i=0;i<category.length;i++){ %>
+                                        <option value="<%= category[i].name%>">
+                                            <%= category[i].name%>
+                                        </option>
+                                        <% } %>
+                                </select>
+                            </div>
+
+                            <h1></h1>
+                            <div class="form-group">
+                                <label for="banner-image">Banner Image</label>
+                                <input type="file" class="form-control-file" id="banner-image" name="image"
+                                    accept="image/*" onchange="validateImage(this)">
+                                <p style="color: red; font-size: smaller;">*Image should be 3480 x 1418 px or else it
+                                    will compress automatically to 3480 x 1418 px</p>
+                                <img id="image-preview" alt="Preview"
+                                    style="max-width: 100%; max-height: 200px; display: none;">
+                            </div>
+                            <h1></h1>
+                            <button type="submit" class="btn" style="background-color: #131921 ; color: white;">Add
+                                banner</button>
+                        </form>
+
+
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!-- MAIN -->
+    </section>
+    <!-- CONTENT -->
+    <script>
+        function userdetails(id, prId) {
+            const userDetailURL = `/order-details?Id=${id}`;
+
+            // Redirect to the user details page.
+            window.location.href = userDetailURL;
+        }
+    </script>
+    <script>
+        function validateImage(input) {
+            const file = input.files[0];
+
+            if (!file) {
+                return;
+            }
+
+            const image = new Image();
+
+            image.onload = function () {
+                const maxWidth = 3480;
+                const maxHeight = 1418;
+
+                if (image.width !== maxWidth || image.height !== maxHeight) {
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "The image will be automatically resized",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Yes, okay!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Update the message based on what actually happens after resizing
+                            Swal.fire({
+                                title: "Image Resized!",
+                                text: "Your image has been resized successfully.",
+                                icon: "success"
+                            });
+                        }
+                    });
+
+                    resizeImage(input, maxWidth, maxHeight);
+                } else {
+                    displayImagePreview(input);
+                }
+            };
+
+            image.src = URL.createObjectURL(file);
+        }
+
+        function displayImagePreview(input) {
+            const file = input.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const preview = document.getElementById('image-preview');
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        function resizeImage(input, maxWidth, maxHeight) {
+            const file = input.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const img = new Image();
+                img.src = e.target.result;
+
+                img.onload = function () {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+
+                    canvas.width = maxWidth;
+                    canvas.height = maxHeight;
+
+                    ctx.drawImage(img, 0, 0, maxWidth, maxHeight);
+
+                    canvas.toBlob((blob) => {
+                        const resizedFile = new File([blob], file.name, { type: file.type });
+                        input.files[0] = resizedFile;
+
+                        // Display the preview for the resized image
+                        displayImagePreview(input);
+                    }, file.type);
+                };
+            };
+
+            reader.readAsDataURL(file);
+        }
+    </script>
+
+    <script src="js/adminserver.js"></script>
+    </body>
+
+    </html>

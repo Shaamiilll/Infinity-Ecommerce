@@ -3,6 +3,8 @@ const Userdb = require("../model/usersSchema");
 const productdb = require("../model/productsSchema");
 const orderdb = require("../model/orderSchema");
 const coupen = require("../model/couponSchema");
+const categoryDb = require("../model/categorySchema");
+const bannerDb = require("../model/bannerSchema");
 const mongoose = require("mongoose");
 
 exports.adminlogin = (req, res) => {
@@ -34,6 +36,22 @@ exports.adminproducts = (req, res) => {
 exports.uploadim = (req, res) => {
   res.send("image uploade");
 };
+
+exports.adminBanner =async (req, res) => {
+const data= await bannerDb.find({active:true}).populate('category')
+  res.render('adminBanner',{data})
+};
+
+exports.loadAddAdminBanner=async (req,res)=>{
+const category=await categoryDb.find()
+  res.render('add-banner',{category})
+}
+
+exports.deletedBanner=async (req,res)=>{
+  const data=await bannerDb.find({active:false}).populate('category')
+    res.render('deleted-banner',{data})
+  }
+
 
 exports.renderup = (req, res) => {
   res.render("index");

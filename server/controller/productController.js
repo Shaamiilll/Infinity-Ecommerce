@@ -7,6 +7,9 @@ const path = require("path");
 module.exports = {
   newproduct: async (req, res) => {
     try {
+      const categoryName = req.body.category;
+      const category = await categorydb.findOne({ name: categoryName });
+
       const newProduct = new productdb({
         pname: req.body.prd_name,
         description: req.body.description,
@@ -129,7 +132,6 @@ module.exports = {
       const id = req.query.id;
       const data = await productdb.findById(id);
       const data1 = await categorydb.find();
-
 
       res.render("updateproduct", {
         data: data1,
