@@ -3,6 +3,8 @@ const categorydb = require("../model/categorySchema");
 const reviewdb = require("../model/reviewsSchema");
 const fs = require("fs");
 const path = require("path");
+const dotenv = require("dotenv");
+dotenv.config();
 
 module.exports = {
   newproduct: async (req, res) => {

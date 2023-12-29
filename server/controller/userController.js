@@ -9,7 +9,8 @@ const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const express = require("express");
 const dotenv = require("dotenv");
-dotenv.config({ path: "config.env" });
+dotenv.config();
+
 const Decimal128 = require("mongodb").Decimal128;
 
 console.log(process.env.EMAIL);

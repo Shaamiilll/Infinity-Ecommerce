@@ -4,6 +4,10 @@ const orderDb = require("../model/orderSchema");
 const Razorpay = require("razorpay");
 const Userdb = require("../model/usersSchema");
 const val = productdb.find({ price: 111 });
+const dotenv = require("dotenv");
+dotenv.config();
+
+
 const razorpayInstance = new Razorpay({
   key_id: process.env.RAZORPAY_ID_KEY,
   key_secret: process.env.RAZORPAY_SECRET_KEY,
