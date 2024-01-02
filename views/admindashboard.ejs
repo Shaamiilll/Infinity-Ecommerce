@@ -1,426 +1,348 @@
 <!-- include adminBase -->
 <%- include('include/_adminbase.ejs') %>
-    <!-- include adminBase -->
+  <!-- include adminBase -->
 
-    <!-- Include Chart.js from CDN -->
+  <!-- Include Chart.js from CDN -->
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    integrity="sha384-rw0L4+wER2o89LF0eS/vYFqLXDfIQN7RUaOB1NmmAxDAsj2cFqjjehMaMbzQ+LoD" crossorigin="anonymous">
 
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Include Chart.js from CDN -->
-
-
-    <style>
-        .modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 20px;
-            border: 1px solid #ddd;
-            z-index: 1;
-        }
-        /*the container must be positioned relative:*/
-.custom-select {
-  position: relative;
-  font-family: Arial;
-}
-
-.custom-select select {
-  display: none; /*hide original SELECT element:*/
-}
-
-.select-selected {
-  background-color: DodgerBlue;
-}
-
-/*style the arrow inside the select element:*/
-.select-selected:after {
-  position: absolute;
-  content: "";
-  transform: translateY(-50%);
-  top: 57%;
-  right: 10px;
-  width: 0;
-  height: 0;
-  border: 6px solid transparent;
-  border-color: #fff transparent transparent transparent;
-}
-
-/*point the arrow upwards when the select box is open (active):*/
-.select-selected.select-arrow-active:after {
-  border-color: transparent transparent #fff transparent;
-  top: 43%;
-}
-
-/*style the items (options), including the selected item:*/
-.select-items div,
-.select-selected {
-  color: #ffffff;
-  padding: 8px 16px;
-  border: 1px solid transparent;
-  border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
-  cursor: pointer;
-  user-select: none;
-}
-
-/*style items (options):*/
-.select-items {
-  position: absolute;
-  background-color: DodgerBlue;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 99;
-}
-
-/*hide the items when the select box is closed:*/
-.select-hide {
-  display: none;
-}
-
-.select-items div:hover,
-.same-as-selected {
-  background-color: rgba(0, 0, 0, 0.1);
-}
-    </style>
-
-    <!-- CONTENT -->
-    <section id="content">
-        <main>
-            <div class="head-title">
-                <div class="left">
-                    <h1>Dashboard</h1>
-                    <ul class="breadcrumb">
-                        <li>
-                            <a href="#">Dashboard</a>
-                        </li>
-                        <li><i class='bx bx-chevron-right'></i></li>
-                        <li>
-                            <a class="active" href="#">Home</a>
-                        </li>
-                    </ul>
-                </div>
-                <a href="#" class="btn-download" onclick="showDateRangePopup()">
-                    <i class='bx bxs-cloud-download'></i>
-                    <span class="text">Download PDF</span>
-                </a>
-            </div>
-            <ul class="box-info">
-                <li>
-                    <i class='bx bxs-calendar-check'></i>
-                    <span class="text">
-                        <h3 class="counter">
-                            <%= totalOrder %>
-                        </h3>
-                        <p>Total Order</p>
-                    </span>
-                </li>
-                <li>
-                    <i class='bx bxs-group'></i>
-                    <span class="text">
-                        <h3 class="counter">
-                            <%= amountOfUsers %>
-                        </h3>
-                        <p>Total Users</p>
-                    </span>
-                </li>
-                <li>
-                    <i class='bx bxs-dollar-circle'></i>
-                    <span class="text">
-                        <h3 class="counter">
-                            <%= totalSalesAmount %>
-                        </h3>
-                        <p>Total Sales</p>
-                    </span>
-                </li>
-            </ul>
-
-            <div class="table-data">
-                <div class="order">
-                    <div class="head">
-                        <h3>Recent Orders</h3>
-                        <i class='bx bx-search'></i>
-                        <i class='bx bx-filter'></i>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>User</th>
-                                <th>product</th>
-                                <th>Date Order</th>
-                                <th>Status</th>
-
-                            </tr>
-                        </thead>
-                        <% for(let i=0;i<5;i++){ %>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <img src="primg/<%= latestOrders[i].products[0].prd_images[0] %>">
-                                        <p>
-                                            <%= latestOrders[i].user.split('@')[0] %>
-                                        </p>
-                                    </td>
-                                    <td>
-                                        <%= latestOrders[i].products[0].pname.substring(0, 40) + '...' %>
-                                    </td>
-
-                                    <td>
-                                        <%= latestOrders[i].orderDate.toLocaleDateString('en-IN') %>
-                                    </td>
-                                    <td><span class="status completed">
-                                            <%=latestOrders[i].status %>
-                                        </span></td>
-                                </tr>
-
-                            </tbody>
-                            <% } %>
-                    </table>
-                </div>
-
-            </div>
-            <div class="mb-2">
-                <div class="custom-select ms-auto" style="width:200px;">
-                  <select id="filterSales">
-                    <option value="Monthly">Monthly</option>
-                    <option value="Yearly">Yearly</option>
-                    <option value="Weekly">Weekly</option>
-                    <option value="Daily">Daily</option>
-                  </select>
-                </div>
-              </div>
-            <div>
-                <canvas id="myChart"></canvas>
-            </div>
-        </main>
+  <!-- Include Chart.js from CDN -->
 
 
-
-        <div id="dateRangeModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeDateRangeModal()">&times;</span>
-                <form id="dateRangeForm">
-                    <label for="startDate">Start Date:</label>
-                    <input type="date" id="startDate" required>
-                    <label for="endDate">End Date:</label>
-                    <input type="date" id="endDate" required>
-                    <button type="button" onclick="downloadPdfWithDateRange()">Download</button>
-                    <h1></h1>
-                    <button type="button" onclick="downloadPdfForToday()">Today's Sales Report</button>
-                </form>
-            </div>
+  <!-- CONTENT -->
+  <section id="content">
+    <main>
+      <div class="head-title">
+        <div class="left">
+          <h1>Dashboard</h1>
+          <ul class="breadcrumb">
+            <li>
+              <a href="#">Dashboard</a>
+            </li>
+            <li><i class='bx bx-chevron-right'></i></li>
+            <li>
+              <a class="active" href="#">Home</a>
+            </li>
+          </ul>
         </div>
-        <!-- /Modal -->
+        <a href="#" class="btn-download" data-bs-toggle="modal" data-bs-target="#dateRangeModal">
+          <i class='bx bxs-cloud-download'></i>
+          <span class="text">Download PDF</span>
+        </a>
+
+      </div>
+      <ul class="box-info">
+        <li>
+          <i class='bx bxs-calendar-check'></i>
+          <span class="text">
+            <h3 class="counter">
+              <%= totalOrder %>
+            </h3>
+            <p>Total Order</p>
+          </span>
+        </li>
+        <li>
+          <i class='bx bxs-group'></i>
+          <span class="text">
+            <h3 class="counter">
+              <%= amountOfUsers %>
+            </h3>
+            <p>Total Users</p>
+          </span>
+        </li>
+        <li>
+          <i class='bx bxs-dollar-circle'></i>
+          <span class="text">
+            <h3 class="counter">
+              <%= totalSalesAmount %>
+            </h3>
+            <p>Total Sales</p>
+          </span>
+        </li>
+      </ul>
+
+      <div class="table-data">
+        <div class="order">
+          <div class="head">
+            <h3>Recent Orders</h3>
+            <i class='bx bx-search'></i>
+            <i class='bx bx-filter'></i>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>product</th>
+                <th>Date Order</th>
+                <th>Status</th>
+
+              </tr>
+            </thead>
+            <% for(let i=0;i<5;i++){ %>
+              <tbody>
+                <tr>
+                  <td>
+                    <img src="primg/<%= latestOrders[i].products[0].prd_images[0] %>">
+                    <p>
+                      <%= latestOrders[i].user.split('@')[0] %>
+                    </p>
+                  </td>
+                  <td>
+                    <%= latestOrders[i].products[0].pname.substring(0, 40) + '...' %>
+                  </td>
+
+                  <td>
+                    <%= latestOrders[i].orderDate.toLocaleDateString('en-IN') %>
+                  </td>
+                  <td><span class="status completed">
+                      <%=latestOrders[i].status %>
+                    </span></td>
+                </tr>
+
+              </tbody>
+              <% } %>
+          </table>
+        </div>
+
+      </div>
+      <div class="mb-2">
+        <div class="custom-select ms-auto" style="width:200px;">
+          <select id="filterSales">
+            <option value="Monthly">Monthly</option>
+            <option value="Yearly">Yearly</option>
+            <option value="Weekly">Weekly</option>
+            <option value="Daily">Daily</option>
+          </select>
+        </div>
+                
+      </div>
+      <div>
+        <canvas id="myChart"></canvas>
+      </div>
+    </main>
 
 
-    </section>
-    <!-- CONTENT -->
-    <!--     
-    <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+
+    <!-- Replace your existing modal code with this Bootstrap modal code -->
+    <div class="modal fade" id="dateRangeModal" tabindex="-1" aria-labelledby="dateRangeModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="dateRangeModalLabel">Date Range</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="dateRangeForm">
+              <div class="mb-3">
+                <label for="startDate" class="form-label">Start Date:</label>
+                <input type="date" class="form-control" id="startDate" required
+                  max="<%= new Date().toISOString().split('T')[0] %>">
+              </div>
+              <div class="mb-3">
+                <label for="endDate" class="form-label">End Date:</label>
+                <input type="date" class="form-control" id="endDate" required
+                  max="<%= new Date().toISOString().split('T')[0] %>">
+              </div>
+              <button type="button" class="btn btn-primary" onclick="downloadPdfWithDateRange()">Download</button>
+              <h1></h1>
+              <button type="button" class="btn btn-secondary" onclick="downloadPdfForToday()">Today's Sales
+                Report</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+  </section>
+  <!-- CONTENT -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ratOyhjQIINk+CD2EAgjlEqUC5FFtui9cU4J+sk9BbcE3DE3ZcdVo6YQZ5y4bSSUn"
+    crossorigin="anonymous"></script>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
     integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.0/jquery.waypoints.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery.counterup@2.1.0/jquery.counterup.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
-        integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.0/jquery.waypoints.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jquery.counterup@2.1.0/jquery.counterup.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.0/jquery.waypoints.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery.counterup@2.1.0/jquery.counterup.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+    integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.0/jquery.waypoints.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery.counterup@2.1.0/jquery.counterup.min.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
+  <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script> -->
 
 
 
-    <script>
-        function showDateRangePopup() {
-            var modal = document.getElementById("dateRangeModal");
-            modal.style.display = "block";
-        }
+  <!-- Add this script block at the end of your HTML file -->
+  <script>
+    function showDateRangePopup() {
+      // No need to manually show the modal here
+    }
 
-        function closeDateRangeModal() {
-            var modal = document.getElementById("dateRangeModal");
-            modal.style.display = "none";
-        }
+    function closeDateRangeModal() {
+      // Close the Bootstrap modal
+      $('#dateRangeModal').modal('hide');
+    }
 
-        function downloadPdfWithDateRange() {
-            var startDate = document.getElementById("startDate").value;
-            var endDate = document.getElementById("endDate").value;
+    function downloadPdfWithDateRange() {
+      var startDate = document.getElementById("startDate").value;
+      var endDate = document.getElementById("endDate").value;
 
-            // Close the modal after clicking the download button
-            closeDateRangeModal();
+      // Perform validation
+      if (!startDate || !endDate) {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Both start date and end date are required.",
+ 
+        });
 
-            // Perform your download action with startDate and endDate
-            window.location.href = `/sales-report?startDate=${startDate}&endDate=${endDate}`;
-        }
-        function downloadPdfForToday() {
-            // Get the current date
-            var today = new Date();
-            var dd = String(today.getDate()).padStart(2, '0');
-            var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
-            var yyyy = today.getFullYear();
+      
+        return;
+      }
 
-            var currentDate = yyyy + '-' + mm + '-' + dd;
+      if (new Date(endDate) <= new Date(startDate)) {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "End date must be greater than the start date.",
+ 
+        });
+        return;
+      }
 
-            // Perform your download action with the current date
-            window.location.href = `/sales-report?date=${currentDate}`;
+      // Close the modal after clicking the download button
+      closeDateRangeModal();
 
-            // Close the modal after clicking the download button
-            closeDateRangeModal();
-        }
+      // Perform your download action with startDate and endDate
+      window.location.href = `/sales-report?startDate=${startDate}&endDate=${endDate}`;
+    }
+    function downloadPdfForToday() {
+      // Get the current date
+      var today = new Date();
+      var dd = String(today.getDate()).padStart(2, '0');
+      var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+      var yyyy = today.getFullYear();
 
-    </script>
+      var currentDate = yyyy + '-' + mm + '-' + dd;
+
+      // Perform your download action with the current date
+      window.location.href = `/sales-report?date=${currentDate}`;
+
+      // Close the modal after clicking the download button
+      closeDateRangeModal();
+    }
+  </script>
 
 
 
-   <script>
+
+  <script>
     $(".counter").counterUp({
-  delay: 10,
-  time: 900,
-});
-
-const ctx = document.getElementById("myChart");
-let newChart;
-let flag = false;
-
-function chartShow(saleData) {
-  if (flag) {
-    newChart.destroy();
-    flag = false;
-  }
-  newChart = new Chart(ctx, {
-    type: "bar",
-    data: {
-      labels: saleData.label,
-      datasets: [
-        {
-          label: "Total Sales",
-          data: saleData.salesCount,
-          borderWidth: 1,
-        },
-      ],
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true,
-        },
-      },
-    },
-  });
-}
-
-function chartDetails(filter) {
-  $.ajax({
-    url: "/api/getDetailsChart",
-    method: "POST",
-    data: { filter },
-  })
-    .then((res) => {
-      chartShow(res);
-    })
-    .catch((err) => {
-      console.log(err);
+      delay: 10,
+      time: 900,
     });
-}
 
-const formSelect = document.getElementById("filterSales");
+    const ctx = document.getElementById("myChart");
+    let newChart;
+    let flag = false;
 
-window.addEventListener("load", () => {
-  chartDetails(formSelect.value);
-});
+    function chartShow(saleData) {
+      if (flag) {
+        newChart.destroy();
+        flag = false;
+      }
+      newChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: saleData.label,
+          datasets: [
+            {
+              label: "Total Sales",
+              data: saleData.salesCount,
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+    }
 
-var x, i, j, l, ll, selElmnt, a, b, c;
-x = document.getElementsByClassName("custom-select");
-l = x.length;
-for (i = 0; i < l; i++) {
-  selElmnt = x[i].getElementsByTagName("select")[0];
-  ll = selElmnt.length;
-  a = document.createElement("DIV");
-  a.setAttribute("class", "select-selected");
-  a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
-  x[i].appendChild(a);
-  b = document.createElement("DIV");
-  b.setAttribute("class", "select-items select-hide");
-  for (j = 0; j < ll; j++) {
-    c = document.createElement("DIV");
-    c.innerHTML = selElmnt.options[j].innerHTML;
-    c.addEventListener("click", function (e) {
-      var y, i, k, s, h, sl, yl;
-      s = this.parentNode.parentNode.getElementsByTagName("select")[0];
-      sl = s.length;
-      h = this.parentNode.previousSibling;
-      for (i = 0; i < sl; i++) {
-        if (s.options[i].innerHTML == this.innerHTML) {
-          s.selectedIndex = i;
-          h.innerHTML = this.innerHTML;
-          y = this.parentNode.getElementsByClassName("same-as-selected");
-          yl = y.length;
-          invokeChangeEvent();
-          for (k = 0; k < yl; k++) {
-            y[k].removeAttribute("class");
-          }
-          this.setAttribute("class", "same-as-selected");
-          break;
+    function chartDetails(filter) {
+      $.ajax({
+        url: "/api/getDetailsChart",
+        method: "POST",
+        data: { filter },
+      })
+        .then((res) => {
+          chartShow(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+
+    const formSelect = document.getElementById("filterSales");
+
+    window.addEventListener("load", () => {
+      chartDetails(formSelect.value);
+    });
+
+   
+    function closeAllSelect(elmnt) {
+      var x,
+        y,
+        i,
+        xl,
+        yl,
+        arrNo = [];
+      x = document.getElementsByClassName("select-items");
+      y = document.getElementsByClassName("select-selected");
+      xl = x.length;
+      yl = y.length;
+      for (i = 0; i < yl; i++) {
+        if (elmnt == y[i]) {
+          arrNo.push(i);
+        } else {
+          y[i].classList.remove("select-arrow-active");
         }
       }
-      h.click();
+      for (i = 0; i < xl; i++) {
+        if (arrNo.indexOf(i)) {
+          x[i].classList.add("select-hide");
+        }
+      }
+    }
+
+    document.addEventListener("click", closeAllSelect);
+
+    formSelect.addEventListener("change", () => {
+      flag = true;
+      chartDetails(formSelect.value);
     });
-    b.appendChild(c);
-  }
-  x[i].appendChild(b);
-  a.addEventListener("click", function (e) {
-    e.stopPropagation();
-    closeAllSelect(this);
-    this.nextSibling.classList.toggle("select-hide");
-    this.classList.toggle("select-arrow-active");
-  });
-}
 
-function closeAllSelect(elmnt) {
-  var x,
-    y,
-    i,
-    xl,
-    yl,
-    arrNo = [];
-  x = document.getElementsByClassName("select-items");
-  y = document.getElementsByClassName("select-selected");
-  xl = x.length;
-  yl = y.length;
-  for (i = 0; i < yl; i++) {
-    if (elmnt == y[i]) {
-      arrNo.push(i);
-    } else {
-      y[i].classList.remove("select-arrow-active");
+    function invokeChangeEvent() {
+      const event = new Event("change");
+      formSelect.dispatchEvent(event);
     }
-  }
-  for (i = 0; i < xl; i++) {
-    if (arrNo.indexOf(i)) {
-      x[i].classList.add("select-hide");
-    }
-  }
-}
 
-document.addEventListener("click", closeAllSelect);
-
-formSelect.addEventListener("change", () => {
-  flag = true;
-  chartDetails(formSelect.value);
-});
-
-function invokeChangeEvent() {
-  const event = new Event("change");
-  formSelect.dispatchEvent(event);
-}
-
-   </script>
+  </script>
 
 
 
@@ -428,4 +350,4 @@ function invokeChangeEvent() {
 
 
 
-    </html>
+  </html>

@@ -4,6 +4,7 @@ const categorydb = require("../model/categorySchema");
 const dotenv = require("dotenv");
 const productdb = require("../model/productsSchema");
 const Reviewdb = require("../model/reviewsSchema");
+const cartDb = require("../model/cartSchema");
 dotenv.config({ path: "config.env" });
 
 exports.login = (req, res) => {
@@ -31,9 +32,7 @@ exports.login = (req, res) => {
   );
 };
 
-exports.product = (req, res) => {
-  res.render("productDetails");
-};
+
 
 exports.forgetPassword = (req, res) => {
   res.render("forgetPassword");
@@ -219,41 +218,56 @@ exports.address = (req, res) => {
     });
 };
 
-exports.loadcheckout = (req, res) => {
-  let totalprice;
-  const email = req.session.email;
+exports.loadcheckout = async (req, res) => {
+  try {
+    let totalprice;
+    const email = req.session.email;
+    const prId = req.session.singleProductId;
 
-  totalprice = req.session.totalAmountSession;
+    totalprice = req.session.totalAmountSession;
 
-  const index = req.query.id || 0;
-  const prId = req.session.singleProductId;
+    const index = req.query.id || 0;
 
-  console.log(totalprice + "from checkot 2");
-  Userdb.findOne({ email: email })
-    .then((userdata) => {
-      console.log(userdata);
-      res.render(
-        "checkout",
-        {
-          prId: prId,
-          users: userdata,
-          price: totalprice,
-          a: index,
-        },
-        (err, html) => {
-          if (err) {
-            return res.send("Internal Server error " + "1");
-          }
-          delete req.session.discountApplied;
+    console.log(totalprice + " from checkout 2");
 
-          res.send(html);
+    const userdata = await Userdb.findOne({ email: email });
+    if(prId){
+      data=await productdb.findById(prId);
+      totalprice=data.price
+    }else{
+      data = await cartDb.find({email:email})
+    const total = data.reduce((total,value)=>{
+      return total += (value.price - (value.price*value.discount/100)) * value.cartQuantity;
+      
+    },0)
+    totalprice=total
+      
+    }
+    if (userdata) {
+      res.render("checkout", {
+        prId: prId,
+        users: userdata,
+        price: totalprice,
+        a: index,
+      }, (err, html) => {
+        if (err) {
+          return res.send("Internal Server error " + "1");
         }
-      );
-    })
-    .catch((err) => {
-      res.send(err);
-    });
+        delete req.session.discountApplied;
+        res.send(html);
+      });
+    } else {
+      res.json({
+        success: false,
+        message: "User not found.",
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error " + "2");
+  }
 };
+
 exports.changeAddress = (req, res) => {
   const email = req.session.email;
   const totalprice = req.body.totalsum;

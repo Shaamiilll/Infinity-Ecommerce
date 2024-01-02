@@ -7,6 +7,7 @@ const route = require("./server/routes/userRouter");
 const cors = require("cors");
 const connectDB = require("./server/database/connection");
 const cookieParser = require("cookie-parser");
+const morgan = require("morgan");
 
 
 const app = express();
@@ -15,7 +16,7 @@ dotenv.config();
 const PORT = process.env.PORT || 8080;
 
 // log requestsq
-// app.use(morgan('tiny')); debug propuse
+// app.use(morgan('tiny')); 
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());

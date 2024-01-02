@@ -49,13 +49,13 @@
                                         <%=data[i]. discription %>
                                     </td>
                                     <td onclick="banner('<%=data[i].image  %>')">
-                                        <%=data[i].category.name %>
+                                        <%=data[i].category.name%>
                                     </td>
 
                                     <td>
                                         <a href="/delete-banner?id=<%= data[i]._id %>"> <i class="fas fa-trash-alt"
                                                 style="color: black; margin-right: 10px;"></i> </a>
-                                        <a href="/edit-coupon?id=<%= data[i]._id %>"> <i class="fas fa-pencil-alt"
+                                        <a href="/edit-banner?id=<%= data[i]._id %>"> <i class="fas fa-pencil-alt"
                                                 style="color: black;"></i> </a>
                                     </td>
                                 </tr>

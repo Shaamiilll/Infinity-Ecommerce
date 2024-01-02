@@ -1,108 +1,203 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Product</title>
+<!-- include header -->
+<%- include('include/admin-head') %>
+  <!-- /include header -->
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!-- OWL Carousel -->
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
-    <link rel="stylesheet" href="css/owl.theme.default.min.css">
-    <!-- Showmore CSS -->
-    <link rel="stylesheet" href="css/showMoreItems-theme.min.css">
-</head>
-
-<body>
-
-    <section>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-10 col-md-8 ml-auto">
-                    <div class="row align-items-center pt-md-5 mt-md-5 mb-5">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-title text-center mt-3">
-                                    <h3>Add Product</h3>
-                                </div>
-
-                                <div class="card-body">
-                                    <form action="/api/add-product" method="POST" enctype="multipart/form-data">
-                                        <div class="form-group">
-                                            <label for="productName">Product Name:</label>
-                                            <input type="text" name="prd_name" class="form-control" id="productName" placeholder="Enter Product Name">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="productDescription">Description:</label>
-                                            <input type="text" name="description" class="form-control" id="productDescription" placeholder="Enter Description">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="productCategory">Category:</label>
-                                            <select name="category" id="productCategory" class="form-control">
-                                                <% for(let i=0;i<data.length;i++){ %>
-                                                <option value="<%=data[i].name  %>"><%= data[i].name %></option>
-                                                <% } %>
-                                            </selectA>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="productPrice">Product Price:</label>
-                                            <input type="number" name="price" class="form-control" id="productPrice" placeholder="Enter Product Price">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="productPrice">Add Stock:</label>
-                                            <input type="number" name="stock" class="form-control" id="productPrice" placeholder="Enter Product Price">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="productPrice">Add Discound percentage:</label>
-                                            <input type="number" name="discound" class="form-control" id="productPrice" placeholder="Enter Product Price">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="productImage">Product Image:</label>
-                                            <input type="file" name="image" multiple class="form-control-file" id="productImage" accept="image/*">
-                                            <img id="imagePreview" class="mt-2" style="max-width: 100%; height: auto;" src="#" alt="Image Preview">
-                                        </div>
-
-                                        <button class="btn btn-dark mt-5 mx-auto d-block" type="submit">Add Product</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+  <!-- MDB -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="dist/themes/toasteur-default.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
+  
+  <div class="row">
+    <div class="col-md-8 mb-4 mx-auto mb-4  mt-5">
+      <div class="card mb-4" style="background-color:#f5f5f7;">
+        <div class="card-header py-3">
+          <h5 class="mb-0">Add product</h5>
         </div>
-    </section>
+        <div class="card-body">
+          <form id="addProductForm" action="/api/add-product" method="POST" enctype="multipart/form-data">
+            <div class="card shadow-0 ">
+              <div class="p-4" style="background-color:#f5f5f7;">
+                <h5 class="card-title mb-3" style="background-color:#f5f5f7;">Product details</h5>
+                <div class="row">
+                </div>
+                <p id="alert"></p>
+                <div class="row">
+                  <div class="col-sm-8 mb-3">
+                    <p class="mb-0">product name</p>
+                    <div class="form-outline">
+                      <input required type="text" name="prd_name" class="form-control" id="productName"
+                        placeholder="Enter Product Name">
+                    </div>
+                  </div>
+                  <div class="col-sm-8 mb-3">
+                    <p class="mb-0">Discription</p>
+                    <div class="form-outline">
+                      <input required type="text" name="description" class="form-control" id="productDescription"
+                        placeholder="Enter Description">
+                    </div>
+                  </div>
 
-    <!-- Bootstrap JS and Popper.js -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    <!-- Custom Script for Image Preview -->
-    <script>
-        // Function to handle image preview
-        function previewImage() {
-            var input = document.getElementById('productImage');
-            var preview = document.getElementById('imagePreview');
 
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
 
-                reader.onload = function (e) {
-                    preview.src = e.target.result;
-                };
+                  <div class="col-sm-4 mb-3">
+                    <p class="mb-0">product price</p>
+                    <div class="form-outline">
+                      <input required type="number" name="price" class="form-control" id="productPrice"
+                        placeholder="Enter Product Price">
+                    </div>
+                    <p class="mb-0" id="PriceWarning" style="display: none; color: red;">price should be positive value</p>
+                  </div>
 
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
+                  <div class="col-sm-4 mb-3">
+                    <p class="mb-0">Add Stock</p>
+                    <div class="form-outline">
+                      <input required type="number" name="stock" class="form-control" id="productStock"
+                        placeholder="Enter Product Stock">
+                    </div>
+                    <p class="mb-0" id="PriceStock" style="display: none; color: red;">stock should be positive value</p>
 
-        // Attach the preview function to the file input change event
-        document.getElementById('productImage').addEventListener('change', previewImage);
-    </script>
+                  </div>
 
-</body>
-</html>
+                  <div class="col-sm-4 col-6 mb-3">
+                    <p class="mb-0">Add Discount(%)</p>
+                    <div class="form-outline">
+                      <input required type="number" name="discount" class="form-control" id="productDiscount"
+                        placeholder="Enter Product Discount">
+                    </div>
+                    <p class="mb-0" id="PriceDiscount" style="display: none; color: red;">Discount Less than 90% And above 0% </p>
+
+                  </div>
+
+                  <div class="col-sm-4 mb-3">
+                    <p class="mb-0">category</p>
+                    <div class="form-outline">
+                      <select name="category" id="productCategory" class="form-control">
+                        <% for(let i=0;i<data.length;i++){ %>
+                          <option value="<%=data[i].name  %>">
+                            <%= data[i].name %>
+                          </option>
+                          <% } %>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-4 col-6 mb-3">
+                    <p class="mb-0">Product Image</p>
+                    <div class="form-outline">
+
+                      <input required type="file" name="image" multiple class="form-control-file" id="productImage"
+                        accept="image/*">
+                        <img id="imagePreview" class="mt-2" style="max-width: 100px; height: 100px; object-fit: cover;"
+                        src="#" alt="Image Preview">
+
+                    </div>
+                  </div>
+                </div>
+
+
+                <div class="float-end">
+                  <button type="submit" class="btn btn-success shadow-0 border"
+                    style="background-color: #131921;">Continue</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="dist/toasteur.min.js"></script>
+
+  <script>
+    // Function to handle image preview
+    function previewImage() {
+      var input = document.getElementById('productImage');
+      var preview = document.getElementById('imagePreview');
+
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+          preview.src = e.target.result;
+        };
+
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    // Attach the preview function to the file input change event
+    document.getElementById('productImage').addEventListener('change', previewImage);
+  </script>
+  <script>
+    // Function to handle image preview
+    function previewImage() {
+      var input = document.getElementById('productImage');
+      var preview = document.getElementById('imagePreview');
+
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+          preview.src = e.target.result;
+        };
+
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    // Attach the preview function to the file input change event
+    document.getElementById('productImage').addEventListener('change', previewImage);
+
+    // Function to validate the form
+    function validateForm() {
+      var productName = document.getElementById('productName').value;
+      var productDescription = document.getElementById('productDescription').value;
+      var productPrice = document.getElementById('productPrice').value;
+      var productStock = document.getElementById('productStock').value;
+      var productDiscount = document.getElementById('productDiscount').value;
+      var productImage = document.getElementById('productImage').value;
+
+      // Basic validation for non-empty fields
+      if (!productName || !productDescription || !productPrice || !productStock || !productDiscount || !productImage) {
+         alert("Product name or product description is required")
+        return false;
+      }
+
+      // Validation for numeric fields
+      if (isNaN(productPrice) || isNaN(productStock) || isNaN(productDiscount)) {
+        alert('Price, Stock, and Discount must be numeric values.');
+        return false;
+      }
+
+      if (productPrice <= 0 ) {
+        document.getElementById('PriceWarning').style.display = 'block';
+        return false;
+      }
+      if ( productStock <= 0 ) {
+        document.getElementById('PriceStock').style.display = 'block';
+        return false;
+      }
+      if ( productDiscount < 0 || productDiscount > 90) {
+        document.getElementById('PriceDiscount').style.display = 'block';
+        return false;
+      }
+
+      return true;
+    }
+
+    // Attach the validateForm function to the form submit event
+    document.getElementById('addProductForm').addEventListener('submit', function (event) {
+      if (!validateForm()) {
+        // Prevent the form submission if validation fails
+        event.preventDefault();
+      }
+    });
+  </script>
+
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>

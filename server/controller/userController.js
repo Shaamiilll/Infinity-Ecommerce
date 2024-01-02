@@ -13,9 +13,6 @@ dotenv.config();
 
 const Decimal128 = require("mongodb").Decimal128;
 
-console.log(process.env.EMAIL);
-console.log(process.env.APP_PASSWORD);
-
 let transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -214,21 +211,20 @@ module.exports = {
     try {
       const email = req.session.email;
       const blocked = req.session.block;
-      console.log(email);
 
       const products = await productDb
         .find({ active: true, categoryStats: true, stock: { $gt: 0 } })
         .populate("category") // Populate the 'category' field
         .exec();
-        const banner=await bannerDb.find({active:true}).populate('category')
-        console.log(banner);
-
+      const banner = await bannerDb.find({ active: true }).populate("category");
+      const category = await categoryDb.find();
       res.render("userHome", {
         products: products,
         userLogged: email,
         blocked: blocked,
-        logged:email,
-        banner
+        logged: email,
+        banner,
+        category,
       });
     } catch (err) {
       console.error("Error fetching products:", err);
@@ -569,13 +565,17 @@ module.exports = {
   },
 
   promoCode: async (req, res) => {
-    req.session.promocode=''
+    req.session.promocode = "";
     const promoCode = req.body.coupon.toUpperCase();
-    let price = req.body.price;
-     req.session.promocode= promoCode
+    let price = req.session.totalAmountSession;
+    req.session.promocode = promoCode;
 
     try {
-      const data = await couponDb.findOne({ code: promoCode });
+      const data = await couponDb.findOne({
+        code: promoCode,
+        active: true,
+        expired: false,
+      });
 
       if (data) {
         if (req.session.discountApplied) {
@@ -590,10 +590,11 @@ module.exports = {
             message: "Can't Apply Coupon Code price should be more than 100",
           });
         }
-
-        const discountedPrice = price - (price / 100) * data.discountPercentage;
+        price = price - 20;
+        const discountedPrice = price - (price * data.discountPercentage) / 100;
         console.log(discountedPrice);
         console.log("discount price ");
+        req.session.totalAmountSession = discountedPrice;
         req.session.discountApplied = true;
         req.session.discountPercentage = data.discountPercentage; // Set the flag to indicate discount applied
         return res.json({
@@ -613,26 +614,36 @@ module.exports = {
   },
   wallet: async (req, res) => {
     try {
-      const price = req.body.price;
+      let price = req.session.totalAmountSession;
       const email = req.session.email;
       const user = await Userdb.findOne({ email: email });
 
       if (user) {
         const userWalletAmount = user.wallet;
         req.session.userWallet = 0;
-
-        if ((userWalletAmount) => price) {
-          req.session.userWalletbalance = userWalletAmount - price;
+        console.log(price);
+        console.log(userWalletAmount);
+        if (userWalletAmount >= price) {
+          req.session.userWallet = userWalletAmount-price;
+          price = 0;
+          req.session.totalAmountSession=0
           return res.json({
-            success: true,
-            price: price - userWalletAmount,
-            walletAmount: req.session.totalAmountSession - 20,
-          });
+          success: true,
+          walletPrice:req.session.userWallet,
+          price : 0
+          })
+          
         } else {
+          price -= userWalletAmount
+          req.session.totalAmountSession=price
+          req.session.userWallet = 0;
           return res.json({
-            success: false,
-            message: "Insufficient funds in the wallet or  ",
-          });
+            price:price,
+            success: true,
+            walletPrice:0,
+          })
+         // Zero out the user's wallet balance
+          
         }
       } else {
         return res.json({

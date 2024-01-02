@@ -89,17 +89,21 @@
             </div>
           </div>
           <!-- Center elements -->
-
+          
           <!-- Right elements -->
           <div class="col-lg-5 col-md-12 col-12">
             <div class="input-group float-center">
-              <div class="form-outline">
-                <input type="search" id="form1" class="form-control" />
-                <label class="form-label" for="form1" style="color: aliceblue;">Search</label>
-              </div>
-              <button type="button" class="btn btn-white shadow-0">
-                <i class="fas fa-search"></i>
-              </button>
+
+              <form action="/products" method="GET" class="input-group float-center">
+                <div class="form-outline">
+                  <input type="search" name="search" id="form1" class="form-control" />
+                  <label class="form-label" for="form1" style="color: aliceblue;">Search</label>
+                </div>
+                <button type="submit" class="btn btn-white shadow-0">
+                  <i class="fas fa-search"></i>
+                </button>
+              </form>
+
             </div>
           </div>
           <!-- Right elements -->
@@ -135,26 +139,15 @@
               </a>
               <!-- Dropdown menu -->
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <% for(let i=0;i<category.length;i++){ %>
                 <li>
                   <a class="dropdown-item "
-                    style="color: white; background-color: #232F3E;font-family: 'Rubik', sans-serif" href="#">LAPTOP</a>
+                    style="color: white; background-color: #232F3E;font-family: 'Rubik', sans-serif" href="/products?category=<%=category[i].name  %>"><%=category[i].name  %></a>
                 </li>
-                <li>
-                  <a class="dropdown-item"
-                    style="color: white; background-color: #232F3E;font-family: 'Rubik', sans-serif"
-                    href="#">SMARTPHONE</a>
-                </li>
+                <% } %>
+               
 
-                <li>
-                  <a class="dropdown-item"
-                    style="color: white; background-color: #232F3E;font-family: 'Rubik', sans-serif"
-                    href="#">HEADSET</a>
-                </li>
-                <li>
-                  <a class="dropdown-item"
-                    style="color: white; background-color: #232F3E;font-family: 'Rubik', sans-serif"" href="
-                    #">WATCHES</a>
-                </li>
+               
               </ul>
             </li>
 
@@ -202,8 +195,8 @@
               <img src="/primg/<%= banner.image%>" class="d-block img-fluid w-100" alt="Image <%= index + 1 %>" style="aspect-ratio: 12/3 ;">
               <div class="carousel-caption d-none d-md-block">
                 <!-- Add your text here -->
-                <h5>Banner Title <%= index + 1 %></h5>
-                <p>Some description or additional text</p>
+                <h5> <%=banner.title%></h5>
+                <p><%= banner.discription  %></p>
               </div>
             </a>
           </div>
@@ -343,23 +336,7 @@
           }
         }
 
-        function showLogoutReminder() {
-          Toastify({
-            text: `Login For Complete Accessibility click ctrl + /'`,
-            duration: 3000,
-            destination: "http://localhost:7000/login",
-            newWindow: true,
-            close: true,
-            gravity: "top",
-            position: "right",
-            stopOnFocus: true,
-            style: {
-              background: "white",
-              color: "Black"
-            },
-            onClick: function () { }
-          }).showToast();
-        }
+       
 
 
         function checkLoginStatus() {

@@ -26,7 +26,7 @@ module.exports = {
       let amount = req.session.totalAmountSession;
       const wallet = req.session.userWallet ? req.session.userWallet : 0;
       amount = (price - wallet) * 100;
-      const finalAmount = Math.max(0, amount);
+      const finalAmount = req.session.totalAmountSession * 100;
       if (req.session.userWallet || req.session.discountPercentage) {
         const wallet = req.session.userWallet;
         const couponPercentage = req.session.discountPercentage;
@@ -51,39 +51,50 @@ module.exports = {
         req.session.orderDetails = orderDetails;
         const neworder = new orderDb(orderDetails);
         if (req.body.payment === "Online_Payment") {
-          console.log("razorpay");
-          const randomOrderID = Math.floor(Math.random() * 1000000).toString();
-          const options = {
-            amount: finalAmount,
-            currency: "INR",
-            receipt: randomOrderID,
-          };
-
-          await new Promise((resolve, reject) => {
-            razorpayInstance.orders.create(options, (err) => {
-              console.log(err);
-              if (!err) {
-                console.log("Reached RazorPay Method on cntrlr", randomOrderID);
-                res.status(200).send({
-                  razorSuccess: true,
-                  msg: "order created",
-                  amount: finalAmount,
-                  key_id: process.env.RAZORPAY_ID_KEY,
-                  name: req.session.email,
-                  contact: "9744676504",
-                  email: "shamil@gmail.com",
-                });
-                resolve();
-              } else {
-                console.error("Razorpay Error:", err);
-                res.status(400).send({
-                  razorSuccess: false,
-                  msg: "Error creating order with Razorpay",
-                });
-                reject(err);
-              }
+          const finalAmount = req.session.totalAmountSession * 100;
+        
+          // Check if the final amount is greater than 1 rupee
+          if (finalAmount > 1) {
+            console.log("razorpay");
+            const randomOrderID = Math.floor(Math.random() * 1000000).toString();
+            const options = {
+              amount: finalAmount,
+              currency: "INR",
+              receipt: randomOrderID,
+            };
+        
+            await new Promise((resolve, reject) => {
+              razorpayInstance.orders.create(options, (err) => {
+                console.log(err);
+                if (!err) {
+                  console.log("Reached RazorPay Method on cntrlr", randomOrderID);
+                  res.status(200).send({
+                    razorSuccess: true,
+                    msg: "order created",
+                    amount: finalAmount,
+                    key_id: process.env.RAZORPAY_ID_KEY,
+                    name: req.session.email,
+                    contact: "9744676504",
+                    email: "shamil@gmail.com",
+                  });
+                  resolve();
+                } else {
+                  console.error("Razorpay Error:", err);
+                  res.status(400).send({
+                    razorSuccess: false,
+                    msg: "Error creating order with Razorpay",
+                  });
+                  reject(err);
+                }
+              });
             });
-          });
+          } else {
+           
+            res.status(400).send({
+              razorSuccess: false,
+              msg: "Final amount is less than or equal to 1 rupee. Razorpay not initiated.",
+            });
+          }
         } else {
           await neworder.save();
           await productdb.updateOne({ _id: id }, { $inc: { stock: -1 } });
@@ -96,7 +107,7 @@ module.exports = {
         for (let i = 0; i < productData.length; i++) {
           const orderDetails = {
             user: email,
-            totalAmount: req.body.totalsum,
+            totalAmount: finalAmount,
             shippingAddress: {
               Address: req.body.address,
               city: req.body.city,

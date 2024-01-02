@@ -78,9 +78,10 @@
                             onclick="updateCartItem('<%= cart[i].prId %>', 1)">
                             <i class="fas fa-plus"></i>
                           </button>
-                          
+
                         </div>
-                        <label id='stock<%=cart[i]._id  %>' style="color: red; display: none;">No More Stock available</label>
+                        <label id='stock<%=cart[i]._id  %>' style="color: red; display: none;">No More Stock
+                          available</label>
                       </div>
                     </div>
                     <div
@@ -163,28 +164,48 @@
 
     function updateCartItem(id, delta) {
       fetch(`/cart/update?id=${id}&change=${delta}`, {
-        method: "GEt",
+        method: "GET",
         headers: {
           "Content-Type": "application/json"
         },
       })
         .then(response => response.json())
         .then(data => {
-            updateUI(data);
-            if(data.updatedData.cartQuantity==data.updatedData.stock){
-              document.getElementById(`stock${data.updatedData._id}`).style.display='block'
-            }else{
-              document.getElementById("stock").style.display='none'
- 
-            }
-        
-          
+          console.log(data);
+
+          const formattedPrice = new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR'
+          }).format((data.updatedData.price - (data.updatedData.price * data.updatedData.discount / 100)) * data.updatedData.cartQuantity);
+
+          var quantityInput = document.getElementById(`quInput${data.updatedData.prId}`);
+          quantityInput.placeholder = data.updatedData.cartQuantity;
+
+          document.getElementById(`indPrice${data.updatedData.prId}`).innerHTML = formattedPrice;
+
+          var totalPriceElement = document.getElementById('total-price');
+          var totalPriceElementbefore = document.getElementById('total-price-before');
+          var totalSum = data.totalSum;
+          var formattedTotalSum = new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR'
+          }).format(totalSum);
+
+          totalPriceElement.innerHTML = formattedTotalSum
+          totalPriceElementbefore.innerHTML = formattedTotalSum
+
+          if (data.updatedData.cartQuantity == data.updatedData.stock) {
+            document.getElementById(`stock${data.updatedData._id}`).style.display = 'block'
+          } else {
+            document.getElementById("stock").style.display = 'none'
+
+          }
+
+
         })
     }
 
     function updateUI(data) {
-      console.log(data);
-      console.log(data.updatedData.prId)
 
       var quantityInput = document.getElementById(`quInput${data.updatedData.prId}`);
       if (quantityInput) {
@@ -202,13 +223,6 @@
 
         totalPriceElement.textContent = totalProductPrice;
       }
-
-
-
-
-
-
-
     }
 
     function decrementCartItem(productId) {
@@ -225,7 +239,7 @@
   </script>
 
 
-  
+
   </body>
   <!-- include footer -->
   <%- include('include/_footer') %>

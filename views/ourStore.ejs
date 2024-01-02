@@ -112,19 +112,12 @@
               </a>
               <!-- Dropdown menu -->
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <% for(let i=0;i< category.length;i++ ){%>
                 <li>
-                  <a class="dropdown-item " style="background-color: #232F3E;" href="#">LAPTOP</a>
+                  <a class="dropdown-item " style="background-color: #232F3E;" href="/products?category=<%= category[i].name %>"><%= category[i].name %></a>
                 </li>
-                <li>
-                  <a class="dropdown-item" style="background-color: #232F3E;" href="#">SMARTPHONE</a>
-                </li>
-
-                <li>
-                  <a class="dropdown-item" style="background-color: #232F3E;" href="#">HEADSET</a>
-                </li>
-                <li>
-                  <a class="dropdown-item" style="background-color: #232F3E;" href="#">WATCHES</a>
-                </li>
+                <% } %>
+              
               </ul>
             </li>
 
@@ -184,7 +177,7 @@
                       <ul class="list-unstyled">
                         <li><a href="/products" class="text-dark">All</a></li>
                         <% for(let i=0;i<category.length;i++){ %>
-                          <li><a href="/products?category=<%= category[i].name %>&page=<%= page %>" class="text-dark">
+                          <li><a href="/products?category=<%= category[i].name %>" class="text-dark">
                               <%= category[i].name %>
                             </a></li>
                           <% } %>

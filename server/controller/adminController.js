@@ -1,10 +1,8 @@
-const Userdb = require("../model/usersSchema");
-const blockdb = require("../model/blockedUsers");
 const CsvParser = require("json2csv").Parser;
-const coupon=require("../model/couponSchema")
-
 const fs = require("fs");
 const path = require("path");
+const Userdb = require("../model/usersSchema");
+const coupon=require("../model/couponSchema")
 const orderDb = require("../model/orderSchema");
 const Coupon = require("../model/couponSchema");
 const Banner = require("../model/bannerSchema");
@@ -24,9 +22,7 @@ module.exports = {
         });
       });
   },
-  addCoupon:(req,res)=>{
-    res.render("add-coupon")
-  },
+ 
 
   // Blocking A User 
   block: (req, res) => {
@@ -45,18 +41,15 @@ module.exports = {
   },
 
   // For Unblocking A User
-
   unblock: (req, res) => {
     const email = req.query.email;
     console.log(email);
     Userdb.updateOne(
       { email: email },
-      { $set: { block: "false", status: "Inactive" } }
-    )
+      { $set: { block: "false", status: "Inactive" } })
       .then((data) => {
         res.redirect("/admin-users");
       })
-
       .catch((err) => {
         res.send(err);
       });
@@ -66,7 +59,6 @@ module.exports = {
 salesReport: async (req, res) => {
   try {
     let totalOrders;
-
     const startDate = new Date(req.query.startDate);
     const endDate = new Date(req.query.endDate);
 
@@ -108,30 +100,20 @@ salesReport: async (req, res) => {
         },
       },
     ]);
-
-    console.log(totalOrders);
-
     const csvFields = ["Order ID", "Product Name", "Product Price"];
     const csvHeader = csvFields.join(",") + "\n";
-
     let csvValues = "";
-
     totalOrders.forEach((order) => {
       order.products.forEach((product) => {
         csvValues += `${order._id},"${product.pname}",${product.price}\n`;
       });
     });
-
     const totalOrdersCount = totalOrders.reduce((acc, order) => acc + order.count, 0);
-
     // Add the totals to the CSV values
     csvValues += `${totalOrdersCount},${totalUsers},${totalSales[0]?.sum || 0}\n`;
-
     const csvData = csvHeader + csvValues;
-
     res.setHeader("Content-Type", "text/csv");
     res.setHeader("Content-Disposition", "attachment;filename=salesData.csv");
-
     res.status(200).send(csvData);
   } catch (error) {
     console.error(error);
@@ -139,33 +121,15 @@ salesReport: async (req, res) => {
   }
 },
 
-  download: (req, res) => {
-    console.log("download sales report");
-  },
-  saveCoupon:async (req,res)=>{
-    try {
-      console.log(req.body);
-      const { couponCode, discount, validFrom, validTo } = req.body;
-      const code=couponCode.toUpperCase()
-      const coupon=new Coupon({
-        code:code,
-        discountPercentage:discount,
-        createdAt:validFrom,
-        expirationDate:validTo
 
-      })
-      await coupon.save()
-      res.redirect("admin-coupon")
-    } catch (error) {
-      console.error('Error saving coupon:', error);
-      res.status(500).send('Internal Server Error');
-    }
-  },
-  deleteCoupon:async(req,res)=>{
-    const id = req.query.id
-    const data= await coupon.updateOne({_id:id},{$set:{active:false}})
-    res.redirect("/admin-coupon")
-  },
+ 
+
+  
+
+
+ 
+
+
   logout: (req, res) => {
     try {
       req.session.destroy((err) => {
@@ -179,19 +143,21 @@ salesReport: async (req, res) => {
       res.render("error");
     }
   },
+
+
   admindash: async (req, res) => {
     try {
       const totalOrder = await orderDb.find({}).count();
-
       const amountOfUsers = await Userdb.find({}).count();
+
       const totalSales = await orderDb.aggregate([
         { $unwind: "$products" },
         { $group: { _id: null, sum: { $sum: "$products.price" } } },
       ]);
 
       const totalSalesAmount = totalSales[0]?.sum || 0;
-      const latestOrders = await orderDb.find().sort({ createdAt: -1 }).limit(5);
-console.log(latestOrders);
+      const latestOrders = await orderDb.find().sort({ orderDate: -1 }).limit(5);
+
 
       res.render("admindashboard", {
         totalOrder: totalOrder,
@@ -312,7 +278,11 @@ console.log(latestOrders);
       const orders = await orderDb.find(findQuerry);
 
       orders.forEach(order => {
-        salesCount[labelObj[String(order.orderDate).split(' ')[index]]] += 1;
+        if(index === 2){
+          salesCount[labelObj[Number(String(order.orderDate).split(' ')[index])]] += 1;
+        }else{
+          salesCount[labelObj[String(order.orderDate).split(' ')[index]]] += 1;
+        }
       });
 
       res.json({
@@ -323,13 +293,13 @@ console.log(latestOrders);
       console.log(err);
       res.status(500).send('Internal server err');
     }
-  }
-,
+  },
+
+
  addAdminBanner :async (req, res) => {
   try {
-      console.log("hyyy");
+      
       const data = await category.find({ name: req.body.category });
-      console.log(data);
 
       const newBanner = new Banner({
           title: req.body.title,
@@ -345,15 +315,6 @@ console.log(latestOrders);
       res.status(500).send('Internal server error');
   }
 },
-deleteBanner:async(req,res)=>{
-  const id=req.query.id
-  await Banner.updateOne({_id:id},{$set:{active:false}})
-  res.redirect('/admin-banner')
-},
-restoreBanner:async(req,res)=>{
-  const id=req.query.id
-  await Banner.updateOne({_id:id},{$set:{active:true}})
-  res.redirect('/admin-banner')
-}
+
 }
 

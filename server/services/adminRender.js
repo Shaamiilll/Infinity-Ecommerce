@@ -8,7 +8,10 @@ const bannerDb = require("../model/bannerSchema");
 const mongoose = require("mongoose");
 
 exports.adminlogin = (req, res) => {
-  res.render("adminlogin");
+ 
+  const log = req.session.admin
+
+  res.render("adminlogin" ,{log});
 };
 
 exports.admindash = (req, res) => {
@@ -23,9 +26,9 @@ exports.adminorder = async (req, res) => {
 
 exports.adminproducts = (req, res) => {
   productdb
-    .find({ active: true, categoryStats: true })
+    .find({ active: true, categoryStats: true }).populate('category')
     .then((product) => {
-      console.log(product);
+   console.log(product);
       res.render("adminProduct", { products: product });
     })
     .catch((err) => {
@@ -55,6 +58,13 @@ exports.deletedBanner=async (req,res)=>{
 
 exports.renderup = (req, res) => {
   res.render("index");
+};
+exports.editBanner =async(req, res) => {
+  const category=await categoryDb.find()
+  const id= req.query.id
+  const banner=await bannerDb.findOne({_id:id}).populate('category')
+
+  res.render("edit-banner",{category,banner});
 };
 exports.adminusers = (req, res) => {
   Userdb.find()
@@ -111,9 +121,6 @@ exports.updateproduct = (req, res) => {
   res.render("updateproduct");
 };
 
-exports.shopingCart = (req, res) => {
-  res.render("shoping-cart");
-};
 
 exports.loadCoupon=async(req,res)=>{
   const currentDate = new Date();
@@ -198,13 +205,13 @@ exports.updateimage = (req, res) => {
 
 exports.order = async (req, res) => {
   const id = req.query.Id;
-  console.log("Received Id:", id);
+  const email= req.session.email
 
   const data = await orderdb.findById(id);
+  const user = await Userdb.find({email:email})
+console.log(user +"hyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
 
-  console.log("Aggregation Result:", data);
-
-  res.render("orderDetailes", { data });
+  res.render("orderDetailes", { data,user });
 };
 exports.changeStatus = async (req, res) => {
   const status = req.query.status;

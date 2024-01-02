@@ -1,3 +1,7 @@
+
+
+
+
 <title>Order Details</title>
 <style>
     body {
@@ -144,6 +148,27 @@
                     <p><strong>Username: </strong>
                         <%= data.user %>
                     </p>
+                    <p><strong>Payment method </strong>
+                        <%= data.PaymentMethod %>
+                    </p>
+                    <p><strong>Amount</strong>
+                        <%= data.totalAmount %>
+                    </p>
+                    <p><strong>Quantity</strong>
+                        <% if (data.products[0].cartQuantity !== undefined && data.products[0].cartQuantity !== null) { %>
+                            <%= data.products[0].cartQuantity %>
+                        <% } else { %>
+                            1
+                        <% } %>
+                    </p>
+                    <p><strong>Shipped address: </strong>
+                        <%= data.shippingAddress.Address %>
+                        <%= data.shippingAddress.city %>
+                        <%= data.shippingAddress.House_no %>
+                        <%= data.shippingAddress.postalCode %>
+                        <%= data.shippingAddress.AlternateNumber %>
+                    </p>
+                    
 
                     <!-- Order Status -->
                     <% if (data.status === 'pending') { %>
@@ -158,8 +183,7 @@
                     <% } else if (data.status === 'cancelled') { %>
                         <span style="font-weight: 500; color: #dc3545;">✗ Cancelled</span>
                     <% } else { %>
-                        
-                        <span style="font-weight: 500; color: #28a745;">✓ Delivered</span>
+                        <span style="font-weight: 500; color: #dc3545;">✗ returned</span>
                         
                     <% } %>
                 </div>

@@ -299,7 +299,7 @@
 <script>
 
   $("#checkout-form").submit((e) => {
-    
+
     e.preventDefault();
     $.ajax({
       url: `/submit-order?prId=${'<%=prId%>'}`,
@@ -307,12 +307,23 @@
       data: $('#checkout-form').serialize(),
 
       success: (response) => {
-        if (response.url) {
-          return window.location.href = response.url;
-        }
-        razorpayPayment(response);
-      },
-    });
+        
+    if (response.razorSuccess==true) {
+    
+      // Check if razorSuccess is true
+      if (response.url) {
+        return window.location.href = response.url;
+      }
+      razorpayPayment(response);
+    } else {
+      
+      // Handle the case where razorSuccess is false
+     alert(response.msg)
+      // You can add additional error handling here if needed
+    }
+  },
+ 
+});
   });
   function razorpayPayment(order) {
     var options = {
@@ -368,20 +379,18 @@
       method: 'post',
       data: { coupon: promoCode, price: totalsum1 },
       success: function (response) {
-
-
         if (response.success) {
-          
+
           document.getElementById('coupon').innerText = ""
           document.getElementById('couponDis').innerText = '-' + response.discountPercent + '%'
           document.getElementById('co').style.display = "block"
           document.getElementById("updatedPrice").innerText = response.discount
-          document.getElementById('price1').value=response.discount
-          document.getElementById('totalsum').value=response.discount
+          document.getElementById('price1').value = response.discount
+          document.getElementById('totalsum').value = response.discount
 
-          
+
           // document.getElementById("price1").innerText = totalsum - (totalsum / 100) * response.discountPercent
-        
+
           const Toast = Swal.mixin({
             toast: true,
             position: "top-end",
@@ -395,9 +404,9 @@
           });
           Toast.fire({
             icon: "success",
-            title:"Coupon Code Applied Succesfully"
+            title: "Coupon Code Applied Succesfully"
           });
-          
+
 
 
         } else {
@@ -429,9 +438,9 @@
       $.ajax({
         url: '/apply-wallet',
         method: 'post',
-        data: {  price: price },
+        data: { price: price },
         success: function (response) {
-          alert(response.price)
+          
           if (response.success) {
             const Toast = Swal.mixin({
               toast: true,
@@ -448,15 +457,13 @@
               icon: "success",
               title: "Withdrawed The Amount From the Wallet"
             });
-            document.getElementById("updatedPrice").innerText = '<%=updateprice%>' - response.walletAmount;
+            document.getElementById("updatedPrice").innerText =response.price;
             document.getElementById("price1").value = '<%=updateprice%>' - response.walletAmount;
-            if ('<%=users.wallet %>' - response.walletAmount < 0) {
-              document.getElementById('wal').innerText = `₹ 0 Available in wallet`
-              document.getElementById("updatedPrice").innerText = ` ₹ ${('<%=users.wallet %>' - response.walletAmount) * -1}`
-            } else {
-              document.getElementById('wal').innerText = `₹ ${'<%=users.wallet %>' - response.walletAmount} Available in Wallet`;
-
+            document.getElementById("wal").value = response.walletPrice;
+            if(response.price==0){
+              document.getElementById("creditCardPayment").disabled=true
             }
+            
 
           } else {
             document.getElementById('coupon').innerText = response.message;
@@ -474,7 +481,7 @@
         title: "Adding Money Back to wallet ",
         icon: "success"
       });
-    window.location.reload()
+      window.location.reload()
     }
   }
 

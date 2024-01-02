@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
+<%- include('include/admin-head') %>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,12 +38,9 @@
                             <div id="imagePreview" class="d-flex flex-wrap">
                                 <% for(let i=0; i < images.length; i++) { %>
                                     <div class="image-container d-inline-block">
-                                        <img src="/primg/<%= images[i] %>" alt="" class="img-thumbnail m-2">
+                                        <img src="/primg/<%= images[i] %>" alt="" class="img-thumbnail m-2" style="width: 20%; height: auto;" >
                                         <button class="btn btn-danger btn-sm mt-2"
-                                            onclick="deleteImage('<%= images[i] %>','<%=id%>')">Remove</button>
-                                           <form action="/crop-image?id=" method="post">
-                                            <button class="btn btn-danger  btn-sm mt-2" type="submit">crop</button>
-                                           </form> 
+                                            onclick="deleteImage('<%= images[i] %>','<%=id%>')" style="height: 30px; width: 80px;">Remove</button>
                                     </div>
                                     <% } %>
                             </div>

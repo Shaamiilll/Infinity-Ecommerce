@@ -1,9 +1,10 @@
-<link rel="icon" type="image/x-icon" href="images/fav.png">
-<title>Admin Login</title>
-
-<link rel="stylesheet" href="/css/adminlogin.css">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/x-icon" href="images/fav.png">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="/css/adminlogin.css">
 </head>
-
 <body>
     <div class="l-form">
         <form action="/adminlogin" class="form" method="POST">
@@ -19,10 +20,22 @@
                 <input type="password" name="password" class="form__input" placeholder=" ">
                 <label for="" class="form__label">Password</label>
             </div>
+            <p style="color: red; display: none;" id="err">Invalid Credentials</p>
 
             <input type="submit" class="form__button" value="Sign In" style="color:white">
         </form>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check if the page is being loaded for the first time or if it's a refresh
+            if (performance.navigation.type === 1) {
+                // Display the error message only on page refresh
+                var log = '<%=log%>';
+                if (log === 'true') {
+                    document.getElementById("err").style.display = "block";
+                }
+            }
+        });
+    </script>
 </body>
-
 </html>
