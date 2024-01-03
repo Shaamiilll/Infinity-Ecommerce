@@ -19,7 +19,7 @@ exports.admindash = (req, res) => {
 };
 
 exports.adminorder = async (req, res) => {
-  const data = await orderdb.find();
+  const data = await orderdb.find().sort({ orderDate: -1 });
   console.log(data);
   res.render("adminOrder", { data: data });
 };

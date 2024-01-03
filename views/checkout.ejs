@@ -299,32 +299,30 @@
 <script>
 
   $("#checkout-form").submit((e) => {
+  e.preventDefault();
+  
+  $.ajax({
+    url: `/submit-order?prId=${'<%=prId%>'}`,
+    method: 'post',
+    data: $('#checkout-form').serialize(),
 
-    e.preventDefault();
-    $.ajax({
-      url: `/submit-order?prId=${'<%=prId%>'}`,
-      method: 'post',
-      data: $('#checkout-form').serialize(),
-
-      success: (response) => {
-        
-    if (response.razorSuccess==true) {
-    
-      // Check if razorSuccess is true
+    success: (response) => {
+      // Always redirect to the URL if it exists
       if (response.url) {
         return window.location.href = response.url;
       }
+
+      // If there's no URL, proceed with razorpayPayment
       razorpayPayment(response);
-    } else {
-      
-      // Handle the case where razorSuccess is false
-     alert(response.msg)
-      // You can add additional error handling here if needed
+    },
+
+    error: (error) => {
+      // Handle any errors here
+      console.error('An error occurred:', error);
     }
-  },
- 
-});
   });
+});
+
   function razorpayPayment(order) {
     var options = {
       "key": "rzp_test_JrHZi49O6mvXnR",
@@ -459,11 +457,15 @@
             });
             document.getElementById("updatedPrice").innerText =response.price;
             document.getElementById("price1").value = '<%=updateprice%>' - response.walletAmount;
-            document.getElementById("wal").value = response.walletPrice;
+         document.getElementById("wal").innerHTML = `  ${response.walletPrice.toLocaleString('en-IN', {
+    style: 'currency',
+    currency: 'INR'
+})} Available in Wallet`
+        
             if(response.price==0){
               document.getElementById("creditCardPayment").disabled=true
             }
-            
+
 
           } else {
             document.getElementById('coupon').innerText = response.message;

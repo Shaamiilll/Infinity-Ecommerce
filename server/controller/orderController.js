@@ -47,6 +47,7 @@ module.exports = {
           products: data,
           PaymentMethod: req.body.payment,
           couponCode: req.session.promocode,
+          fromWallet:req.session.userWallet
         };
         req.session.orderDetails = orderDetails;
         const neworder = new orderDb(orderDetails);
@@ -97,6 +98,8 @@ module.exports = {
           }
         } else {
           await neworder.save();
+          const email = req.session.email;
+          await Userdb.updateOne({email:email},{$set:{wallet:req.session.userWallet}})
           await productdb.updateOne({ _id: id }, { $inc: { stock: -1 } });
           res.json({ url: `/successOrder?id=${data._id}` });
         }
@@ -117,6 +120,8 @@ module.exports = {
             },
             products: productData[i],
             PaymentMethod: req.body.payment,
+            fromWallet:req.session.userWallet,
+            couponCode: req.session.promocode
           };
           allOrderDetails.push(orderDetails);
         }
@@ -155,7 +160,6 @@ module.exports = {
           });
         } else {
           for (let i = 0; i < allOrderDetails.length; i++) {
-            const email = req.session.email;
             const neworderItem = new orderDb(allOrderDetails[i]);
 
             await neworderItem.save();
@@ -166,6 +170,9 @@ module.exports = {
               { $inc: { stock: quantity } }
             );
           }
+          const email = req.session.email;
+          await Userdb.updateOne({email:email},{$set:{wallet:req.session.userWallet}})
+       
           await cartDb.deleteMany({ email: email });
           res.json({ url: `/successOrder` });
         }
@@ -201,6 +208,9 @@ module.exports = {
       if (prId) {
         const neworder = new orderDb(allOrderDetails);
         await neworder.save();
+        const email = req.session.email;
+        await Userdb.updateOne({email:email},{$inc:{wallet:req.session.userWallet}})
+        await productdb.updateOne({ _id: prId }, { $inc: { stock: -1 } });
         return res.send(
           `/successOrder?id=${"payment single product from buy now"} `
         );
@@ -208,7 +218,16 @@ module.exports = {
       for (let i = 0; i < allOrderDetails.length; i++) {
         const neworder = new orderDb(allOrderDetails[i]);
         await neworder.save();
+        const productId = allOrderDetails[i].products.prId;
+            const quantity = allOrderDetails[i].products.cartQuantity; // Correcting the variable name
+            await productdb.updateOne(
+              { _id: productId },
+              { $inc: { stock: quantity } }
+            );
       }
+  
+      await Userdb.updateOne({email:email},{$set:{wallet:req.session.userWallet}})
+
       await cartDb.deleteMany({ email: email });
       res.send(
         `/successOrder?id=${"payment Multiple product from add to cart"}`

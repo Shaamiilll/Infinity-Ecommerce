@@ -132,7 +132,7 @@ module.exports = {
   updateproduct1: async (req, res) => {
     try {
       const id = req.query.id;
-      const data = await productdb.findById(id);
+      const data = await productdb.findById(id).populate('category')
       const data1 = await categorydb.find();
 
       res.render("updateproduct", {

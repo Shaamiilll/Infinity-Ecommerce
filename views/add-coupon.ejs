@@ -27,21 +27,30 @@
 
 
 
-                        <form action="/save-coupon" method="post">
-                            <div class="form-group"> <label for="coupon-code">Coupon Code</label> <input type="text"
-                                    class="form-control" id="coupon-code" placeholder="Enter Coupon Code" name="couponCode"> </div>
-                            <div class="form-group"> <label for="discount">Discount (%)</label> <input type="number"
-                                    class="form-control" id="discount" placeholder="Enter Discount Percentage" name="discount">
+                        <form action="/save-coupon" method="post" onsubmit="return validateForm()">
+                            <div class="form-group">
+                                <label for="coupon-code">Coupon Code</label>
+                                <input type="text" class="form-control" id="coupon-code" placeholder="Enter Coupon Code" name="couponCode" required>
+                                <small id="coupon-code-error" class="text-danger"></small>
                             </div>
-                            <div class="form-group"> <label for="valid-from">Valid From</label> <input type="date"
-                                    class="form-control" id="valid-from" name="validFrom"> </div>
-                            <div class="form-group"> <label for="valid-to">Valid To</label> <input type="date"
-                                    class="form-control" id="valid-to" name="validTo"> </div>
+                            <div class="form-group">
+                                <label for="discount">Discount (%)</label>
+                                <input type="number" class="form-control" id="discount" placeholder="Enter Discount Percentage" name="discount" required>
+                                <small id="discount-error" class="text-danger"></small>
+                            </div>
+                            <div class="form-group">
+                                <label for="valid-from">Valid From</label>
+                                <input type="date" class="form-control" id="valid-from" name="validFrom" required>
+                                <small id="valid-from-error" class="text-danger"></small>
+                            </div>
+                            <div class="form-group">
+                                <label for="valid-to">Valid To</label>
+                                <input type="date" class="form-control" id="valid-to" name="validTo" required>
+                                <small id="valid-to-error" class="text-danger"></small>
+                            </div>
                             <h1></h1>
-                            <button type="submit" class="btn" style="background-color: #131921 ; color: white;">Add
-                                Coupon</button>
+                            <button type="submit" class="btn" style="background-color: #131921; color: white;">Add Coupon</button>
                         </form>
-
 
                     </div>
                 </div>
@@ -58,6 +67,50 @@
             window.location.href = userDetailURL;
         }
     </script>
+  <script>
+    function validateForm() {
+        // Reset error messages
+        document.getElementById("coupon-code-error").textContent = "";
+        document.getElementById("discount-error").textContent = "";
+        document.getElementById("valid-from-error").textContent = "";
+        document.getElementById("valid-to-error").textContent = "";
+
+        // Validate Coupon Code
+        const couponCode = document.getElementById("coupon-code").value;
+        if (couponCode.trim() === "") {
+            document.getElementById("coupon-code-error").textContent = "Coupon Code is required.";
+            return false;
+        }
+
+        // Validate Discount
+        const discount = document.getElementById("discount").value;
+        if (isNaN(discount) || discount < 0 || discount > 100) {
+            document.getElementById("discount-error").textContent = "Enter a valid discount percentage (0-100).";
+            return false;
+        }
+
+        // Validate Valid From
+        const validFrom = document.getElementById("valid-from").value;
+        if (validFrom.trim() === "") {
+            document.getElementById("valid-from-error").textContent = "Valid From date is required.";
+            return false;
+        }
+
+        // Validate Valid To
+        const validTo = document.getElementById("valid-to").value;
+        if (validTo.trim() === "") {
+            document.getElementById("valid-to-error").textContent = "Valid To date is required.";
+            return false;
+        }
+
+        // Check if Start Date is smaller than End Date
+        if (new Date(validFrom) >= new Date(validTo)) {
+            document.getElementById("valid-to-error").textContent = "End date should be greater than Start date.";
+            return false;
+        }
+        return true; // Form is valid, submit the form
+    }
+</script>
 
     <script src="js/adminserver.js"></script>
     </body>
