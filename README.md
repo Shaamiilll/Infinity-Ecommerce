@@ -1,4 +1,4 @@
-# EAZHOP E-Commerce Website
+# INFINTY E-Commerce Website
 
 ## Overview
 Infinty is a single-vendor e-commerce website designed to provide users with a seamless shopping experience. With a user-friendly interface and a plethora of features, INFINTY offers convenience and reliability for both administrators and customers.
