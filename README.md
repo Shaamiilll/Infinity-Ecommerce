@@ -8,7 +8,7 @@ Infinty is a single-vendor e-commerce website designed to provide users with a s
 ### Admin Features
 - **Product Management**: Administrators can add and manage products available for purchase.
 - **Offer Management**: Admins can create and manage product offers and coupons, including flat amount and percentage discounts.
-- **Payment Methods**: EAZHOP supports both online payment (via Razorpay) and Cash on Delivery (COD) options.
+- **Payment Methods**: INFINTY supports both online payment (via Razorpay) and Cash on Delivery (COD) options.
 - **Wallet System**: Users can receive refunds for returned products directly into their wallet, which can be used for future purchases.
 - **Order Tracking**: Efficient order status tracking system for administrators to monitor orders and manage deliveries.
 - **Sales Analytics**: Detailed sales tracking and analysis tools for administrators to gain insights into the performance of the e-commerce platform.
@@ -44,7 +44,7 @@ To start using EAZHOP:
 2. Browse through the product catalog and add items to your cart.
 3. Proceed to checkout and select your preferred payment method.
 4. Track your order status.
-5. Enjoy your shopping experience with EAZHOP!
+5. Enjoy your shopping experience with INFINTY!
 
 ## Contact
 For any inquiries or support, please contact us at shamilamiyan@gmail.com
